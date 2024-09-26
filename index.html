@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programming for Losers (PFL)</title>
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            font-size: 16px;
+        }
+        .container {
+            width: 100%;
+            padding: 0 20px;
+            margin: 0 auto;
+        }
+        /* Header styles */
+        header {
+            background-color: #f4f4f4;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .nav-links {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: #f4f4f4;
+            padding: 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .nav-links.active {
+            display: flex;
+            flex-direction: column;
+        }
+        .nav-links a {
+            color: #333;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            display: block;
+            text-align: center;
+        }
+        .menu-toggle {
+            display: block;
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        /* Hero section styles */
+        .hero {
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+            padding: 6rem 0 4rem;
+            margin-top: 60px;
+        }
+        .hero h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        .hero p {
+            font-size: 1rem;
+            margin-bottom: 2rem;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #333;
+            color: #fff;
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .btn:hover {
+            background-color: #555;
+        }
+        /* Section styles */
+        section {
+            padding: 3rem 0;
+        }
+        section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        /* About section styles */
+        #about p {
+            text-align: left;
+            margin-bottom: 1rem;
+        }
+        /* Mentorship section styles */
+        #mentorship {
+            background-color: #f4f4f4;
+        }
+        /* Opportunities section styles */
+        .opportunities-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        .opportunity {
+            background-color: #f4f4f4;
+            padding: 1.5rem;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .opportunity h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+        /* Courses section styles */
+        #courses {
+            background-color: #f4f4f4;
+        }
+        .courses-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        .course {
+            background-color: #fff;
+            padding: 1rem;
+            border-radius: 5px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .course h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        /* Join section styles */
+        #join form {
+            display: flex;
+            flex-direction: column;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        #join input[type="email"] {
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        /* Footer styles */
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 2rem 0;
+        }
+        footer p {
+            margin-bottom: 1rem;
+        }
+        footer a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 0.5rem;
+        }
+        /* Responsive styles */
+        @media (min-width: 768px) {
+            .container {
+                max-width: 720px;
+            }
+            .menu-toggle {
+                display: none;
+            }
+            .nav-links {
+                display: flex;
+                position: static;
+                width: auto;
+                background-color: transparent;
+                padding: 0;
+                box-shadow: none;
+            }
+            .nav-links a {
+                display: inline-block;
+            }
+            .hero {
+                padding: 8rem 0 6rem;
+            }
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            .hero p {
+                font-size: 1.2rem;
+            }
+            .opportunities-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .courses-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            #join form {
+                flex-direction: row;
+            }
+            #join input[type="email"] {
+                flex-grow: 1;
+                margin-bottom: 0;
+                margin-right: 1rem;
+            }
+        }
+        @media (min-width: 992px) {
+            .container {
+                max-width: 960px;
+            }
+            .hero h1 {
+                font-size: 3rem;
+            }
+            .courses-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        @media (min-width: 1200px) {
+            .container {
+                max-width: 1140px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">PFL</div>
+            <button class="menu-toggle" aria-label="Toggle menu">☰</button>
+            <div class="nav-links">
+                <a href="#about">About</a>
+                <a href="#mentorship">Mentorship</a>
+                <a href="#opportunities">Opportunities</a>
+                <a href="#courses">Courses</a>
+                <a href="#join">Join Us</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1>Programming for Losers (PFL)</h1>
+                <p>Where coding failures become programming triumphs. Join our student-led club of aspiring programmers and future tech leaders!</p>
+                <a href="#join" class="btn">Join Now</a>
+            </div>
+        </section>
+
+        <section id="about">
+            <div class="container">
+                <h2>About PFL</h2>
+                <p>Programming for Losers (PFL) is a grassroots initiative started by a group of passionate first-year students. We're just a bunch of coding enthusiasts trying to create a supportive community outside of our formal college environment. Our goal? To connect with like-minded individuals who share our love for programming and technology.</p>
+                <p>As an independent club, we're not affiliated with any college or institution. We're simply students helping students, learning together, and building a network that extends beyond our campus. Whether you're a coding newbie or a budding tech wizard, PFL is the place where we all start as 'losers' but grow together into winners.</p>
+            </div>
+        </section>
+
+        <section id="mentorship">
+            <div class="container">
+                <h2>Peer Learning, Not Teaching</h2>
+                <p>At PFL, we believe in the power of peer learning. We're all students here, learning and growing together. We share our experiences, help each other overcome coding challenges, and collaborate on projects. It's not about one person teaching another; it's about collective growth and mutual support.</p>
+            </div>
+        </section>
+
+        <section id="opportunities">
+            <div class="container">
+                <h2>Opportunities</h2>
+                <div class="opportunities-grid">
+                    <div class="opportunity">
+                        <h3>Project Collaborations</h3>
+                        <p>Team up with fellow members on coding projects. Gain hands-on experience and build your portfolio while learning from peers.</p>
+                    </div>
+                    <div class="opportunity">
+                        <h3>Skill Sharing Sessions</h3>
+                        <p>Participate in regular skill-sharing meetups where members can present and learn about various programming topics and technologies.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="courses">
+            <div class="container">
+                <h2>Our Learning Tracks</h2>
+                <p>While we're not a formal educational institution, we organize study groups and learning tracks based on member interests:</p>
+                <div class="courses-grid">
+                    <div class="course">
+                        <h3>Web Development Basics</h3>
+                        <p>HTML, CSS, JavaScript fundamentals</p>
+                    </div>
+                    <div class="course">
+                        <h3>Python for Beginners</h3>
+                        <p>Learn Python programming from scratch</p>
+                    </div>
+                    <div class="course">
+                        <h3>Data Structures & Algorithms</h3>
+                        <p>Essential CS concepts for interviews</p>
+                    </div>
+                    <div class="course">
+                        <h3>Mobile App Development</h3>
+                        <p>Build apps for iOS and Android</p>
+                    </div>
+                    <div class="course">
+                        <h3>Machine Learning Basics</h3>
+                        <p>Introduction to AI and ML concepts</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="join">
+            <div class="container">
+                <h2>Join PFL Today</h2>
+                <p>Ready to start your programming journey with a supportive community of fellow students? Sign up for our mailing list and be the first to know about upcoming meetups, projects, and learning opportunities.</p>
+                <form id="subscribe-form">
+                    <input type="email" placeholder="Enter your email" required>
+                    <button type="submit" class="btn">Subscribe</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 Programming for Losers (PFL). All rights reserved. Not affiliated with any educational institution.</p>
+            <div>
+                <a href="#">Terms of Service</a>
+                <a href="#">Privacy</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navLinks = document.querySelector('.nav-links');
+
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Close menu when a link is clicked
+        navLinks.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A') {
+                navLinks.classList.remove('active');
+            }
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                const headerOffset = 60;
+                const elementPosition = targetElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Form submission (you would typically send this data to a server)
+        const subscribeForm = document.getElementById('subscribe-form');
+        subscribeForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = e.target.querySelector('input[type="email"]').value;
+            alert(`Thank you for subscribing with: ${email}`);
+            subscribeForm.reset();
+        });
+    </script>
+</body>
+</html>
