@@ -3,130 +3,204 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>First-Year Interactive Syllabus Bot</title>
+    <title>Chatbot</title>
     <style>
+        /* Responsive CSS styles */
         body {
             font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
         }
+
         .chat-container {
-            max-width: 500px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            height: 500px;
+            border: 2px solid #ccc;
             border-radius: 10px;
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        .message {
-            margin-bottom: 20px;
-            opacity: 0;
-            transition: opacity 1s;
-        }
-        .message.show {
-            opacity: 1;
-        }
-        .message.bot {
-            color: #555;
-        }
-        .message.user {
-            color: #000;
-        }
-        select, button {
-            display: block;
-            margin: 10px 0;
+
+        .chatbox {
+            height: 85%;
             padding: 10px;
-            width: 100%;
-            font-size: 16px;
+            overflow-y: auto;
+            border-bottom: 1px solid #ccc;
         }
-        a {
-            color: blue;
-            text-decoration: none;
+
+        .input-section {
+            display: flex;
+            padding: 10px;
+            flex-direction: column;
         }
-        a:hover {
-            text-decoration: underline;
+
+        .chat-message {
+            margin: 10px 0;
+            padding: 8px;
+            border-radius: 5px;
+        }
+
+        .bot-message {
+            background-color: #ececec;
+            align-self: flex-start;
+        }
+
+        .user-message {
+            background-color: black;
+            color: white;
+            align-self: flex-end;
+        }
+
+        .option-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .option-buttons button {
+            background-color: black;
+            color: white;
+            padding: 8px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            flex: 1 1 45%;
+            font-size: 14px;
+        }
+
+        .option-buttons button:hover {
+            background-color: #333;
+        }
+
+        @media (max-width: 600px) {
+            .option-buttons button {
+                flex: 1 1 100%;
+            }
         }
     </style>
 </head>
 <body>
 
 <div class="chat-container">
-    <div class="message bot" id="botMessage1">Hello! Please select your semester:</div>
-    
-    <!-- Semester Dropdown -->
-    <select id="semesterSelect" style="opacity: 0; transition: opacity 1s;">
-        <option value="">-- Select Semester --</option>
-        <option value="sem1">Semester 1</option>
-        <option value="sem2">Semester 2</option>
-    </select>
-
-    <!-- Content Type Dropdown (Syllabus/Notes) -->
-    <div class="message bot" id="botMessage2" style="display:none;">What do you need? Syllabus or Notes?</div>
-    <select id="typeSelect" style="display:none;">
-        <option value="">-- Select Content --</option>
-        <option value="syllabus">Syllabus</option>
-        <option value="notes">Notes</option>
-    </select>
-
-    <!-- Output for PDF Link -->
-    <div id="pdfLink" class="message bot" style="display:none;"></div>
+    <div id="chatbox" class="chatbox"></div>
+    <div class="input-section">
+        <div class="option-buttons" id="options"></div>
+    </div>
 </div>
 
 <script>
-// Sample data with syllabus and notes links for first-year students
-const data = {
-    "sem1": {
-        "syllabus": "https://drive.google.com/sem1_syllabus_link",
-        "notes": "https://drive.google.com/sem1_notes_link"
-    },
-    "sem2": {
-        "syllabus": "https://drive.google.com/sem2_syllabus_link",
-        "notes": "https://drive.google.com/sem2_notes_link"
+    // JavaScript logic
+
+    // Store subjects and PDF links for each chapter
+    const data = {
+        "Semester 1": {
+            "Math": {
+                "Chapter 1: Calculus": "https://drive.google.com/link-to-calculus",
+                "Chapter 2: Algebra": "https://drive.google.com/link-to-algebra"
+            },
+            "PPS": {
+                "Chapter 1: Basics of C": "https://drive.google.com/link-to-c-basics",
+                "Chapter 2: Pointers": "https://drive.google.com/link-to-pointers"
+            },
+            "ENG": {
+                "Chapter 1: Communication Skills": "https://drive.google.com/link-to-communication-skills"
+            },
+            "BEE": {
+                "Chapter 1: Circuits": "https://drive.google.com/link-to-circuits",
+                "Chapter 2: Power Systems": "https://drive.google.com/link-to-power-systems"
+            },
+            "EGD": {
+                "Chapter 1: Engineering Drawing": "https://drive.google.com/link-to-engineering-drawing"
+            }
+        },
+        "Semester 2": {
+            "Math": {
+                "Chapter 1: Probability": "https://drive.google.com/link-to-probability",
+                "Chapter 2: Statistics": "https://drive.google.com/link-to-statistics"
+            },
+            "PPS": {
+                "Chapter 1: Advanced C": "https://drive.google.com/link-to-advanced-c"
+            },
+            "ENG": {
+                "Chapter 1: Technical Writing": "https://drive.google.com/link-to-technical-writing"
+            }
+        }
+    };
+
+    let stage = 0; // To track conversation stage
+    let selectedSemester = "";
+    let selectedSubject = "";
+
+    // Function to display message in chatbox
+    function displayMessage(message, sender) {
+        const chatbox = document.getElementById("chatbox");
+        const messageElement = document.createElement("div");
+        messageElement.classList.add("chat-message");
+        messageElement.classList.add(sender === "bot" ? "bot-message" : "user-message");
+        messageElement.textContent = message;
+        chatbox.appendChild(messageElement);
+        chatbox.scrollTop = chatbox.scrollHeight;
     }
-};
 
-// Show first message smoothly
-document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById('botMessage1').classList.add('show');
-    setTimeout(() => {
-        document.getElementById('semesterSelect').style.opacity = 1;
-    }, 1000);
-});
-
-// Handle semester selection
-document.getElementById('semesterSelect').addEventListener('change', function() {
-    const selectedSemester = this.value;
-    if (selectedSemester) {
-        // Show the second message and type select smoothly
-        setTimeout(() => {
-            document.getElementById('botMessage2').style.display = 'block';
-            document.getElementById('botMessage2').classList.add('show');
-            document.getElementById('typeSelect').style.display = 'block';
-        }, 500);
-    } else {
-        document.getElementById('typeSelect').style.display = 'none';
+    // Function to create option buttons dynamically
+    function createOptions(options, isFinal = false) {
+        const optionsContainer = document.getElementById("options");
+        optionsContainer.innerHTML = ''; // Clear previous options
+        options.forEach(option => {
+            const button = document.createElement("button");
+            button.textContent = option;
+            button.onclick = () => handleOptionClick(option, isFinal);
+            optionsContainer.appendChild(button);
+        });
     }
-});
 
-// Handle content type selection
-document.getElementById('typeSelect').addEventListener('change', function() {
-    const selectedSemester = document.getElementById('semesterSelect').value;
-    const selectedType = this.value;
-
-    if (selectedSemester && selectedType) {
-        const link = data[selectedSemester][selectedType];
-        if (link) {
-            setTimeout(() => {
-                // Display the link with a smooth transition
-                const pdfLink = document.getElementById('pdfLink');
-                pdfLink.innerHTML = `Here is your <strong>${selectedType}</strong> for ${selectedSemester === "sem1" ? "Semester 1" : "Semester 2"}: <a href="${link}" target="_blank">Click here to view</a>`;
-                pdfLink.style.display = 'block';
-                pdfLink.classList.add('show');
-            }, 500);
+    // Function to handle bot responses and button clicks
+    function handleOptionClick(option, isFinal) {
+        if (stage === 0) {
+            // User selects a semester
+            selectedSemester = option;
+            displayMessage(You chose: ${selectedSemester}, "user");
+            displayMessage("Please choose a subject:", "bot");
+            createOptions(Object.keys(data[selectedSemester]));
+            stage = 1;
+        } else if (stage === 1) {
+            // User selects a subject
+            selectedSubject = option;
+            displayMessage(You chose: ${selectedSubject}, "user");
+            displayMessage("Please choose a chapter:", "bot");
+            createOptions(Object.keys(data[selectedSemester][selectedSubject]), true);
+            stage = 2;
+        } else if (stage === 2 && isFinal) {
+            // User selects a chapter, provide the PDF link
+            displayMessage(You chose: ${option}, "user");
+            const link = data[selectedSemester][selectedSubject][option];
+            displayMessage(Here is your PDF link: ${link}, "bot");
+            setTimeout(() => resetChat(), 3000); // Reset after showing PDF link
         }
     }
-});
+
+    // Function to reset the chatbot after a selection is made
+    function resetChat() {
+        stage = 0;
+        selectedSemester = "";
+        selectedSubject = "";
+        displayMessage("Please choose a semester:", "bot");
+        createOptions(["Semester 1", "Semester 2"]);
+    }
+
+    // Initial bot greeting message
+    window.onload = function () {
+        resetChat();
+    };
 </script>
 
 </body>
