@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>First-Year Interactive Syllabus Bot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .chat-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .message {
+            margin-bottom: 20px;
+            opacity: 0;
+            transition: opacity 1s;
+        }
+        .message.show {
+            opacity: 1;
+        }
+        .message.bot {
+            color: #555;
+        }
+        .message.user {
+            color: #000;
+        }
+        select, button {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%;
+            font-size: 16px;
+        }
+        a {
+            color: blue;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="message bot" id="botMessage1">Hello! Please select your semester:</div>
+    
+    <!-- Semester Dropdown -->
+    <select id="semesterSelect" style="opacity: 0; transition: opacity 1s;">
+        <option value="">-- Select Semester --</option>
+        <option value="sem1">Semester 1</option>
+        <option value="sem2">Semester 2</option>
+    </select>
+
+    <!-- Content Type Dropdown (Syllabus/Notes) -->
+    <div class="message bot" id="botMessage2" style="display:none;">What do you need? Syllabus or Notes?</div>
+    <select id="typeSelect" style="display:none;">
+        <option value="">-- Select Content --</option>
+        <option value="syllabus">Syllabus</option>
+        <option value="notes">Notes</option>
+    </select>
+
+    <!-- Output for PDF Link -->
+    <div id="pdfLink" class="message bot" style="display:none;"></div>
+</div>
+
+<script>
+// Sample data with syllabus and notes links for first-year students
+const data = {
+    "sem1": {
+        "syllabus": "https://drive.google.com/sem1_syllabus_link",
+        "notes": "https://drive.google.com/sem1_notes_link"
+    },
+    "sem2": {
+        "syllabus": "https://drive.google.com/sem2_syllabus_link",
+        "notes": "https://drive.google.com/sem2_notes_link"
+    }
+};
+
+// Show first message smoothly
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById('botMessage1').classList.add('show');
+    setTimeout(() => {
+        document.getElementById('semesterSelect').style.opacity = 1;
+    }, 1000);
+});
+
+// Handle semester selection
+document.getElementById('semesterSelect').addEventListener('change', function() {
+    const selectedSemester = this.value;
+    if (selectedSemester) {
+        // Show the second message and type select smoothly
+        setTimeout(() => {
+            document.getElementById('botMessage2').style.display = 'block';
+            document.getElementById('botMessage2').classList.add('show');
+            document.getElementById('typeSelect').style.display = 'block';
+        }, 500);
+    } else {
+        document.getElementById('typeSelect').style.display = 'none';
+    }
+});
+
+// Handle content type selection
+document.getElementById('typeSelect').addEventListener('change', function() {
+    const selectedSemester = document.getElementById('semesterSelect').value;
+    const selectedType = this.value;
+
+    if (selectedSemester && selectedType) {
+        const link = data[selectedSemester][selectedType];
+        if (link) {
+            setTimeout(() => {
+                // Display the link with a smooth transition
+                const pdfLink = document.getElementById('pdfLink');
+                pdfLink.innerHTML = `Here is your <strong>${selectedType}</strong> for ${selectedSemester === "sem1" ? "Semester 1" : "Semester 2"}: <a href="${link}" target="_blank">Click here to view</a>`;
+                pdfLink.style.display = 'block';
+                pdfLink.classList.add('show');
+            }, 500);
+        }
+    }
+});
+</script>
+
+</body>
+</html>
