@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatbot</title>
+    <title>First Year Chatbot</title>
     <style>
-        /* Responsive CSS styles */
+        /* General Styles */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f9;
@@ -34,18 +34,22 @@
             padding: 10px;
             overflow-y: auto;
             border-bottom: 1px solid #ccc;
+            background-color: #f9f9f9;
+            scroll-behavior: smooth;
         }
 
         .input-section {
             display: flex;
             padding: 10px;
             flex-direction: column;
+            background-color: #fafafa;
         }
 
         .chat-message {
             margin: 10px 0;
             padding: 8px;
             border-radius: 5px;
+            max-width: 80%;
         }
 
         .bot-message {
@@ -54,7 +58,7 @@
         }
 
         .user-message {
-            background-color: black;
+            background-color: #007bff;
             color: white;
             align-self: flex-end;
         }
@@ -67,7 +71,7 @@
         }
 
         .option-buttons button {
-            background-color: black;
+            background-color: #007bff;
             color: white;
             padding: 8px 10px;
             border: none;
@@ -75,10 +79,15 @@
             cursor: pointer;
             flex: 1 1 45%;
             font-size: 14px;
+            transition: background-color 0.3s ease;
         }
 
         .option-buttons button:hover {
-            background-color: #333;
+            background-color: #0056b3;
+        }
+
+        .option-buttons button:active {
+            transform: scale(0.95);
         }
 
         @media (max-width: 600px) {
@@ -98,9 +107,7 @@
 </div>
 
 <script>
-    // JavaScript logic
-
-    // Store subjects and PDF links for each chapter
+    // Data for Semester 1 and 2 subjects
     const data = {
         "Semester 1": {
             "Math": {
@@ -136,11 +143,11 @@
         }
     };
 
-    let stage = 0; // To track conversation stage
+    let stage = 0;
     let selectedSemester = "";
     let selectedSubject = "";
 
-    // Function to display message in chatbox
+    // Function to display a message in the chatbox
     function displayMessage(message, sender) {
         const chatbox = document.getElementById("chatbox");
         const messageElement = document.createElement("div");
@@ -163,41 +170,39 @@
         });
     }
 
-    // Function to handle bot responses and button clicks
+    // Function to handle bot responses and option clicks
     function handleOptionClick(option, isFinal) {
         if (stage === 0) {
-            // User selects a semester
             selectedSemester = option;
-            displayMessage(You chose: ${selectedSemester}, "user");
+            displayMessage(`You chose: ${selectedSemester}`, "user");
             displayMessage("Please choose a subject:", "bot");
             createOptions(Object.keys(data[selectedSemester]));
             stage = 1;
         } else if (stage === 1) {
-            // User selects a subject
             selectedSubject = option;
-            displayMessage(You chose: ${selectedSubject}, "user");
+            displayMessage(`You chose: ${selectedSubject}`, "user");
             displayMessage("Please choose a chapter:", "bot");
             createOptions(Object.keys(data[selectedSemester][selectedSubject]), true);
             stage = 2;
         } else if (stage === 2 && isFinal) {
-            // User selects a chapter, provide the PDF link
-            displayMessage(You chose: ${option}, "user");
+            displayMessage(`You chose: ${option}`, "user");
             const link = data[selectedSemester][selectedSubject][option];
-            displayMessage(Here is your PDF link: ${link}, "bot");
-            setTimeout(() => resetChat(), 3000); // Reset after showing PDF link
+            displayMessage("Loading PDF link...", "bot");
+            setTimeout(() => displayMessage(`Here is your PDF link: ${link}`, "bot"), 1500); // Simulate loading
+            setTimeout(() => resetChat(), 3000); // Reset after a delay
         }
     }
 
-    // Function to reset the chatbot after a selection is made
+    // Reset the chatbot
     function resetChat() {
         stage = 0;
         selectedSemester = "";
         selectedSubject = "";
-        displayMessage("Please choose a semester:", "bot");
+        displayMessage("Welcome to the First-Year Resource Bot! Please choose a semester:", "bot");
         createOptions(["Semester 1", "Semester 2"]);
     }
 
-    // Initial bot greeting message
+    // Initial greeting message when the page loads
     window.onload = function () {
         resetChat();
     };
