@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Computer Science and Programming Courses</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f8f8;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        /* Header styles */
+        header {
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+            padding: 2rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        /* Introduction styles */
+        .intro {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .intro h2 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #000;
+        }
+        .intro p {
+            color: #555;
+            margin-bottom: 10px;
+        }
+        /* Filter styles */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .filter-btn {
+            background-color: #fff;
+            color: #000;
+            border: 2px solid #000;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background-color: #000;
+            color: #fff;
+        }
+        #search {
+            flex-grow: 1;
+            padding: 10px 15px;
+            border: 2px solid #000;
+            border-radius: 25px;
+            font-size: 1rem;
+        }
+        #search:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0,0,0,0.2);
+        }
+        /* Course grid styles */
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .course-card {
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        .course-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .course-content {
+            padding: 20px;
+        }
+        .course-title {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: #000;
+        }
+        .course-institution {
+            color: #666;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+        .course-description {
+            margin-bottom: 15px;
+            color: #444;
+        }
+        .course-category {
+            display: inline-block;
+            background-color: #f0f0f0;
+            color: #000;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        .course-link {
+            display: inline-block;
+            background-color: #000;
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: background-color 0.3s ease;
+            font-weight: 500;
+        }
+        .course-link:hover {
+            background-color: #333;
+        }
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .course-grid {
+                grid-template-columns: 1fr;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            .intro h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Computer Science and Programming Courses</h1>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="intro">
+            <h2>Introduction to Computer Science</h2>
+            <p>Computer Science is the study of computation, information, and automation. It encompasses both the theoretical and practical aspects of how computers work and process information. As a discipline, it explores algorithms, data structures, programming languages, software engineering, artificial intelligence, and much more.</p>
+            <p>Whether you're interested in software development, data analysis, artificial intelligence, or any other tech-related field, a strong foundation in Computer Science is crucial. The courses below cover a wide range of topics and programming languages to help you start or advance your journey in the world of computing.</p>
+        </section>
+
+        <section class="filters">
+            <button class="filter-btn active" data-category="All">All</button>
+            <button class="filter-btn" data-category="Introduction to CS">Intro to CS</button>
+            <button class="filter-btn" data-category="C">C</button>
+            <button class="filter-btn" data-category="C++">C++</button>
+            <button class="filter-btn" data-category="Java">Java</button>
+            <button class="filter-btn" data-category="Python">Python</button>
+            <button class="filter-btn" data-category="React">React</button>
+            <button class="filter-btn" data-category="Data Science">Data Science</button>
+            <button class="filter-btn" data-category="Artificial Intelligence">AI</button>
+            <button class="filter-btn" data-category="Machine Learning">Machine Learning</button>
+            <button class="filter-btn" data-category="Web Development">Web Dev</button>
+            <button class="filter-btn" data-category="BMU RELATED">BMU RELATED</button>
+            <input type="text" id="search" placeholder="Search courses...">
+        </section>
+
+        <section class="course-grid" id="courseGrid">
+            <!-- Course cards will be dynamically inserted here -->
+        </section>
+    </main>
+
+    <script>
+        const courses = [
+            {
+                title: "CS50: Introduction to Computer Science",
+                institution: "Harvard University",
+                description: "An introduction to the intellectual enterprises of computer science and the art of programming.",
+                link: "https://cs50.harvard.edu/x/2023/",
+                category: "Introduction to CS",
+                image: "https://fvjxrxvqtjgmxnvvxubp.supabase.co/storage/v1/object/public/images/cs50.jpg"
+            },
+            {
+                title: "C Programming: Getting Started",
+                institution: "Dartmouth College & IMT",
+                description: "Learn the basics of programming in C, including syntax, functions, and data structures.",
+                link: "https://www.edx.org/course/c-programming-getting-started",
+                category: "C",
+                image: "https://fvjxrxvqtjgmxnvvxubp.supabase.co/storage/v1/object/public/images/c-programming.jpg"
+            },
+            {
+                title: "C++ for C Programmers, Part A",
+                institution: "University of California, Santa Cruz",
+                description: "Learn object-oriented programming and the C++ programming language.",
+                link: "https://www.coursera.org/learn/c-plus-plus-a",
+                category: "C++",
+                image: "https://fvjxrxvqtjgmxnvvxubp.supabase.co/storage/v1/object/public/images/cpp.jpg"
+            },
+            {
+                title: "Java Programming and Software Engineering Fundamentals",
+                institution: "Duke University",
+                description: "Learn the basics of programming and software development with Java.",
+                link: "https://www.coursera.org/specializations/java-programming",
+                category: "Java",
+                image: "https://fvjxrxvqtjgmxnvvxubp.supabase.co/storage/v1/object/public/images/java.jpg"
+            },
+            {
+                title: "Python for Everybody",
+                institution: "University of Michigan",
+                description: "Learn to Program and Analyze Data with Python. No prior experience required.",
+                link: "https://www.coursera.org/specializations/python",
+                category: "Python",
+                image: "https://fvjxrxvqtjgmxnvvxubp.supabase.co/storage/v1/object/public/images/python.jpg"
+            },
+            {
+                title: "Modern React with Redux",
+                institution: "Udemy",
+                description: "Master React v16.8+ and Redux with React Router, Webpack, and Create-React-App.",
+                link: "https://www.udemy.com/course/react-redux/",
+                category: "React",
+                image: "https://fvjxrxvqtjgmxnvvxubp.supabase.co/storage/v1/object/public/images/react.jpg"
+            },
+            {
+                title: "Introduction to Data Science",
+                institution: "IBM",
+                description: "Learn the basics of data science, including data analysis, machine learning, and data visualization.",
+                link: "https://www.coursera.org/learn/what-is-datascience",
+                category: "Data Science",
+                image: "https://fvjxrxvqtjgmxnvvxubp.supabase.co/storage/v1/object/public/images/data-science.jpg"
+            },
+            {
+                title: "AI for Everyone",
+                institution: "deeplearning.ai",
+                description: "A non-technical course designed to help you understand AI technologies and their business implications.",
+                link: "https://www.coursera.org/learn/ai-for-everyone",
+                category: "Artificial Intelligence",
+                image: "https://fvjxrxvqtjgmxnvvxubp.supabase.co/storage/v1/object/public/images/ai.jpg"
+            },
+            {
+                title: "Machine Learning",
+                institution: "Stanford University",
+                description: "Learn about the most effective machine learning techniques and gain practice implementing them.",
+                link: "https://www.coursera.org/learn/machine-learning",
+                category: "Machine Learning",
+                image: "https://fvjxrxvqtjgmxnvvxubp.supabase.co/storage/v1/object/public/images/machine-learning.jpg"
+            },
+            {
+                title: "The Web Developer Bootcamp",
+                institution: "Udemy",
+                description: "A comprehensive bootcamp covering HTML, CSS, JavaScript, Node, and more.",
+                link: "https://www.udemy.com/course/the-web-developer-bootcamp/",
+                category: "Web Development",
+                image: "https://fvjxrxvqtjgmxnvvxubp.supabase.co/storage/v1/object/public/images/web-dev.jpg"
+            },
+            {
+                title: "Basics of Electrical Engg",
+                institution: "YOUTUBE",
+                description: "BEE for First Year",
+                link: "https://www.youtube.com/playlist?list=PL3qvHcrYGy1v2kJX4SSsurE3_GdVe0ZD5",
+                category: "BMU RELATED",
+                
+            },
+            {
+                title: "Engineering Grafics and design",
+                institution: "YOUTUBE",
+                description: "EGD for First Year",
+                link: "https://www.youtube.com/playlist?list=PLT3bOBUU3L9jxAdcaJ_mBczmOk_sU5Aev",
+                category: "BMU RELATED",
+            },
+            {
+                title: "Maths First Year",
+                institution: "YOUTUBE",
+                description: "MATHS",
+                link: "https://www.youtube.com/playlist?list=PL3qvHcrYGy1tM431UvWwUYgvhXn-19C63",
+                category: "BMU RELATED",
+            },
+            {
+                title: "PPS ",
+                institution: "College Wallah",
+                description: "playlist of C language ",
+                link: "https://www.youtube.com/playlist?list=PLxgZQoSe9cg1drBnejUaDD9GEJBGQ5hMt",
+                category: "BMU RELATED",
+            },
+        
+            {
+                title: "Android App Development Specialization",
+                institution: "Vanderbilt University",
+                description: "Learn how to create mobile apps for Android devices.",
+                link: "https://www.coursera.org/specializations/android-app-development",
+                category: "Android Development",
+                image: "https://fvjxrxvqtjgmxnvvxubp.supabase.co/storage/v1/object/public/images/android.jpg"
+            }
+        ];
+
+        const courseGrid = document.getElementById('courseGrid');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const searchInput = document.getElementById('search');
+
+        function createCourseCard(course) {
+            const card = document.createElement('div');
+            card.className = 'course-card';
+            card.innerHTML = `
+                
+                <div class="course-content">
+                    <h3 class="course-title">${course.title}</h3>
+                    <p class="course-institution">${course.institution}</p>
+                    <p class="course-description">${course.description}</p>
+                    <span class="course-category">${course.category}</span>
+                    <a href="${course.link}" class="course-link" target="_blank" rel="noopener noreferrer">Go to Course</a>
+                </div>
+            `;
+            return card;
+        }
+
+        function renderCourses(coursesToRender) {
+            courseGrid.innerHTML = '';
+            coursesToRender.forEach(course => {
+                courseGrid.appendChild(createCourseCard(course));
+            });
+        }
+
+        function filterCourses(category, searchTerm) {
+            return courses.filter(course => 
+                (category === 'All' || course.category === category) &&
+                (course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                 course.description.toLowerCase().includes(searchTerm.toLowerCase()))
+            );
+        }
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                const category = button.dataset.category;
+                const searchTerm = searchInput.value;
+                renderCourses(filterCourses(category, searchTerm));
+            });
+        });
+
+        searchInput.addEventListener('input', () => {
+            const activeCategory = document.querySelector('.filter-btn.active').dataset.category;
+            const searchTerm = searchInput.value;
+            renderCourses(filterCourses(activeCategory, searchTerm));
+        });
+
+        // Initial render
+        renderCourses(courses);
+    </script>
+</body>
+</html>
