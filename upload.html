@@ -54,6 +54,10 @@
             color: red;
             margin-bottom: 10px;
         }
+        .disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -86,35 +90,44 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
 
-        // Check if the user is authenticated
-        firebase.auth().onAuthStateChanged((user) => {
-            if (!user) {
-                window.location.href = 'index.html'; // Redirect to login page if not authenticated
-            }
-        });
-
         const uploadForm = document.getElementById('uploadForm');
         const errorElement = document.getElementById('error');
 
-        uploadForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const title = document.getElementById('title').value;
-            const description = document.getElementById('description').value;
-            const file = document.getElementById('file').files[0];
+        // Check if the user is authenticated
+        firebase.auth().onAuthStateChanged((user) => {
+            if (!user) {
+                // User is not authenticated, show error message
+                errorElement.textContent = 'You must be logged in to upload a course.';
+                
+                // Optionally disable the form
+                uploadForm.classList.add('disabled');
+                uploadForm.querySelectorAll('input, button').forEach(input => {
+                    input.disabled = true;
+                });
+            } else {
+                // User is authenticated, allow form submission
+                uploadForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const title = document.getElementById('title').value;
+                    const description = document.getElementById('description').value;
+                    const file = document.getElementById('file').files[0];
 
-            const storageRef = firebase.storage().ref();
-            const fileRef = storageRef.child(`courses/${file.name}`);
+                    const storageRef = firebase.storage().ref();
+                    const fileRef = storageRef.child(`courses/${file.name}`);
 
-            // Upload file
-            fileRef.put(file).then(() => {
-                // File uploaded successfully, you can also save course details in Firestore if needed
-                alert('File uploaded successfully!');
-                // Optionally reset the form
-                uploadForm.reset();
-            }).catch((error) => {
-                errorElement.textContent = error.message;
-            });
+                    // Upload file
+                    fileRef.put(file).then(() => {
+                        // File uploaded successfully
+                        alert('File uploaded successfully!');
+                        // Optionally reset the form
+                        uploadForm.reset();
+                    }).catch((error) => {
+                        errorElement.textContent = error.message;
+                    });
+                });
+            }
         });
     </script>
 </body>
 </html>
+
