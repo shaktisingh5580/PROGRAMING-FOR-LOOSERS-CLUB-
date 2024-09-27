@@ -167,7 +167,6 @@
             border-radius: 5px;
             font-size: 1rem;
         }
-    
         /* Footer styles */
         footer {
             background-color: #333;
@@ -252,7 +251,7 @@
             <div class="nav-links">
                 <a href="#about">About</a>
                 <a href="chatbot.html">Syllabus</a>
-                <a href="event notification.html">Event notifications</a>
+                <a href="event-notification.html">Event notifications</a>
                 <a href="courses.html">Courses</a>
                 <a href="#join">Join Us</a>
             </div>
@@ -263,8 +262,10 @@
         <section class="hero">
             <div class="container">
                 <h1>Programming for Losers (PFL)</h1>
-                <p>Where coding failures become programming triumphs. Join our student-led club of aspiring programmers and future tech leaders!
-                <br> We are integrated club with STUDENT DEVLOPERS CLUB (SDC)</p>
+                <p>
+                    Where coding failures become programming triumphs. Join our student-led club of aspiring programmers and future tech leaders!
+                    <br> We are integrated club with STUDENT DEVELOPERS CLUB (SDC)
+                </p>
                 <a href="https://forms.gle/JFmPGDkyMmR75B4Q6" class="btn">Join Now</a>
             </div>
         </section>
@@ -332,7 +333,7 @@
         <section id="join">
             <div class="container">
                 <h2>Join PFL Today</h2>
-                <p>Ready to start your programming journey with a supportive community of fellow students? Fill the google form  for our mailing list and be the first to know about upcoming meetups, projects, and learning opportunities.</p>
+                <p>Ready to start your programming journey with a supportive community of fellow students? Fill the google form for our mailing list and be the first to know about upcoming meetups, projects, and learning opportunities.</p>
                 <form id="subscribe-form">
                     <a href="https://forms.gle/JFmPGDkyMmR75B4Q6" class="btn">Join Now</a>
                 </form>
@@ -343,10 +344,6 @@
     <footer>
         <div class="container">
             <p>&copy; 2024 Programming for Losers (PFL). All rights reserved. Not affiliated with any educational institution.</p>
-            <div>
-                
-        
-            </div>
         </div>
     </footer>
 
@@ -381,36 +378,6 @@
                     behavior: 'smooth'
                 });
             });
-        });
-
-        // Form submission (you would typically send this data to a server)
-        const subscribeForm = document.getElementById('subscribe-form');
-        subscribeForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = e.target.querySelector('input[type="email"]').value;
-            alert(`Thank you for subscribing with: ${email}`);
-            subscribeForm.reset();
-            // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyAw3gXcRJC0KTVS9wlt8RqUrOp_7GM25Xg",
-  authDomain: "pflclub.firebaseapp.com",
-  projectId: "pflclub",
-  storageBucket: "pflclub.appspot.com",
-  messagingSenderId: "238199612979",
-  appId: "1:238199612979:web:89b029bbdf8a32cd932546",
-  measurementId: "G-JP3PNXL9H8"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
         });
     </script>
 </body>
