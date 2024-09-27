@@ -99,8 +99,9 @@
 
             firebase.auth().signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
-                    // Signed in, redirect to upload page
-                    window.location.href = 'upload.html';
+                    // Signed in
+                    const user = userCredential.user;
+                    window.location.href = 'upload.html'; // Redirect to upload page
                 })
                 .catch((error) => {
                     const errorMessage = error.message;
