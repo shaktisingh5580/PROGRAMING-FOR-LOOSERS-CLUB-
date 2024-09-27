@@ -89,6 +89,21 @@
             outline: none;
             box-shadow: 0 0 0 2px rgba(0,0,0,0.2);
         }
+        .btn {
+            display: inline-block;
+            background-color: #333;
+            color: #fff;
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            border-radius: 2px;
+            transition: background-color 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.7rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .btn:hover {
+                background-color: #555;}
         /* Course grid styles */
         .course-grid {
             display: grid;
@@ -169,6 +184,8 @@
     <header>
         <div class="container">
             <h1>Computer Science and Programming Courses</h1>
+        
+            
         </div>
     </header>
 
@@ -194,10 +211,17 @@
             <button class="filter-btn" data-category="BMU RELATED">BMU RELATED</button>
             <input type="text" id="search" placeholder="Search courses...">
         </section>
+        <section class="upload" id="upload">
+            <h2>To add new course click on this link</h2>
+            <form id="upload"></form>
+                <a href="#" class="btn">UPLOAD NEW COURSE</a>
+            </form>
+        </section>
 
         <section class="course-grid" id="courseGrid">
             <!-- Course cards will be dynamically inserted here -->
         </section>
+        
     </main>
 
     <script>
