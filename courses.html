@@ -6,61 +6,58 @@
     <title>Computer Science and Programming Courses</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        /* Reset and base styles */
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
         body {
             font-family: 'Roboto', sans-serif;
             line-height: 1.6;
             color: #333;
-            background-color: #f8f8f8;
+            background-color: #f4f4f4;
         }
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 15px;
         }
-        /* Header styles */
         header {
             background-color: #000;
             color: #fff;
             text-align: center;
-            padding: 2rem 0;
+            padding: 1.5rem 0;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         h1 {
-            font-size: 2.5rem;
+            font-size: 2rem;
             margin-bottom: 0.5rem;
             font-weight: 700;
         }
-        /* Introduction styles */
         .intro {
             background-color: #fff;
             border-radius: 8px;
-            padding: 30px;
-            margin: 30px 0;
+            padding: 20px;
+            margin: 20px 0;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         .intro h2 {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             margin-bottom: 15px;
             color: #000;
         }
         .intro p {
             color: #555;
             margin-bottom: 10px;
+            font-size: 0.9rem;
         }
-        /* Filter styles */
         .filters {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             background-color: #fff;
-            padding: 20px;
+            padding: 15px;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
@@ -68,47 +65,51 @@
             background-color: #fff;
             color: #000;
             border: 2px solid #000;
-            padding: 10px 15px;
+            padding: 8px 12px;
             cursor: pointer;
-            border-radius: 25px;
+            border-radius: 20px;
             transition: all 0.3s ease;
             font-weight: 500;
+            font-size: 0.9rem;
         }
         .filter-btn:hover, .filter-btn.active {
             background-color: #000;
             color: #fff;
         }
         #search {
-            flex-grow: 1;
+            width: 100%;
             padding: 10px 15px;
             border: 2px solid #000;
-            border-radius: 25px;
+            border-radius: 20px;
             font-size: 1rem;
+            margin-top: 10px;
         }
         #search:focus {
             outline: none;
             box-shadow: 0 0 0 2px rgba(0,0,0,0.2);
         }
+        .upload {
+            text-align: center;
+            margin-bottom: 20px;
+        }
         .btn {
             display: inline-block;
-            background-color: #333;
+            background-color: #000;
             color: #fff;
-            padding: 0.75rem 1.5rem;
+            padding: 12px 24px;
             text-decoration: none;
-            border-radius: 2px;
+            border-radius: 25px;
             transition: background-color 0.3s ease;
-            border: none;
-            cursor: pointer;
-            font-size: 0.7rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            font-weight: bold;
+            font-size: 0.9rem;
         }
         .btn:hover {
-                background-color: #555;}
-        /* Course grid styles */
+            background-color: #333;
+        }
         .course-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 30px;
+            grid-template-columns: 1fr;
+            gap: 20px;
         }
         .course-card {
             background-color: #fff;
@@ -121,16 +122,11 @@
             transform: translateY(-5px);
             box-shadow: 0 6px 12px rgba(0,0,0,0.15);
         }
-        .course-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
         .course-content {
-            padding: 20px;
+            padding: 15px;
         }
         .course-title {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             margin-bottom: 10px;
             color: #000;
         }
@@ -138,10 +134,12 @@
             color: #666;
             margin-bottom: 10px;
             font-weight: 300;
+            font-size: 0.9rem;
         }
         .course-description {
             margin-bottom: 15px;
             color: #444;
+            font-size: 0.9rem;
         }
         .course-category {
             display: inline-block;
@@ -158,24 +156,32 @@
             background-color: #000;
             color: #fff;
             text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 25px;
+            padding: 8px 16px;
+            border-radius: 20px;
             transition: background-color 0.3s ease;
             font-weight: 500;
+            font-size: 0.9rem;
         }
         .course-link:hover {
             background-color: #333;
         }
-        /* Responsive styles */
-        @media (max-width: 768px) {
+        @media (min-width: 768px) {
             .course-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
             }
             h1 {
-                font-size: 2rem;
+                font-size: 2.5rem;
             }
             .intro h2 {
-                font-size: 1.5rem;
+                font-size: 1.8rem;
+            }
+            .filter-btn {
+                font-size: 1rem;
+            }
+        }
+        @media (min-width: 1024px) {
+            .course-grid {
+                grid-template-columns: repeat(3, 1fr);
             }
         }
     </style>
@@ -183,39 +189,36 @@
 <body>
     <header>
         <div class="container">
-            <h1>Computer Science and Programming Courses</h1>
-        
-            
+            <h1>CS and Programming Courses</h1>
         </div>
     </header>
 
     <main class="container">
         <section class="intro">
             <h2>Introduction to Computer Science</h2>
-            <p>Computer Science is the study of computation, information, and automation. It encompasses both the theoretical and practical aspects of how computers work and process information. As a discipline, it explores algorithms, data structures, programming languages, software engineering, artificial intelligence, and much more.</p>
-            <p>Whether you're interested in software development, data analysis, artificial intelligence, or any other tech-related field, a strong foundation in Computer Science is crucial. The courses below cover a wide range of topics and programming languages to help you start or advance your journey in the world of computing.</p>
+            <p>Computer Science explores computation, information, and automation. It covers algorithms, data structures, programming languages, software engineering, AI, and more.</p>
+            <p>Whether you're interested in software development, data analysis, AI, or other tech fields, these courses will help you start or advance your journey in computing.</p>
         </section>
 
         <section class="filters">
             <button class="filter-btn active" data-category="All">All</button>
-            <button class="filter-btn" data-category="Introduction to CS">Intro to CS</button>
+            <button class="filter-btn" data-category="Introduction to CS">Intro CS</button>
             <button class="filter-btn" data-category="C">C</button>
             <button class="filter-btn" data-category="C++">C++</button>
             <button class="filter-btn" data-category="Java">Java</button>
             <button class="filter-btn" data-category="Python">Python</button>
             <button class="filter-btn" data-category="React">React</button>
-            <button class="filter-btn" data-category="Data Science">Data Science</button>
+            <button class="filter-btn" data-category="Data Science">Data Sci</button>
             <button class="filter-btn" data-category="Artificial Intelligence">AI</button>
-            <button class="filter-btn" data-category="Machine Learning">Machine Learning</button>
+            <button class="filter-btn" data-category="Machine Learning">ML</button>
             <button class="filter-btn" data-category="Web Development">Web Dev</button>
-            <button class="filter-btn" data-category="BMU RELATED">BMU RELATED</button>
+            <button class="filter-btn" data-category="BMU RELATED">BMU</button>
+            <button class="filter-btn" data-category="Android Development">Android</button>
             <input type="text" id="search" placeholder="Search courses...">
         </section>
         <section class="upload" id="upload">
-            <h2>To add new course click on this link</h2>
-            <form id="upload"></form>
-                <a href="login.html" class="btn">UPLOAD NEW COURSE</a>
-            </form>
+            <h2>Add a new course</h2>
+            <a href="login.html" class="btn">UPLOAD NEW COURSE</a>
         </section>
 
         <section class="course-grid" id="courseGrid">
@@ -224,8 +227,30 @@
         
     </main>
 
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <script>
-        const courses = [
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAw3gXcRJC0KTVS9wlt8RqUrOp_7GM25Xg",
+            authDomain: "pflclub.firebaseapp.com",
+            projectId: "pflclub",
+            storageBucket: "pflclub.appspot.com",
+            messagingSenderId: "238199612979",
+            appId: "1:238199612979:web:89b029bbdf8a32cd932546",
+            measurementId: "G-JP3PNXL9H8"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        const database = firebase.database();
+        const courseGrid = document.getElementById('courseGrid');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const searchInput = document.getElementById('search');
+
+        // Existing courses
+        const existingCourses = [
             {
                 title: "CS50: Introduction to Computer Science",
                 institution: "Harvard University",
@@ -317,7 +342,7 @@
                 title: "Functional Web Development",
                 institution: "YOUTUBE Sheryians Coding School ",
                 description: "A free course on youtube ",
-                link: "https://www.youtube.com/playlist?list=PL3qvHcrYGy1tM431UvWwUYgvhXn-19C63",
+                link: "https://www.youtube.com/playlist?list=PL3qvHcrYGy1tM431UvWwUYgv",
                 category: "Web Development",
             },
             {
@@ -326,7 +351,6 @@
                 description: "BEE for First Year",
                 link: "https://www.youtube.com/playlist?list=PL3qvHcrYGy1v2kJX4SSsurE3_GdVe0ZD5",
                 category: "BMU RELATED",
-                
             },
             {
                 title: "Engineering Grafics and design",
@@ -356,7 +380,6 @@
                 link: "https://www.youtube.com/playlist?list=PL3qvHcrYGy1tM431UvWwUYgvhXn-19C63",
                 category: "BMU RELATED",
             },
-
             {
                 title: "PPS ",
                 institution: "College Wallah",
@@ -364,7 +387,6 @@
                 link: "https://www.youtube.com/playlist?list=PLxgZQoSe9cg1drBnejUaDD9GEJBGQ5hMt",
                 category: "BMU RELATED",
             },
-        
             {
                 title: "Android App Development Specialization",
                 institution: "Vanderbilt University",
@@ -375,15 +397,12 @@
             }
         ];
 
-        const courseGrid = document.getElementById('courseGrid');
-        const filterButtons = document.querySelectorAll('.filter-btn');
-        const searchInput = document.getElementById('search');
+        let allCourses = [...existingCourses];
 
         function createCourseCard(course) {
             const card = document.createElement('div');
             card.className = 'course-card';
             card.innerHTML = `
-                
                 <div class="course-content">
                     <h3 class="course-title">${course.title}</h3>
                     <p class="course-institution">${course.institution}</p>
@@ -403,7 +422,7 @@
         }
 
         function filterCourses(category, searchTerm) {
-            return courses.filter(course => 
+            return allCourses.filter(course => 
                 (category === 'All' || course.category === category) &&
                 (course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                  course.description.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -426,8 +445,21 @@
             renderCourses(filterCourses(activeCategory, searchTerm));
         });
 
-        // Initial render
-        renderCourses(courses);
+        // Fetch courses from Firebase and combine with existing courses
+        database.ref('courses').on('value', (snapshot) => {
+            const firebaseCourses = [];
+            snapshot.forEach((childSnapshot) => {
+                firebaseCourses.push({
+                    id: childSnapshot.key,
+                    ...childSnapshot.val()
+                });
+            });
+            allCourses = [...existingCourses, ...firebaseCourses];
+            renderCourses(allCourses);
+        });
+
+        // Initial render of existing courses
+        renderCourses(existingCourses);
     </script>
 </body>
 </html>
