@@ -6,6 +6,14 @@
     <title>PFL Admin Panel</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #000;
+            --secondary-color: #333;
+            --background-color: #f4f4f4;
+            --text-color: #333;
+            --success-color: #28a745;
+            --error-color: #dc3545;
+        }
         * {
             box-sizing: border-box;
             margin: 0;
@@ -14,38 +22,44 @@
         body {
             font-family: 'Roboto', sans-serif;
             line-height: 1.6;
-            color: #333;
-            background-color: #f4f4f4;
+            color: var(--text-color);
+            background-color: var(--background-color);
             padding: 20px;
         }
         .container {
             max-width: 800px;
             margin: 0 auto;
             background-color: #fff;
-            padding: 20px;
+            padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         h1, h2 {
-            color: #000;
+            color: var(--primary-color);
             margin-bottom: 20px;
         }
         input, textarea, button, select {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
+            padding: 12px;
+            margin-bottom: 15px;
             border: 1px solid #ddd;
             border-radius: 4px;
             font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
         }
         button {
-            background-color: #000;
+            background-color: var(--primary-color);
             color: #fff;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            font-weight: bold;
         }
         button:hover {
-            background-color: #333;
+            background-color: var(--secondary-color);
         }
         #loginForm, #adminPanel {
             margin-top: 20px;
@@ -54,33 +68,46 @@
             display: none;
         }
         .tab {
-            overflow: hidden;
-            border: 1px solid #ccc;
-            background-color: #f1f1f1;
+            display: flex;
+            border-bottom: 2px solid var(--primary-color);
             margin-bottom: 20px;
         }
         .tab button {
-            background-color: inherit;
-            float: left;
+            background-color: transparent;
             border: none;
             outline: none;
             cursor: pointer;
-            padding: 14px 16px;
+            padding: 14px 20px;
             transition: 0.3s;
-            color: #000;
+            font-size: 16px;
+            color: var(--text-color);
+            font-weight: bold;
         }
         .tab button:hover {
-            background-color: #ddd;
+            background-color: #f1f1f1;
         }
         .tab button.active {
-            background-color: #000;
+            background-color: var(--primary-color);
             color: #fff;
         }
         .tabcontent {
             display: none;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-top: none;
+            padding: 20px 0;
+        }
+        #message {
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            display: none;
+        }
+        .success {
+            background-color: var(--success-color);
+            color: #fff;
+        }
+        .error {
+            background-color: var(--error-color);
+            color: #fff;
         }
     </style>
 </head>
@@ -104,6 +131,7 @@
                 <input type="date" id="eventDate" required>
                 <input type="text" id="eventTitle" placeholder="Event Title" required>
                 <textarea id="eventDescription" placeholder="Event Description" required></textarea>
+                <input type="url" id="eventRegistrationLink" placeholder="Registration Link (Optional)">
                 <button onclick="addEvent()">Add Event</button>
             </div>
 
@@ -116,6 +144,7 @@
 
             <button onclick="logout()" style="margin-top: 20px;">Logout</button>
         </div>
+        <div id="message"></div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -139,6 +168,16 @@
         const auth = firebase.auth();
         const database = firebase.database();
 
+        function showMessage(message, isError = false) {
+            const messageElement = document.getElementById('message');
+            messageElement.textContent = message;
+            messageElement.className = isError ? 'error' : 'success';
+            messageElement.style.display = 'block';
+            setTimeout(() => {
+                messageElement.style.display = 'none';
+            }, 3000);
+        }
+
         function login() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
@@ -148,9 +187,10 @@
                     document.getElementById('loginForm').style.display = 'none';
                     document.getElementById('adminPanel').style.display = 'block';
                     document.getElementById("defaultOpen").click();
+                    showMessage('Logged in successfully');
                 })
                 .catch((error) => {
-                    alert('Login failed: ' + error.message);
+                    showMessage('Login failed: ' + error.message, true);
                 });
         }
 
@@ -158,6 +198,9 @@
             auth.signOut().then(() => {
                 document.getElementById('loginForm').style.display = 'block';
                 document.getElementById('adminPanel').style.display = 'none';
+                showMessage('Logged out successfully');
+            }).catch((error) => {
+                showMessage('Logout failed: ' + error.message, true);
             });
         }
 
@@ -165,18 +208,21 @@
             const date = document.getElementById('eventDate').value;
             const title = document.getElementById('eventTitle').value;
             const description = document.getElementById('eventDescription').value;
+            const registrationLink = document.getElementById('eventRegistrationLink').value;
 
             database.ref('events').push({
                 date: date,
                 title: title,
-                description: description
+                description: description,
+                registrationLink: registrationLink
             }).then(() => {
-                alert('Event added successfully!');
+                showMessage('Event added successfully');
                 document.getElementById('eventDate').value = '';
                 document.getElementById('eventTitle').value = '';
                 document.getElementById('eventDescription').value = '';
+                document.getElementById('eventRegistrationLink').value = '';
             }).catch((error) => {
-                alert('Failed to add event: ' + error.message);
+                showMessage('Failed to add event: ' + error.message, true);
             });
         }
 
@@ -188,11 +234,11 @@
                 date: date,
                 message: message
             }).then(() => {
-                alert('Notification added successfully!');
+                showMessage('Notification added successfully');
                 document.getElementById('notificationDate').value = '';
                 document.getElementById('notificationMessage').value = '';
             }).catch((error) => {
-                alert('Failed to add notification: ' + error.message);
+                showMessage('Failed to add notification: ' + error.message, true);
             });
         }
 
