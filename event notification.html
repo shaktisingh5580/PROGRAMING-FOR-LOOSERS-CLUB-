@@ -152,6 +152,12 @@
             .events {
                 grid-template-columns: 1fr;
             }
+            h1 {
+                font-size: 2rem;
+            }
+            .notifications h2 {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
@@ -182,65 +188,74 @@
         </section>
     </main>
 
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <script>
-        // Sample event data
-        const events = [
-            { 
-                date: '2024-05-15', 
-                title: 'Web Development Hackathon', 
-                description: 'A 24-hour coding challenge focused on web technologies. Join us for an exciting opportunity to showcase your skills and learn from peers.'
-            },
-            { 
-                date: '2024-05-20', 
-                title: 'Machine Learning Seminar', 
-                description: 'Learn about the latest advancements in AI and machine learning. Our expert speakers will cover cutting-edge topics and practical applications.'
-            },
-            { 
-                date: '2024-06-01', 
-                title: 'Code Review Workshop', 
-                description: 'Improve your code quality and learn best practices for code reviews. This hands-on workshop will enhance your collaboration skills.'
-            },
-            { 
-                date: '2024-06-10', 
-                title: 'Mobile App Development Bootcamp', 
-                description: 'Intensive 3-day bootcamp on building mobile applications. Get hands-on experience with the latest tools and frameworks.'
-            }
-        ];
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAw3gXcRJC0KTVS9wlt8RqUrOp_7GM25Xg",
+            authDomain: "pflclub.firebaseapp.com",
+            projectId: "pflclub",
+            storageBucket: "pflclub.appspot.com",
+            messagingSenderId: "238199612979",
+            appId: "1:238199612979:web:89b029bbdf8a32cd932546",
+            measurementId: "G-JP3PNXL9H8"
+        };
 
-        // Sample notification data
-        const notifications = [
-            { date: '2024-05-10', message: 'New Python course added to our learning resources!' },
-            { date: '2024-05-08', message: 'Reminder: Web Development Hackathon registration closes in 2 days.' },
-            { date: '2024-05-05', message: 'PFL monthly meetup scheduled for next week. RSVP now!' }
-        ];
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
 
-        // Render event cards
-        const eventsSection = document.getElementById('events');
-        events.forEach(event => {
-            const eventCard = document.createElement('div');
-            eventCard.className = 'event-card';
-            eventCard.innerHTML = `
-                <div class="event-content">
-                    <h3 class="event-title">${event.title}</h3>
-                    <p class="event-date">${event.date}</p>
-                    <p class="event-description">${event.description}</p>
-                    <a href="#" class="event-register">Register Now</a>
-                </div>
-            `;
-            eventsSection.appendChild(eventCard);
-        });
+        const database = firebase.database();
 
-        // Render notification list
-        const notificationList = document.getElementById('notificationList');
-        notifications.forEach(notification => {
-            const notificationItem = document.createElement('div');
-            notificationItem.className = 'notification-item';
-            notificationItem.innerHTML = `
-                <p class="notification-date">${notification.date}</p>
-                <p class="notification-message">${notification.message}</p>
-            `;
-            notificationList.appendChild(notificationItem);
-        });
+        // Fetch and render events
+        function renderEvents() {
+            const eventsSection = document.getElementById('events');
+            eventsSection.innerHTML = ''; // Clear existing content
+
+            database.ref('events').once('value', (snapshot) => {
+                snapshot.forEach((childSnapshot) => {
+                    const event = childSnapshot.val();
+                    const eventCard = document.createElement('div');
+                    eventCard.className = 'event-card';
+                    eventCard.innerHTML = `
+                        <div class="event-content">
+                            <h3 class="event-title">${event.title}</h3>
+                            <p class="event-date">${event.date}</p>
+                            <p class="event-description">${event.description}</p>
+                            <a href="#" class="event-register">Register Now</a>
+                        </div>
+                    `;
+                    eventsSection.appendChild(eventCard);
+                });
+            });
+        }
+
+        // Fetch and render notifications
+        function renderNotifications() {
+            const notificationList = document.getElementById('notificationList');
+            notificationList.innerHTML = ''; // Clear existing content
+
+            database.ref('notifications').once('value', (snapshot) => {
+                snapshot.forEach((childSnapshot) => {
+                    const notification = childSnapshot.val();
+                    const notificationItem = document.createElement('div');
+                    notificationItem.className = 'notification-item';
+                    notificationItem.innerHTML = `
+                        <p class="notification-date">${notification.date}</p>
+                        <p class="notification-message">${notification.message}</p>
+                    `;
+                    notificationList.appendChild(notificationItem);
+                });
+            });
+        }
+
+        // Initial render
+        renderEvents();
+        renderNotifications();
+
+        // Listen for changes (optional, for real-time updates)
+        database.ref('events').on('child_added', renderEvents);
+        database.ref('notifications').on('child_added', renderNotifications);
     </script>
 </body>
 </html>
