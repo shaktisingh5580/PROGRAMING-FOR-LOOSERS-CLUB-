@@ -3,152 +3,192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PFL Admin Panel</title>
+    <title>PFL Events and Notifications</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #000;
-            --secondary-color: #333;
-            --background-color: #f4f4f4;
-            --text-color: #333;
-            --success-color: #28a745;
-            --error-color: #dc3545;
-        }
+        /* Reset and base styles */
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
         body {
             font-family: 'Roboto', sans-serif;
             line-height: 1.6;
-            color: var(--text-color);
-            background-color: var(--background-color);
-            padding: 20px;
+            color: #333;
+            background-color: #f4f4f4;
         }
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 0 20px;
         }
-        h1, h2 {
-            color: var(--primary-color);
-            margin-bottom: 20px;
-        }
-        input, textarea, button, select {
+        /* Header styles */
+        header {
+            background-color: #000;
+            color: #fff;
+            padding: 1rem 0;
+            position: fixed;
             width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
+            top: 0;
+            z-index: 1000;
         }
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
-        button {
-            background-color: var(--primary-color);
-            color: #fff;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            font-weight: bold;
-        }
-        button:hover {
-            background-color: var(--secondary-color);
-        }
-        #loginForm, #adminPanel {
-            margin-top: 20px;
-        }
-        #adminPanel {
-            display: none;
-        }
-        .tab {
+        nav {
             display: flex;
-            border-bottom: 2px solid var(--primary-color);
-            margin-bottom: 20px;
+            justify-content: space-between;
+            align-items: center;
         }
-        .tab button {
-            background-color: transparent;
-            border: none;
-            outline: none;
-            cursor: pointer;
-            padding: 14px 20px;
-            transition: 0.3s;
-            font-size: 16px;
-            color: var(--text-color);
+        .logo {
+            font-size: 1.5rem;
             font-weight: bold;
         }
-        .tab button:hover {
-            background-color: #f1f1f1;
-        }
-        .tab button.active {
-            background-color: var(--primary-color);
+        .nav-links a {
             color: #fff;
+            text-decoration: none;
+            margin-left: 1rem;
+            transition: color 0.3s ease;
         }
-        .tabcontent {
-            display: none;
-            padding: 20px 0;
+        .nav-links a:hover {
+            color: #ccc;
         }
-        #message {
-            padding: 10px;
-            margin-top: 10px;
+        /* Main content styles */
+        main {
+            padding: 6rem 0 2rem;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: #000;
+        }
+        /* Event styles */
+        .events {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        .event-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .event-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        .event-content {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .event-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: #000;
+        }
+        .event-date {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+        .event-description {
+            font-size: 1rem;
+            color: #333;
+            margin-bottom: 1rem;
+            flex-grow: 1;
+        }
+        .event-register {
+            display: inline-block;
+            background-color: #000;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
             border-radius: 4px;
-            font-weight: bold;
-            display: none;
+            transition: background-color 0.3s ease;
+            text-align: center;
         }
-        .success {
-            background-color: var(--success-color);
-            color: #fff;
+        .event-register:hover {
+            background-color: #333;
         }
-        .error {
-            background-color: var(--error-color);
-            color: #fff;
+        /* Notification styles */
+        .notifications {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+        .notifications h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #000;
+        }
+        .notification-item {
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+        }
+        .notification-item:hover {
+            transform: translateX(5px);
+        }
+        .notification-date {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+        .notification-message {
+            font-size: 1rem;
+            color: #333;
+        }
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .events {
+                grid-template-columns: 1fr;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            .notifications h2 {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>PFL Admin Panel</h1>
-        <div id="loginForm">
-            <h2>Login</h2>
-            <input type="email" id="email" placeholder="Email" required>
-            <input type="password" id="password" placeholder="Password" required>
-            <button onclick="login()">Login</button>
-        </div>
-        <div id="adminPanel">
-            <div class="tab">
-                <button class="tablinks" onclick="openTab(event, 'Events')" id="defaultOpen">Events</button>
-                <button class="tablinks" onclick="openTab(event, 'Notifications')">Notifications</button>
+    <header>
+        <nav class="container">
+            <div class="logo">PFL</div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="#events">Events</a>
+                <a href="#notifications">Notifications</a>
             </div>
+        </nav>
+    </header>
 
-            <div id="Events" class="tabcontent">
-                <h2>Add Event</h2>
-                <input type="date" id="eventDate" required>
-                <input type="text" id="eventTitle" placeholder="Event Title" required>
-                <textarea id="eventDescription" placeholder="Event Description" required></textarea>
-                <input type="url" id="eventRegistrationLink" placeholder="Registration Link (Optional)">
-                <button onclick="addEvent()">Add Event</button>
+    <main class="container">
+        <h1>PFL Events and Notifications</h1>
+
+        <section id="events" class="events">
+            <!-- Event cards will be dynamically inserted here -->
+        </section>
+
+        <section id="notifications" class="notifications">
+            <h2>Recent Notifications</h2>
+            <div id="notificationList">
+                <!-- Notification items will be dynamically inserted here -->
             </div>
-
-            <div id="Notifications" class="tabcontent">
-                <h2>Add Notification</h2>
-                <input type="date" id="notificationDate" required>
-                <textarea id="notificationMessage" placeholder="Notification Message" required></textarea>
-                <button onclick="addNotification()">Add Notification</button>
-            </div>
-
-            <button onclick="logout()" style="margin-top: 20px;">Logout</button>
-        </div>
-        <div id="message"></div>
-    </div>
+        </section>
+    </main>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <script>
         // Your Firebase configuration
@@ -165,108 +205,62 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
 
-        const auth = firebase.auth();
         const database = firebase.database();
 
-        function showMessage(message, isError = false) {
-            const messageElement = document.getElementById('message');
-            messageElement.textContent = message;
-            messageElement.className = isError ? 'error' : 'success';
-            messageElement.style.display = 'block';
-            setTimeout(() => {
-                messageElement.style.display = 'none';
-            }, 3000);
-        }
+        // Fetch and render events
+        function renderEvents() {
+            const eventsSection = document.getElementById('events');
+            eventsSection.innerHTML = ''; // Clear existing content
 
-        function login() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            auth.signInWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    document.getElementById('loginForm').style.display = 'none';
-                    document.getElementById('adminPanel').style.display = 'block';
-                    document.getElementById("defaultOpen").click();
-                    showMessage('Logged in successfully');
-                })
-                .catch((error) => {
-                    showMessage('Login failed: ' + error.message, true);
+            database.ref('events').once('value', (snapshot) => {
+                snapshot.forEach((childSnapshot) => {
+                    const event = childSnapshot.val();
+                    const eventCard = document.createElement('div');
+                    eventCard.className = 'event-card';
+                    eventCard.innerHTML = `
+                        <div class="event-content">
+                            <h3 class="event-title">${event.title}</h3>
+                            <p class="event-date">${event.date}</p>
+                            <p class="event-description">${event.description}</p>
+                            ${event.registrationLink ? `<a href="${event.registrationLink}" class="event-register" target="_blank" rel="noopener noreferrer">Register Now</a>` : ''}
+                        </div>
+                    `;
+                    eventsSection.appendChild(eventCard);
                 });
-        }
-
-        function logout() {
-            auth.signOut().then(() => {
-                document.getElementById('loginForm').style.display = 'block';
-                document.getElementById('adminPanel').style.display = 'none';
-                showMessage('Logged out successfully');
-            }).catch((error) => {
-                showMessage('Logout failed: ' + error.message, true);
             });
         }
 
-        function addEvent() {
-            const date = document.getElementById('eventDate').value;
-            const title = document.getElementById('eventTitle').value;
-            const description = document.getElementById('eventDescription').value;
-            const registrationLink = document.getElementById('eventRegistrationLink').value;
+        // Fetch and render notifications
+        function renderNotifications() {
+            const notificationList = document.getElementById('notificationList');
+            notificationList.innerHTML = ''; // Clear existing content
 
-            database.ref('events').push({
-                date: date,
-                title: title,
-                description: description,
-                registrationLink: registrationLink
-            }).then(() => {
-                showMessage('Event added successfully');
-                document.getElementById('eventDate').value = '';
-                document.getElementById('eventTitle').value = '';
-                document.getElementById('eventDescription').value = '';
-                document.getElementById('eventRegistrationLink').value = '';
-            }).catch((error) => {
-                showMessage('Failed to add event: ' + error.message, true);
+            database.ref('notifications').once('value', (snapshot) => {
+                snapshot.forEach((childSnapshot) => {
+                    const notification = childSnapshot.val();
+                    const notificationItem = document.createElement('div');
+                    notificationItem.className = 'notification-item';
+                    notificationItem.innerHTML = `
+                        <p class="notification-date">${notification.date}</p>
+                        <p class="notification-message">${notification.message}</p>
+                    `;
+                    notificationList.appendChild(notificationItem);
+                });
             });
         }
 
-        function addNotification() {
-            const date = document.getElementById('notificationDate').value;
-            const message = document.getElementById('notificationMessage').value;
+        // Initial render
+        renderEvents();
+        renderNotifications();
 
-            database.ref('notifications').push({
-                date: date,
-                message: message
-            }).then(() => {
-                showMessage('Notification added successfully');
-                document.getElementById('notificationDate').value = '';
-                document.getElementById('notificationMessage').value = '';
-            }).catch((error) => {
-                showMessage('Failed to add notification: ' + error.message, true);
-            });
-        }
+        // Listen for changes
+        database.ref('events').on('child_added', renderEvents);
+        database.ref('events').on('child_changed', renderEvents);
+        database.ref('events').on('child_removed', renderEvents);
 
-        function openTab(evt, tabName) {
-            var i, tabcontent, tablinks;
-            tabcontent = document.getElementsByClassName("tabcontent");
-            for (i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].style.display = "none";
-            }
-            tablinks = document.getElementsByClassName("tablinks");
-            for (i = 0; i < tablinks.length; i++) {
-                tablinks[i].className = tablinks[i].className.replace(" active", "");
-            }
-            document.getElementById(tabName).style.display = "block";
-            evt.currentTarget.className += " active";
-        }
-
-        // Check auth state
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                document.getElementById('loginForm').style.display = 'none';
-                document.getElementById('adminPanel').style.display = 'block';
-                document.getElementById("defaultOpen").click();
-            } else {
-                document.getElementById('loginForm').style.display = 'block';
-                document.getElementById('adminPanel').style.display = 'none';
-            }
-        });
+        database.ref('notifications').on('child_added', renderNotifications);
+        database.ref('notifications').on('child_changed', renderNotifications);
+        database.ref('notifications').on('child_removed', renderNotifications);
     </script>
 </body>
 </html>
