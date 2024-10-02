@@ -95,6 +95,24 @@
                 flex: 1 1 100%;
             }
         }
+
+        .link-button {
+            background-color: #070707;
+            color: white;
+            padding: 8px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .link-button:hover {
+            background-color: #030303;
+        }
     </style>
 </head>
 <body>
@@ -119,14 +137,25 @@
                 "Chapter 2: Pointers": "https://drive.google.com/link-to-pointers"
             },
             "ENG": {
-                "Chapter 1: Communication Skills": "https://drive.google.com/link-to-communication-skills"
+                "Chapert 1:VOCABULARY BUILDING":"https://drive.google.com/file/d/1EcCLpWY_bkgJpIyHyX17Eucx9xKObM95/view?usp=drive_link",
+                "Chapter 2:Phonetics":"https://drive.google.com/file/d/1MvgOqBRYcMPZKI0EfCTKpFBntv9YCK98/view?usp=drive_link",
+                "BOOK":"https://drive.google.com/file/d/1Py2B1PLk51TtsWPNU6luJckX83_WLB9K/view?usp=drive_link"
+                
             },
             "BEE": {
-                "Chapter 1: Circuits": "https://drive.google.com/link-to-circuits",
-                "Chapter 2: Power Systems": "https://drive.google.com/link-to-power-systems"
+                "DC": "https://drive.google.com/file/d/19BH20UlPOwNn7FLDtm6zbZSwJsbYEYuP/view?usp=drive_link",
+                "Nerwork thearom": "https://drive.google.com/file/d/1If5txpBzgCtj21mU5ntu8sitBFYKBs4i/view?usp=drive_link",
+                "Resonance b1":"https://drive.google.com/file/d/12vnJGmYdewNzjpKyEis9eEEHg7bzQBAg/view?usp=drive_link"
             },
             "EGD": {
-                "Chapter 1: Engineering Drawing": "https://drive.google.com/link-to-engineering-drawing"
+                " Scales": "https://docs.google.com/presentation/d/1or_VCH3RtdXSFpgFkQQ3QPA9QBWi4ant/edit?usp=drive_link",
+                " Projection of Solids": "https://docs.google.com/presentation/d/1p0Sd5zjZwgs3uI6YrOtvcApUlFrXa0EN/edit?usp=drive_link",
+                "Projection of Lines": "https://docs.google.com/presentation/d/12mXhZqw-3bkD3bSq5FSaWmrSfq779_iR/edit?usp=drive_link",
+                "Projection of Lines 2": "https://docs.google.com/presentation/d/1sTU-EAVQ2ax4TAlwyT8y_xiVuwhSvBRG/edit?usp=drive_link",
+                " Orthographic Projection": "https://docs.google.com/presentation/d/1c0Fbv71gu3tuTETMZugo6k3LG7psegaw/edit?usp=drive_link",
+                " Isometric":"https://docs.google.com/presentation/d/1S3vYOo4fLQhws9XT0b7UCZnq2iL5nUTh/edit?usp=drive_link&ouid=107722964094877090147&rtpof=true&sd=true",
+                " Ellips by Gen Method":"https://docs.google.com/presentation/d/1L5H3bbPmQG89c-x7fhFgMXHPjkPvGySX/edit?usp=drive_link&ouid=107722964094877090147&rtpof=true&sd=true",
+
             }
         },
         "Semester 2": {
@@ -146,6 +175,7 @@
     let stage = 0;
     let selectedSemester = "";
     let selectedSubject = "";
+    let selectedChapter = "";
 
     // Function to display a message in the chatbox
     function displayMessage(message, sender) {
@@ -185,12 +215,27 @@
             createOptions(Object.keys(data[selectedSemester][selectedSubject]), true);
             stage = 2;
         } else if (stage === 2 && isFinal) {
-            displayMessage(`You chose: ${option}`, "user");
-            const link = data[selectedSemester][selectedSubject][option];
-            displayMessage("Loading PDF link...", "bot");
-            setTimeout(() => displayMessage(`Here is your PDF link: ${link}`, "bot"), 1500); // Simulate loading
+            selectedChapter = option;
+            displayMessage(`You chose: ${selectedChapter}`, "user");
+            const link = data[selectedSemester][selectedSubject][selectedChapter];
+            displayMessage("Click the button below to view the PDF:", "bot");
+            createLinkButton(link); // Create the PDF link button
             setTimeout(() => resetChat(), 3000); // Reset after a delay
         }
+    }
+
+    // Function to create a "View PDF" button
+    function createLinkButton(link) {
+        const optionsContainer = document.getElementById("options");
+        optionsContainer.innerHTML = ''; // Clear previous options
+
+        const linkButton = document.createElement("a");
+        linkButton.href = link;
+        linkButton.target = "_blank"; // Open in new tab
+        linkButton.textContent = "View";
+        linkButton.classList.add("link-button");
+
+        optionsContainer.appendChild(linkButton);
     }
 
     // Reset the chatbot
@@ -198,6 +243,7 @@
         stage = 0;
         selectedSemester = "";
         selectedSubject = "";
+        selectedChapter = "";
         displayMessage("Welcome to the First-Year Resource Bot! Please choose a semester:", "bot");
         createOptions(["Semester 1", "Semester 2"]);
     }
