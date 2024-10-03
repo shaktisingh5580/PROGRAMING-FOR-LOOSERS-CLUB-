@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PFL Articles and Blogs</title>
+    <style>
+        :root {
+            --primary-color: #020202;
+            --primary-hover: #0f1010;
+            --background-color: #f4f4f4;
+            --text-color: #333;
+            --card-background: #ffffff;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            font-size: 16px;
+            background-color: var(--background-color);
+        }
+        .container {
+            width: 100%;
+            padding: 0 20px;
+            margin: 0 auto;
+            max-width: 1200px;
+        }
+        header {
+            background-color: var(--card-background);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        .nav-links {
+            display: none;
+        }
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            transition: color 0.3s ease;
+        }
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        .menu-toggle {
+            display: block;
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--primary-color);
+        }
+        main {
+            padding-top: 80px;
+        }
+        .page-title {
+            text-align: center;
+            margin: 2rem 0;
+            color: var(--primary-color);
+        }
+        .article-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            padding: 2rem 0;
+        }
+        .article-item {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .article-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .article-item h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+        .article-item p {
+            margin-bottom: 1rem;
+        }
+        .article-item a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        .article-item a:hover {
+            color: var(--primary-hover);
+        }
+        footer {
+            background-color: var(--text-color);
+            color: var(--card-background);
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 2rem;
+        }
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 1rem;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .btn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+        .btn-container {
+            text-align: center;
+            margin: 2rem 0;
+        }
+        @media (min-width: 768px) {
+            .menu-toggle {
+                display: none;
+            }
+            .nav-links {
+                display: flex;
+            }
+            .article-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (min-width: 1024px) {
+            .article-list {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">PFL</div>
+            <button class="menu-toggle" aria-label="Toggle menu">☰</button>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="index.html#about">About</a>
+                <a href="chatbot.html">Syllabus</a>
+                <a href="event-notification.html">Event notifications</a>
+                <a href="courses.html">Courses</a>
+                <a href="https://studentdeveloperclub.tech/?i=2">Explore SDC</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            <h1 class="page-title">PFL Articles and Blogs</h1>
+            <div class="btn-container">
+                <a href="login.html" class="btn">Login to Submit Article</a>
+            </div>
+            <div class="article-list">
+                <article class="article-item">
+                    <h2>Getting Started with Web Development</h2>
+                    <p>Learn the basics of HTML, CSS, and JavaScript to kickstart your web development journey.</p>
+                    <a href="#">Read More</a>
+                </article>
+                <article class="article-item">
+                    <h2>Python for Beginners: A Comprehensive Guide</h2>
+                    <p>Dive into the world of Python programming with this beginner-friendly tutorial.</p>
+                    <a href="#">Read More</a>
+                </article>
+                <article class="article-item">
+                    <h2>Understanding Data Structures and Algorithms</h2>
+                    <p>Explore the fundamental concepts of data structures and algorithms for better coding practices.</p>
+                    <a href="#">Read More</a>
+                </article>
+                <article class="article-item">
+                    <h2>Mobile App Development: iOS vs Android</h2>
+                    <p>Compare the two major mobile platforms and decide which one to focus on for your app development career.</p>
+                    <a href="#">Read More</a>
+                </article>
+                <article class="article-item">
+                    <h2>Introduction to Machine Learning</h2>
+                    <p>Get started with machine learning concepts and discover how AI is shaping the future of technology.</p>
+                    <a href="#">Read More</a>
+                </article>
+                <article class="article-item">
+                    <h2>Version Control with Git and GitHub</h2>
+                    <p>Learn how to use Git and GitHub to manage your code and collaborate with other developers.</p>
+                    <a href="#">Read More</a>
+                </article>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Programming for Losers (PFL). All rights reserved. Not affiliated with any educational institution.</p>
+        </div>
+    </footer>
+
+    <script>
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navLinks = document.querySelector('.nav-links');
+
+        menuToggle.addEventListener('click', () => {
+            navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+        });
+
+        navLinks.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A' && window.innerWidth < 768) {
+                navLinks.style.display = 'none';
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768) {
+                navLinks.style.display = 'flex';
+            } else {
+                navLinks.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
