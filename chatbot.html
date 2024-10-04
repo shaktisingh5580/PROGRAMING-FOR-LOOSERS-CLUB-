@@ -4,257 +4,217 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>First Year Chatbot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* General Styles */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        .chat-container {
-            width: 90%;
-            max-width: 400px;
-            height: 500px;
-            border: 2px solid #ccc;
-            border-radius: 10px;
-            background-color: #fff;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .chatbox {
-            height: 85%;
-            padding: 10px;
-            overflow-y: auto;
-            border-bottom: 1px solid #ccc;
-            background-color: #f9f9f9;
-            scroll-behavior: smooth;
-        }
-
-        .input-section {
-            display: flex;
-            padding: 10px;
-            flex-direction: column;
-            background-color: #fafafa;
-        }
-
-        .chat-message {
-            margin: 10px 0;
-            padding: 8px;
-            border-radius: 5px;
-            max-width: 80%;
-        }
-
-        .bot-message {
-            background-color: #ececec;
-            align-self: flex-start;
-        }
-
-        .user-message {
-            background-color: #070707;
-            color: white;
-            align-self: flex-end;
-        }
-
-        .option-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .option-buttons button {
-            background-color: #070707;
-            color: white;
-            padding: 8px 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            flex: 1 1 45%;
-            font-size: 14px;
-            transition: background-color 0.3s ease;
-        }
-
-        .option-buttons button:hover {
-            background-color: #030303;
-        }
-
-        .option-buttons button:active {
-            transform: scale(0.95);
-        }
-
-        @media (max-width: 600px) {
-            .option-buttons button {
-                flex: 1 1 100%;
-            }
-        }
-
-        .link-button {
-            background-color: #070707;
-            color: white;
-            padding: 8px 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 14px;
-            margin-top: 10px;
-        }
-
-        .link-button:hover {
-            background-color: #030303;
+            font-family: 'Inter', sans-serif;
         }
     </style>
 </head>
-<body>
-
-<div class="chat-container">
-    <div id="chatbox" class="chatbox"></div>
-    <div class="input-section">
-        <div class="option-buttons" id="options"></div>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md space-y-4">
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div id="chatbox" class="h-[400px] p-4 overflow-y-auto space-y-2"></div>
+            <div class="p-4 border-t">
+                <div id="options" class="flex flex-wrap gap-2"></div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-md p-4">
+            <h2 class="text-xl font-bold mb-2">Upcoming Exam: <span id="examTitle"></span></h2>
+            <p class="mb-2">Date: <span id="examDate"></span></p>
+            <h3 class="font-semibold mb-1">Subjects:</h3>
+            <ul id="examSubjects" class="list-disc pl-5 mb-2"></ul>
+            <button id="generalNotesBtn" class="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors">
+                General Exam Notes
+            </button>
+        </div>
     </div>
-</div>
 
-<script>
-    // Data for Semester 1 and 2 subjects
-    const data = {
-        "Semester 1": {
-            "Math": {
-                "Chapter 1: Calculus": "https://drive.google.com/link-to-calculus",
-                "Chapter 2: Algebra": "https://drive.google.com/link-to-algebra"
+    <script>
+        const data = {
+            "Semester 1": {
+                "Math": {
+                    "Chapter 1: Calculus": "https://drive.google.com/link-to-calculus",
+                    "Chapter 2: Algebra": "https://drive.google.com/link-to-algebra"
+                },
+                "PPS": {
+                    "SYLLABUS": "https://drive.google.com/file/d/1hBV9d8d8P_ntFEL0laAIGSqQ4UsK1Usr/view?usp=drive_link",
+                    "LECTURE NOTES": "https://drive.google.com/file/d/19Wfhz--qolOH_6gGlXb2V0IpqyATaZGy/view?usp=drive_link",
+                    "STUDY MATERIAL": "https://drive.google.com/file/d/131mIc1BfMG2rTca1RV9y03FmqV4G8omG/view?usp=drive_link",
+                    "C HAND BOOK": "https://cwh-full-next-space.fra1.cdn.digitaloceanspaces.com/YouTube/The%20Ultimate%20C%20Handbook.pdf",
+                },
+                "ENG": {
+                    "Chapert 1:VOCABULARY BUILDING": "https://drive.google.com/file/d/1EcCLpWY_bkgJpIyHyX17Eucx9xKObM95/view?usp=drive_link",
+                    "Chapter 2:Phonetics": "https://drive.google.com/file/d/1MvgOqBRYcMPZKI0EfCTKpFBntv9YCK98/view?usp=drive_link",
+                    "BOOK": "https://drive.google.com/file/d/1Py2B1PLk51TtsWPNU6luJckX83_WLB9K/view?usp=drive_link"
+                },
+                "BEE": {
+                    "DC": "https://drive.google.com/file/d/19BH20UlPOwNn7FLDtm6zbZSwJsbYEYuP/view?usp=drive_link",
+                    "Nerwork thearom": "https://drive.google.com/file/d/1If5txpBzgCtj21mU5ntu8sitBFYKBs4i/view?usp=drive_link",
+                    "Resonance b1": "https://drive.google.com/file/d/12vnJGmYdewNzjpKyEis9eEEHg7bzQBAg/view?usp=drive_link"
+                },
+                "EGD": {
+                    " Scales": "https://docs.google.com/presentation/d/1or_VCH3RtdXSFpgFkQQ3QPA9QBWi4ant/edit?usp=drive_link",
+                    " Projection of Solids": "https://docs.google.com/presentation/d/1p0Sd5zjZwgs3uI6YrOtvcApUlFrXa0EN/edit?usp=drive_link",
+                    "Projection of Lines": "https://docs.google.com/presentation/d/12mXhZqw-3bkD3bSq5FSaWmrSfq779_iR/edit?usp=drive_link",
+                    "Projection of Lines 2": "https://docs.google.com/presentation/d/1sTU-EAVQ2ax4TAlwyT8y_xiVuwhSvBRG/edit?usp=drive_link",
+                    " Orthographic Projection": "https://docs.google.com/presentation/d/1c0Fbv71gu3tuTETMZugo6k3LG7psegaw/edit?usp=drive_link",
+                    " Isometric": "https://docs.google.com/presentation/d/1S3vYOo4fLQhws9XT0b7UCZnq2iL5nUTh/edit?usp=drive_link&ouid=107722964094877090147&rtpof=true&sd=true",
+                    " Ellips by Gen Method": "https://docs.google.com/presentation/d/1L5H3bbPmQG89c-x7fhFgMXHPjkPvGySX/edit?usp=drive_link&ouid=107722964094877090147&rtpof=true&sd=true",
+                }
             },
-            "PPS": {
-                  "SYLLABUS":"https://drive.google.com/file/d/1hBV9d8d8P_ntFEL0laAIGSqQ4UsK1Usr/view?usp=drive_link",
-                "LECTURE NOTES":"https://drive.google.com/file/d/19Wfhz--qolOH_6gGlXb2V0IpqyATaZGy/view?usp=drive_link",
-                "STUDY MATERIAL":"https://drive.google.com/file/d/131mIc1BfMG2rTca1RV9y03FmqV4G8omG/view?usp=drive_link",
-                "C HAND BOOK":"https://cwh-full-next-space.fra1.cdn.digitaloceanspaces.com/YouTube/The%20Ultimate%20C%20Handbook.pdf",
-            },
-            "ENG": {
-                "Chapert 1:VOCABULARY BUILDING":"https://drive.google.com/file/d/1EcCLpWY_bkgJpIyHyX17Eucx9xKObM95/view?usp=drive_link",
-                "Chapter 2:Phonetics":"https://drive.google.com/file/d/1MvgOqBRYcMPZKI0EfCTKpFBntv9YCK98/view?usp=drive_link",
-                "BOOK":"https://drive.google.com/file/d/1Py2B1PLk51TtsWPNU6luJckX83_WLB9K/view?usp=drive_link"
-                
-            },
-            "BEE": {
-                "DC": "https://drive.google.com/file/d/19BH20UlPOwNn7FLDtm6zbZSwJsbYEYuP/view?usp=drive_link",
-                "Nerwork thearom": "https://drive.google.com/file/d/1If5txpBzgCtj21mU5ntu8sitBFYKBs4i/view?usp=drive_link",
-                "Resonance b1":"https://drive.google.com/file/d/12vnJGmYdewNzjpKyEis9eEEHg7bzQBAg/view?usp=drive_link"
-            },
-            "EGD": {
-                " Scales": "https://docs.google.com/presentation/d/1or_VCH3RtdXSFpgFkQQ3QPA9QBWi4ant/edit?usp=drive_link",
-                " Projection of Solids": "https://docs.google.com/presentation/d/1p0Sd5zjZwgs3uI6YrOtvcApUlFrXa0EN/edit?usp=drive_link",
-                "Projection of Lines": "https://docs.google.com/presentation/d/12mXhZqw-3bkD3bSq5FSaWmrSfq779_iR/edit?usp=drive_link",
-                "Projection of Lines 2": "https://docs.google.com/presentation/d/1sTU-EAVQ2ax4TAlwyT8y_xiVuwhSvBRG/edit?usp=drive_link",
-                " Orthographic Projection": "https://docs.google.com/presentation/d/1c0Fbv71gu3tuTETMZugo6k3LG7psegaw/edit?usp=drive_link",
-                " Isometric":"https://docs.google.com/presentation/d/1S3vYOo4fLQhws9XT0b7UCZnq2iL5nUTh/edit?usp=drive_link&ouid=107722964094877090147&rtpof=true&sd=true",
-                " Ellips by Gen Method":"https://docs.google.com/presentation/d/1L5H3bbPmQG89c-x7fhFgMXHPjkPvGySX/edit?usp=drive_link&ouid=107722964094877090147&rtpof=true&sd=true",
-
+            "Semester 2": {
+                "Math": {
+                    "Chapter 1: Probability": "https://drive.google.com/link-to-probability",
+                    "Chapter 2: Statistics": "https://drive.google.com/link-to-statistics"
+                },
+                "PPS": {},
+                "ENG": {
+                    "Chapter 1: Technical Writing": "https://drive.google.com/link-to-technical-writing"
+                }
             }
-        },
-        "Semester 2": {
-            "Math": {
-                "Chapter 1: Probability": "https://drive.google.com/link-to-probability",
-                "Chapter 2: Statistics": "https://drive.google.com/link-to-statistics"
-            },
-            "PPS": {
-                
-            },
-            "ENG": {
-                "Chapter 1: Technical Writing": "https://drive.google.com/link-to-technical-writing"
+        };
+
+        const examInfo = {
+            title: "Mid-Semester Exam",
+            date: "October 21, 2024",
+            subjects: [
+                {
+                    name: "Mathematics",
+                    syllabus: "https://example.com/math-syllabus",
+                    lectures: "https://example.com/math-lectures",
+                    notes: "https://example.com/math-notes"
+                },
+                {
+                    name: "Programming",
+                    syllabus: "https://example.com/programming-syllabus",
+                    lectures: "https://example.com/programming-lectures",
+                    notes: "https://example.com/programming-notes"
+                },
+                {
+                    name: "English",
+                    syllabus: "https://example.com/english-syllabus",
+                    lectures: "https://example.com/english-lectures",
+                    notes: "https://example.com/english-notes"
+                },
+                { 
+                    name: "BEE",
+                    syllabus:"#",
+                    lectures:"#",
+                    notes:"#",
+                },
+                {
+                    name:"EDG",
+                    syllabus:"#",
+                    lectures:"#",
+                    notes:"#",
+                },
+                        
+            ],
+            generalNotes: "https://example.com/general-exam-notes"
+        };
+
+        let stage = 0;
+        let selectedSemester = "";
+        let selectedSubject = "";
+        let selectedChapter = "";
+
+        function displayMessage(message, sender) {
+            const chatbox = document.getElementById("chatbox");
+            const messageElement = document.createElement("div");
+            messageElement.classList.add("p-2", "rounded-lg", "mb-2");
+            if (sender === "bot") {
+                messageElement.classList.add("bg-gray-200", "text-gray-800");
+            } else {
+                messageElement.classList.add("bg-blue-500", "text-white", "ml-auto");
+            }
+            messageElement.textContent = message;
+            chatbox.appendChild(messageElement);
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        function createOptions(options, isFinal = false) {
+            const optionsContainer = document.getElementById("options");
+            optionsContainer.innerHTML = '';
+            options.forEach(option => {
+                const button = document.createElement("button");
+                button.textContent = option;
+                button.classList.add("bg-blue-500", "text-white", "py-2", "px-4", "rounded", "hover:bg-blue-600", "transition-colors");
+                button.onclick = () => handleOptionClick(option, isFinal);
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        function handleOptionClick(option, isFinal) {
+            if (stage === 0) {
+                selectedSemester = option;
+                displayMessage(`You chose: ${selectedSemester}`, "user");
+                displayMessage("Please choose a subject:", "bot");
+                createOptions(Object.keys(data[selectedSemester]));
+                stage = 1;
+            } else if (stage === 1) {
+                selectedSubject = option;
+                displayMessage(`You chose: ${selectedSubject}`, "user");
+                displayMessage("Please choose a chapter:", "bot");
+                createOptions(Object.keys(data[selectedSemester][selectedSubject]), true);
+                stage = 2;
+            } else if (stage === 2 && isFinal) {
+                selectedChapter = option;
+                displayMessage(`You chose: ${selectedChapter}`, "user");
+                const link = data[selectedSemester][selectedSubject][selectedChapter];
+                displayMessage("Click the button below to view the PDF:", "bot");
+                createLinkButton(link);
+                setTimeout(() => resetChat(), 3000);
             }
         }
-    };
 
-    let stage = 0;
-    let selectedSemester = "";
-    let selectedSubject = "";
-    let selectedChapter = "";
-
-    // Function to display a message in the chatbox
-    function displayMessage(message, sender) {
-        const chatbox = document.getElementById("chatbox");
-        const messageElement = document.createElement("div");
-        messageElement.classList.add("chat-message");
-        messageElement.classList.add(sender === "bot" ? "bot-message" : "user-message");
-        messageElement.textContent = message;
-        chatbox.appendChild(messageElement);
-        chatbox.scrollTop = chatbox.scrollHeight;
-    }
-
-    // Function to create option buttons dynamically
-    function createOptions(options, isFinal = false) {
-        const optionsContainer = document.getElementById("options");
-        optionsContainer.innerHTML = ''; // Clear previous options
-        options.forEach(option => {
-            const button = document.createElement("button");
-            button.textContent = option;
-            button.onclick = () => handleOptionClick(option, isFinal);
-            optionsContainer.appendChild(button);
-        });
-    }
-
-    // Function to handle bot responses and option clicks
-    function handleOptionClick(option, isFinal) {
-        if (stage === 0) {
-            selectedSemester = option;
-            displayMessage(`You chose: ${selectedSemester}`, "user");
-            displayMessage("Please choose a subject:", "bot");
-            createOptions(Object.keys(data[selectedSemester]));
-            stage = 1;
-        } else if (stage === 1) {
-            selectedSubject = option;
-            displayMessage(`You chose: ${selectedSubject}`, "user");
-            displayMessage("Please choose a chapter:", "bot");
-            createOptions(Object.keys(data[selectedSemester][selectedSubject]), true);
-            stage = 2;
-        } else if (stage === 2 && isFinal) {
-            selectedChapter = option;
-            displayMessage(`You chose: ${selectedChapter}`, "user");
-            const link = data[selectedSemester][selectedSubject][selectedChapter];
-            displayMessage("Click the button below to view the PDF:", "bot");
-            createLinkButton(link); // Create the PDF link button
-            setTimeout(() => resetChat(), 3000); // Reset after a delay
+        function createLinkButton(link) {
+            const optionsContainer = document.getElementById("options");
+            optionsContainer.innerHTML = '';
+            const linkButton = document.createElement("a");
+            linkButton.href = link;
+            linkButton.target = "_blank";
+            linkButton.textContent = "View PDF";
+            linkButton.classList.add("bg-blue-500", "text-white", "py-2", "px-4", "rounded", "hover:bg-blue-600", "transition-colors", "inline-block");
+            optionsContainer.appendChild(linkButton);
         }
-    }
 
-    // Function to create a "View PDF" button
-    function createLinkButton(link) {
-        const optionsContainer = document.getElementById("options");
-        optionsContainer.innerHTML = ''; // Clear previous options
+        function resetChat() {
+            stage = 0;
+            selectedSemester = "";
+            selectedSubject = "";
+            selectedChapter = "";
+            document.getElementById("chatbox").innerHTML = '';
+            displayMessage("Welcome to the First-Year Resource Bot! Please choose a semester:", "bot");
+            createOptions(Object.keys(data));
+        }
 
-        const linkButton = document.createElement("a");
-        linkButton.href = link;
-        linkButton.target = "_blank"; // Open in new tab
-        linkButton.textContent = "View";
-        linkButton.classList.add("link-button");
+        function populateExamInfo() {
+            document.getElementById("examTitle").textContent = examInfo.title;
+            document.getElementById("examDate").textContent = examInfo.date;
+            const subjectsList = document.getElementById("examSubjects");
+            examInfo.subjects.forEach(subject => {
+                const li = document.createElement("li");
+                li.classList.add("mb-2");
+                li.innerHTML = `
+                    <span class="font-medium">${subject.name}</span>
+                    <div class="flex flex-wrap gap-2 mt-1">
+                        <a href="${subject.syllabus}" target="_blank" rel="noopener noreferrer" class="bg-gray-200 text-gray-800 py-1 px-2 rounded text-sm hover:bg-gray-300 transition-colors">Syllabus</a>
+                        <a href="${subject.lectures}" target="_blank" rel="noopener noreferrer" class="bg-gray-200 text-gray-800 py-1 px-2 rounded text-sm hover:bg-gray-300 transition-colors">Lectures</a>
+                        <a href="${subject.notes}" target="_blank" rel="noopener noreferrer" class="bg-gray-200 text-gray-800 py-1 px-2 rounded text-sm hover:bg-gray-300 transition-colors">Notes</a>
+                    </div>
+                `;
+                subjectsList.appendChild(li);
+            });
+            document.getElementById("generalNotesBtn").onclick = () => window.open(examInfo.generalNotes, '_blank');
+        }
 
-        optionsContainer.appendChild(linkButton);
-    }
-
-    // Reset the chatbot
-    function resetChat() {
-        stage = 0;
-        selectedSemester = "";
-        selectedSubject = "";
-        selectedChapter = "";
-        displayMessage("Welcome to the First-Year Resource Bot! Please choose a semester:", "bot");
-        createOptions(["Semester 1", "Semester 2"]);
-    }
-
-    // Initial greeting message when the page loads
-    window.onload = function () {
-        resetChat();
-    };
-</script>
-
+        window.onload = function() {
+            resetChat();
+            populateExamInfo();
+        };
+    </script>
 </body>
 </html>
