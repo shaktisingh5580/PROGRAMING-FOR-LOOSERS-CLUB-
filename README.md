@@ -57,9 +57,9 @@
   <li><strong>Clone the repository</strong>:
     <pre><code>git clone https://github.com/your-username/programming-for-losers.git</code></pre>
   </li>
-  <li><strong>Join our discussions</strong>: Connect with us on <a href="#">Discord/Slack/etc.</a> to chat, share resources, and collaborate.</li>
-  <li><strong>Check out ongoing projects</strong>: Browse the <code>projects/</code> folder to see current collaborative efforts you can contribute to.</li>
-  <li><strong>Participate in challenges</strong>: Head over to the <code>challenges/</code> folder to find coding challenges to work on with the community.</li>
+  <li><strong>Join our discussions</strong>: Connect with us on <a href="https://forms.gle/cwz4ugbbyBnsZK9D7">Google form</a> to chat, share resources, and collaborate.</li>
+  <li><strong>Check out Courses</strong>: Browse <code>courses</code> folder to see current courses to follow you can watch and learn .</li>
+  <li><strong>Participate in challenges</strong>: Head over to the <code>event and notification</code> folder to find on going challanges and seminars .</li>
 </ol>
 
 <hr>
