@@ -122,6 +122,13 @@
             margin-bottom: 2rem;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         }
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
         .btn {
             display: inline-block;
             padding: 0.75rem 1.5rem;
@@ -132,7 +139,8 @@
             cursor: pointer;
             font-size: 1rem;
             font-weight: bold;
-            margin: 0 0.5rem;
+            text-align: center;
+            min-width: 150px;
         }
         .btn-register {
             background-color: #fff;
@@ -274,6 +282,16 @@
                 max-width: 1140px;
             }
         }
+        @media (max-width: 480px) {
+            .button-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            .btn {
+                width: 100%;
+                max-width: 250px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -388,7 +406,7 @@
                 <p>Ready to start your programming journey with a supportive community of fellow students? Fill out our form to join our mailing list and be the first to know about upcoming meetups, projects, and learning opportunities.</p>
                 <div class="button-group">
                     <a href="https://forms.gle/JFmPGDkyMmR75B4Q6" class="btn btn-register">Register Now</a>
-                    <a href="https://chat.whatsapp.com/L6oZFQQv3sk7pzhheDDZDh" class="btn btn-whatsapp">Join WhatsApp Community</a>
+                    <a href="https://chat.whatsapp.com/L6oZFQQv3sk7pzhheDDZDh" class="btn btn-whatsapp">Join WhatsApp</a>
                     <a href="https://studentdeveloperclub.tech/?i=3" class="btn btn-sdc">SDC</a>
                 </div>
             </div>
