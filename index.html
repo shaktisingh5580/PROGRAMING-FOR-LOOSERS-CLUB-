@@ -15,17 +15,20 @@
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
-            color: #333;
+            color: #fff;
             font-size: 16px;
+            background-color: #000;
         }
         .container {
             width: 100%;
             padding: 0 20px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
         /* Header styles */
         header {
-            background-color: #f4f4f4;
+            background-color: rgba(0, 0, 0, 0.8);
             padding: 1rem 0;
             position: fixed;
             width: 100%;
@@ -43,24 +46,6 @@
         }
         .nav-links {
             display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            background-color: #f4f4f4;
-            padding: 1rem;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .nav-links.active {
-            display: flex;
-            flex-direction: column;
-        }
-        .nav-links a {
-            color: #333;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            display: block;
-            text-align: center;
         }
         .menu-toggle {
             display: block;
@@ -68,66 +53,112 @@
             background: none;
             border: none;
             cursor: pointer;
+            color: #fff;
         }
         /* Hero section styles */
         .hero {
-            background-color: #000;
+            position: relative;
             color: #fff;
             text-align: center;
-            padding: 6rem 0 4rem;
-            margin-top: 60px;
+            padding: 12rem 0 8rem;
+            overflow: hidden;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
         }
         .hero h1 {
-            font-size: 2rem;
+            font-size: 3rem;
             margin-bottom: 1rem;
         }
         .hero p {
-            font-size: 1rem;
+            font-size: 1.2rem;
             margin-bottom: 2rem;
         }
         .btn {
             display: inline-block;
-            background-color: #333;
-            color: #fff;
             padding: 0.75rem 1.5rem;
             text-decoration: none;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
+            border-radius: 25px;
+            transition: all 0.3s ease;
             border: none;
             cursor: pointer;
             font-size: 1rem;
+            font-weight: bold;
+            margin: 0 0.5rem;
         }
-        .btn:hover {
-            background-color: #555;
+        .btn-register {
+            background-color: #fff;
+            color: #000;
+        }
+        .btn-register:hover {
+            background-color: #e0e0e0;
+        }
+        .btn-whatsapp {
+            background-color: #fbfcfc;
+            color: #090909;
+        }
+        .btn-whatsapp:hover {
+            background-color: #128C7E;
+        }
+      .btn-sdc{
+        background-color:#fbfcfc;
+        color : #000
+      }
+        /* 3D background */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
         }
         /* Section styles */
         section {
-            padding: 3rem 0;
+            padding: 6rem 0;
+            position: relative;
         }
         section h2 {
-            font-size: 1.8rem;
-            margin-bottom: 1.5rem;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
             text-align: center;
         }
         /* About section styles */
+        #about {
+            background-color: rgba(17, 17, 17, 0.8);
+        }
         #about p {
-            text-align: left;
             margin-bottom: 1rem;
         }
         /* Mentorship section styles */
         #mentorship {
-            background-color: #f4f4f4;
+            background-color: rgba(0, 0, 0, 0.8);
         }
         /* Opportunities section styles */
+        #opportunities {
+            background-color: rgba(17, 17, 17, 0.8);
+        }
         .opportunities-grid {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
         }
         .opportunity {
-            background-color: #f4f4f4;
+            background-color: rgba(0, 0, 0, 0.5);
             padding: 1.5rem;
-            border-radius: 5px;
+            border-radius: 10px;
             text-align: center;
         }
         .opportunity h3 {
@@ -136,66 +167,33 @@
         }
         /* Courses section styles */
         #courses {
-            background-color: #f4f4f4;
+            background-color: rgba(0, 0, 0, 0.8);
         }
         .courses-grid {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
         }
         .course {
-            background-color: #fff;
-            padding: 1rem;
-            border-radius: 5px;
+            background-color: rgba(17, 17, 17, 0.5);
+            padding: 1.5rem;
+            border-radius: 10px;
             text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         .course h3 {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             margin-bottom: 0.5rem;
         }
         /* Join section styles */
-        #join form {
-            display: flex;
-            flex-direction: column;
-            max-width: 100%;
-            margin: 0 auto;
-        }
-        #join input[type="email"] {
-            padding: 0.75rem;
-            margin-bottom: 1rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
+        #join {
+            background-color: rgba(17, 17, 17, 0.8);
         }
         /* Footer styles */
         footer {
-            background-color: #333;
+            background-color: rgba(0, 0, 0, 0.8);
             color: #fff;
             text-align: center;
             padding: 2rem 0;
-        }
-        footer p {
-            margin-bottom: 1rem;
-        }
-        footer a {
-            color: #fff;
-            text-decoration: none;
-            margin: 0 0.5rem;
-        }
-        /* Button group styles */
-        .button-group {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-        /* WhatsApp button styles */
-        .btn-whatsapp {
-            background-color: #333;
-        }
-        .btn-whatsapp:hover {
-            background-color: #128C7E;
         }
         /* Responsive styles */
         @media (min-width: 768px) {
@@ -207,48 +205,22 @@
             }
             .nav-links {
                 display: flex;
-                position: static;
-                width: auto;
-                background-color: transparent;
-                padding: 0;
-                box-shadow: none;
             }
             .nav-links a {
-                display: inline-block;
-            }
-            .hero {
-                padding: 8rem 0 6rem;
+                color: #fff;
+                text-decoration: none;
+                padding: 0.5rem 1rem;
             }
             .hero h1 {
-                font-size: 2.5rem;
+                font-size: 3.5rem;
             }
             .hero p {
-                font-size: 1.2rem;
-            }
-            .opportunities-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .courses-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            #join form {
-                flex-direction: row;
-            }
-            #join input[type="email"] {
-                flex-grow: 1;
-                margin-bottom: 0;
-                margin-right: 1rem;
+                font-size: 1.4rem;
             }
         }
         @media (min-width: 992px) {
             .container {
                 max-width: 960px;
-            }
-            .hero h1 {
-                font-size: 3rem;
-            }
-            .courses-grid {
-                grid-template-columns: repeat(3, 1fr);
             }
         }
         @media (min-width: 1200px) {
@@ -259,16 +231,16 @@
     </style>
 </head>
 <body>
+    <canvas id="bg-canvas"></canvas>
     <header>
         <nav class="container">
             <div class="logo">PFL</div>
             <button class="menu-toggle" aria-label="Toggle menu">☰</button>
             <div class="nav-links">
                 <a href="#about">About</a>
-                <a href="chatbot.html">Syllabus</a>
-                <a href="event notification.html">Event notifications</a>
-                <a href="courses.html">Courses</a>
-                <a href="articles.html">Articles</a>
+                <a href="#mentorship">Mentorship</a>
+                <a href="#opportunities">Opportunities</a>
+                <a href="#courses">Courses</a>
                 <a href="#join">Join Us</a>
                 <a href="https://studentdeveloperclub.tech/?i=2">Explore SDC</a>
             </div>
@@ -277,16 +249,16 @@
 
     <main>
         <section class="hero">
-            <div class="container">
+            <div id="particles-js"></div>
+            <div class="container hero-content">
                 <h1>Programming for Losers (PFL)</h1>
                 <p>
                     Where coding failures become programming triumphs. Join our student-led club of aspiring programmers and future tech leaders!
-                    <br> We are integrated club with STUDENT DEVELOPER CLUB (SDC)
                 </p>
                 <div class="button-group">
-                    <a href="https://forms.gle/JFmPGDkyMmR75B4Q6" class="btn">Register Now</a>
+                    <a href="https://forms.gle/JFmPGDkyMmR75B4Q6" class="btn btn-register">Register Now</a>
                     <a href="https://chat.whatsapp.com/L6oZFQQv3sk7pzhheDDZDh" class="btn btn-whatsapp">Join WhatsApp</a>
-                    <a href="https://studentdeveloperclub.tech/?i=2" class="btn btn-sdc">SDC</a>
+                    <a href="https://studentdeveloperclub.tech/?i=3" class=" btn btn-sdc">SDC</a>
                 </div>
             </div>
         </section>
@@ -296,6 +268,7 @@
                 <h2>About PFL</h2>
                 <p>Programming for Losers (PFL) is a grassroots initiative started by a group of passionate first-year students. We're just a bunch of coding enthusiasts trying to create a supportive community outside of our formal college environment. Our goal? To connect with like-minded individuals who share our love for programming and technology.</p>
                 <p>As an independent club, we're not affiliated with any college or institution. We're simply students helping students, learning together, and building a network that extends beyond our campus. Whether you're a coding newbie or a budding tech wizard, PFL is the place where we all start as 'losers' but grow together into winners.</p>
+                <div id="react-3d-viewer" class="mt-8"></div>
             </div>
         </section>
 
@@ -317,6 +290,14 @@
                     <div class="opportunity">
                         <h3>Skill Sharing Sessions</h3>
                         <p>Participate in regular skill-sharing meetups where members can present and learn about various programming topics and technologies.</p>
+                    </div>
+                    <div class="opportunity">
+                        <h3>Hackathons</h3>
+                        <p>Join our internal hackathons to challenge yourself, work on innovative projects, and compete in a friendly environment.</p>
+                    </div>
+                    <div class="opportunity">
+                        <h3>Networking Events</h3>
+                        <p>Connect with industry professionals and alumni through our networking events and gain insights into the tech industry.</p>
                     </div>
                 </div>
             </div>
@@ -347,6 +328,10 @@
                         <h3>Machine Learning Basics</h3>
                         <p>Introduction to AI and ML concepts</p>
                     </div>
+                    <div class="course">
+                        <h3>Version Control with Git</h3>
+                        <p>Master Git and GitHub for collaboration</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -354,11 +339,11 @@
         <section id="join">
             <div class="container">
                 <h2>Join PFL Today</h2>
-                <p>Ready to start your programming journey with a supportive community of fellow students? Fill the google form for our mailing list and be the first to know about upcoming meetups, projects, and learning opportunities.</p>
+                <p>Ready to start your programming journey with a supportive community of fellow students? Fill out our form to join our mailing list and be the first to know about upcoming meetups, projects, and learning opportunities.</p>
                 <div class="button-group">
-                    <a href="https://forms.gle/JFmPGDkyMmR75B4Q6" class="btn">Register Now</a>
+                    <a href="https://forms.gle/JFmPGDkyMmR75B4Q6" class="btn btn-register">Register Now</a>
                     <a href="https://chat.whatsapp.com/L6oZFQQv3sk7pzhheDDZDh" class="btn btn-whatsapp">Join WhatsApp Community</a>
-                    <a href="https://studentdeveloperclub.tech/?i=2" class="btn btn-sdc">SDC</a>
+                    <a href="https://studentdeveloperclub.tech/?i=3" class="btn btn-sdc">SDC</a>
                 </div>
             </div>
         </section>
@@ -370,6 +355,10 @@
         </div>
     </footer>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
         // Mobile menu toggle
         const menuToggle = document.querySelector('.menu-toggle');
@@ -379,29 +368,86 @@
             navLinks.classList.toggle('active');
         });
 
-        // Close menu when a link is clicked
-        navLinks.addEventListener('click', (e) => {
-            if (e.target.tagName === 'A') {
-                navLinks.classList.remove('active');
-            }
+        // Three.js background animation
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg-canvas'), alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        const geometry = new THREE.TorusKnotGeometry(10, 3, 100, 16);
+        const material = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true });
+        const torusKnot = new THREE.Mesh(geometry, material);
+        scene.add(torusKnot);
+
+        camera.position.z = 30;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            torusKnot.rotation.x += 0.01;
+            torusKnot.rotation.y += 0.005;
+            torusKnot.rotation.z += 0.002;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
-                const headerOffset = 60;
-                const elementPosition = targetElement.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        // Particles.js configuration
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: '#ffffff' },
+                shape: { type: 'circle' },
+                opacity: { value: 0.5, random: false, anim: { enable: false, speed: 1, opacity_min: 0.1, sync: false } },
+                size: { value: 3, random: true, anim: { enable: false, speed: 40, size_min: 0.1, sync: false } },
+                line_linked: { enable: true, distance: 150, color: '#ffffff', opacity: 0.4, width: 1 },
+                move: { enable: true, speed: 6, direction: 'none', random: false, straight: false, out_mode: 'out', bounce: false, attract: { enable: false, rotateX: 600, rotateY: 1200 } }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: { onhover: { enable: true, mode: 'repulse' }, onclick: { enable: true, mode: 'push' }, resize: true },
+                modes: { grab: { distance: 400, line_linked: { opacity: 1 } }, bubble: { distance: 400, size: 40, duration: 2, opacity: 8, speed: 3 }, repulse: { distance: 200, duration: 0.4 }, push: { particles_nb: 4 }, remove: { particles_nb: 2 } }
+            },
+            retina_detect: true
+        });
 
-                window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth'
-                });
+        // GSAP animations
+        gsap.registerPlugin(ScrollTrigger);
+
+        gsap.from('.hero h1, .hero p, .hero .btn', {
+            opacity: 0,
+            y: 50,
+            duration: 1,
+            stagger: 0.2,
+            ease: 'power3.out'
+        });
+
+        gsap.utils.toArray('section').forEach((section, i) => {
+            gsap.from(section.querySelectorAll('h2, p, .opportunity, .course'), {
+                opacity: 0,
+                y: 50,
+                duration: 1,
+                stagger: 0.2,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: section,
+                    start: 'top 80%',
+                    end: 'bottom 20%',
+                    toggleActions: 'play none none reverse'
+                }
             });
         });
+    </script>
+    <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+    <script src="improved-3d-viewer.js"></script>
+    <script>
+        ReactDOM.render(React.createElement(Component), document.getElementById('react-3d-viewer'));
     </script>
 </body>
 </html>
