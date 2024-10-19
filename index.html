@@ -46,6 +46,32 @@
         }
         .nav-links {
             display: none;
+            transition: all 0.3s ease-in-out;
+            opacity: 0;
+            visibility: hidden;
+        }
+        .nav-links.active {
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.9);
+            padding: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            opacity: 1;
+            visibility: visible;
+        }
+        .nav-links.active a {
+            padding: 0.75rem 0;
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .nav-links.active a:hover {
+            color: #f0f0f0;
         }
         .menu-toggle {
             display: block;
@@ -54,6 +80,10 @@
             border: none;
             cursor: pointer;
             color: #fff;
+            transition: color 0.3s ease;
+        }
+        .menu-toggle:hover {
+            color: #f0f0f0;
         }
         /* Hero section styles */
         .hero {
@@ -112,10 +142,10 @@
         .btn-whatsapp:hover {
             background-color: #128C7E;
         }
-      .btn-sdc{
-        background-color:#fbfcfc;
-        color : #000
-      }
+        .btn-sdc {
+            background-color: #fbfcfc;
+            color: #000;
+        }
         /* 3D background */
         #bg-canvas {
             position: fixed;
@@ -205,11 +235,21 @@
             }
             .nav-links {
                 display: flex;
+                flex-direction: row;
+                position: static;
+                background-color: transparent;
+                padding: 0;
+                opacity: 1;
+                visibility: visible;
             }
             .nav-links a {
+                padding: 0.5rem 1rem;
                 color: #fff;
                 text-decoration: none;
-                padding: 0.5rem 1rem;
+                transition: color 0.3s ease;
+            }
+            .nav-links a:hover {
+                color: #f0f0f0;
             }
             .hero h1 {
                 font-size: 3.5rem;
@@ -258,7 +298,7 @@
                 <div class="button-group">
                     <a href="https://forms.gle/JFmPGDkyMmR75B4Q6" class="btn btn-register">Register Now</a>
                     <a href="https://chat.whatsapp.com/L6oZFQQv3sk7pzhheDDZDh" class="btn btn-whatsapp">Join WhatsApp</a>
-                    <a href="https://studentdeveloperclub.tech/?i=3" class=" btn btn-sdc">SDC</a>
+                    <a href="https://studentdeveloperclub.tech/?i=3" class="btn btn-sdc">SDC</a>
                 </div>
             </div>
         </section>
@@ -368,6 +408,13 @@
             navLinks.classList.toggle('active');
         });
 
+        // Close menu when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!event.target.closest('nav')) {
+                navLinks.classList.remove('active');
+            }
+        });
+
         // Three.js background animation
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -375,7 +422,7 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
 
         const geometry = new THREE.TorusKnotGeometry(10, 3, 100, 16);
-        const material = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true });
+        const  material = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true });
         const torusKnot = new THREE.Mesh(geometry, material);
         scene.add(torusKnot);
 
