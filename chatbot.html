@@ -28,6 +28,12 @@
             .grid {
                 grid-template-columns: 1fr 1fr;
             }
+            .grid .card:first-child {
+                order: 1;
+            }
+            .grid .card:last-child {
+                order: 2;
+            }
         }
         .card {
             background-color: #f8f8f8;
@@ -125,16 +131,16 @@
         <h1>First Year Resource Bot</h1>
         <div class="grid">
             <div class="card">
-                <h2>Chat Interface</h2>
-                <div id="chatbox" class="chatbox"></div>
-                <div id="options" class="options"></div>
-            </div>
-            <div class="card">
                 <h2>Upcoming Exam: <span id="examTitle"></span></h2>
                 <p>Date: <span id="examDate"></span></p>
                 <h3>Subjects:</h3>
                 <ul id="examSubjects"></ul>
                 <button id="generalNotesBtn" class="hidden">General Exam Notes</button>
+            </div>
+            <div class="card">
+                <h2>Chat Interface</h2>
+                <div id="chatbox" class="chatbox"></div>
+                <div id="options" class="options"></div>
             </div>
         </div>
     </div>
