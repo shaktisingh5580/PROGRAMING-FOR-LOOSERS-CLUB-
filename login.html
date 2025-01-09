@@ -77,13 +77,13 @@
     <script>
         // Firebase configuration
         const firebaseConfig = {
-               apiKey: "AIzaSyAw3gXcRJC0KTVS9wlt8RqUrOp_7GM25Xg",
+            apiKey: "AIzaSyAw3gXcRJC0KTVS9wlt8RqUrOp_7GM25Xg",
             authDomain: "pflclub.firebaseapp.com",
             projectId: "pflclub",
             storageBucket: "pflclub.appspot.com",
             messagingSenderId: "238199612979",
             appId: "1:238199612979:web:89b029bbdf8a32cd932546",
-            measurementId: "G-JP3PNXL9H8",
+            measurementId: "G-JP3PNXL9H8"
         };
 
         firebase.initializeApp(firebaseConfig);
@@ -98,14 +98,22 @@
 
             firebase.auth().signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
+                    // Successful login
                     const user = userCredential.user;
-                    window.location.href = 'upload.html'; // Redirect to upload page
+                    errorElement.textContent = "Login successful. Redirecting...";
+                    errorElement.style.color = "green";
+                    setTimeout(() => {
+                        window.location.href = 'upload.html'; // Redirect to upload page
+                    }, 2000);
                 })
                 .catch((error) => {
-                    errorElement.textContent = "Redirecting...";
+                    // Login error
+                    console.error("Login error:", error);
+                    errorElement.textContent = "Invalid email or password. Redirecting...";
+                    errorElement.style.color = "red";
                     setTimeout(() => {
-                        window.location.href = 'wrong-password.html'; // Redirect to video page
-                    }, 2000); // Add a delay if desired
+                        window.location.href = 'wrong-password.html'; // Redirect to wrong password page
+                    }, 2000);
                 });
         });
     </script>
