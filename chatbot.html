@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>First Year Chatbot</title>
+    <title>First Year Resource Bot</title>
     <style>
         /* Base styles */
         body {
@@ -124,6 +124,14 @@
             justify-content: space-between;
             margin-top: 1rem;
         }
+        #resetChatBtn {
+            margin-top: 1rem;
+            background-color: #f0f0f0;
+            color: #000000;
+        }
+        #resetChatBtn:hover {
+            background-color: #e0e0e0;
+        }
     </style>
 </head>
 <body>
@@ -141,6 +149,7 @@
                 <h2>Chat Interface</h2>
                 <div id="chatbox" class="chatbox"></div>
                 <div id="options" class="options"></div>
+                <button id="resetChatBtn">Reset Chat</button>
             </div>
         </div>
     </div>
@@ -160,7 +169,6 @@
         const data = {
             "Semester 1": {
                 "Math": {
-            
                     "SYLLABUS":"https://drive.google.com/file/d/1mfl7bat0htdaGpWpXCXvQgyIBWG6T_9o/view?usp=sharing",
                     "BOOK (GTU)":"https://drive.google.com/file/d/12PrwTUir_BoMqXsr3VppRP1OHS1aW-Rm/view?usp=sharing",
                     "ASSIGNMENT":"https://drive.google.com/drive/folders/1EtsEw4Vdk3v29lQ1zkzA4u9QNk8Lm_Lf?usp=sharing",
@@ -304,25 +312,42 @@
         }
 
         function handleOptionClick(option) {
-            if (stage === 0) {
-                selectedSemester = option;
-                displayMessage(`You chose: ${selectedSemester}`, "user");
-                displayMessage("Please choose a subject:", "bot");
-                createOptions(Object.keys(data[selectedSemester]));
-                stage = 1;
-            } else if (stage === 1) {
-                selectedSubject = option;
-                displayMessage(`You chose: ${selectedSubject}`, "user");
-                displayMessage("Please choose a chapter:", "bot");
-                createOptions(Object.keys(data[selectedSemester][selectedSubject]));
-                stage = 2;
-            } else if (stage === 2) {
-                displayMessage(`You chose: ${option}`, "user");
-                const link = data[selectedSemester][selectedSubject][option];
-                displayMessage("Click the button below to view the resource:", "bot");
-                createLinkButton(link);
-                setTimeout(() => resetChat(), 5000);
-            }
+            displayMessage(`You chose: ${option}`, "user");
+            
+            
+            const buttons = document.querySelectorAll('#options button');
+            buttons.forEach(button => button.disabled = true);
+            
+            
+            const typingMessage = document.createElement("div");
+            typingMessage.classList.add("message", "bot");
+            typingMessage.textContent = "Typing...";
+            document.getElementById("chatbox").appendChild(typingMessage);
+            
+            setTimeout(() => {
+                
+                typingMessage.remove();
+                
+                
+                buttons.forEach(button => button.disabled = false);
+                
+                if (stage === 0) {
+                    selectedSemester = option;
+                    displayMessage("Please choose a subject:", "bot");
+                    createOptions(Object.keys(data[selectedSemester]));
+                    stage = 1;
+                } else if (stage === 1) {
+                    selectedSubject = option;
+                    displayMessage("Please choose a chapter:", "bot");
+                    createOptions(Object.keys(data[selectedSemester][selectedSubject]));
+                    stage = 2;
+                } else if (stage === 2) {
+                    const link = data[selectedSemester][selectedSubject][option];
+                    displayMessage("Click the button below to view the resource:", "bot");
+                    createLinkButton(link);
+                    setTimeout(() => resetChat(), 5000);
+                }
+            }, 1000); // 2 sec ka wait reply karne se pehle 
         }
 
         function createLinkButton(link) {
@@ -399,6 +424,7 @@
         }
 
         document.getElementById('closePopup').addEventListener('click', closePopup);
+        document.getElementById('resetChatBtn').addEventListener('click', resetChat);
 
         window.onload = function() {
             resetChat();
