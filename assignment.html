@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PFL - Assignments Hub</title>
+    <link rel="icon" href="HummingBird (1).png" type="image/x-icon">
+    <link rel="stylesheet" href="assignment.css">
+    <!-- Add manifest for PWA capabilities (optional but good for FCM) -->
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">PFL</div>
+            <div class="header-nav-links">
+                <a href="index.html">Home</a>
+                <a href="chat.html">Chat</a>
+                <a href="courses.html">Courses</a>
+            </div>
+            <div class="user-auth-info">
+                <span id="assignmentUserEmail">Not logged in</span>
+                <!-- Notification Settings Button -->
+                <button id="notificationSettingsBtn" class="btn btn-secondary hidden" title="Notification Settings">🔔</button>
+                <button id="assignmentLogoutBtn" class="btn btn-secondary hidden">Logout</button>
+                <button id="assignmentLoginBtn" class="btn">Login</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h1>Assignments Hub</h1>
+        <div class="action-bar">
+            <button id="showUploadFormBtn" class="btn hidden">Upload New Assignment</button>
+        </div>
+        <div class="filters-bar">
+            <input type="text" id="searchTerm" placeholder="Search assignments..." class="form-control">
+            <select id="filterSemester" class="form-control">
+                <option value="">All Semesters</option>
+            </select>
+            <select id="filterSubject" class="form-control">
+                <option value="">All Subjects</option>
+            </select>
+            <input type="text" id="filterAssignmentNumber" placeholder="Assignment No." class="form-control">
+            <select id="sortBy" class="form-control">
+                <option value="uploadDate_desc">Newest First</option>
+                <option value="votes_desc">Most Voted</option>
+                <option value="uploadDate_asc">Oldest First</option>
+            </select>
+            <div class="filter-buttons-container">
+                <button id="applyFiltersBtn" class="btn">Apply Filters</button>
+                <button id="resetFiltersBtn" class="btn btn-secondary">Reset</button>
+            </div>
+        </div>
+        <div id="assignmentsGrid" class="assignments-grid">
+            <!-- Loader or assignments will be injected here -->
+        </div>
+    </main>
+
+    <!-- Upload Assignment Modal -->
+    <div id="uploadModal" class="modal">
+        <div class="modal-content">
+            <h3>Upload New Assignment</h3>
+            <form id="uploadAssignmentForm">
+                <div class="form-group">
+                    <label for="assignmentTitle">Assignment Title *</label>
+                    <input type="text" id="assignmentTitle" name="assignmentTitle" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="subject">Subject *</label>
+                    <input type="text" id="subject" name="subject" class="form-control" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="semester">Semester *</label>
+                        <select id="semester" name="semester" class="form-control" required>
+                            <option value="">Select Semester</option>
+                            <option value="1">1st Semester</option>
+                            <option value="2">2nd Semester</option>
+                            <option value="3">3rd Semester</option>
+                            <option value="4">4th Semester</option>
+                            <option value="5">5th Semester</option>
+                            <option value="6">6th Semester</option>
+                            <option value="7">7th Semester</option>
+                            <option value="8">8th Semester</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="assignmentNumber">Assignment Number</label>
+                        <input type="text" id="assignmentNumber" name="assignmentNumber" class="form-control" placeholder="e.g., 1, Lab 2, Project">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="keywords">Keywords (comma-separated)</label>
+                    <input type="text" id="keywords" name="keywords" class="form-control" placeholder="e.g., programming, arrays, c++">
+                </div>
+                <div class="form-group">
+                    <label for="driveLink">Google Drive Link (View Access) *</label>
+                    <input type="url" id="driveLink" name="driveLink" class="form-control" placeholder="https://drive.google.com/..." required>
+                    <button type="button" id="getDriveLinkHelperBtn" class="btn btn-secondary">How to Get Drive Link?</button>
+                </div>
+                <p id="uploadFormError" class="error-message hidden"></p>
+                <div class="modal-buttons">
+                    <button type="button" id="closeUploadModalBtn" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn">Upload Assignment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Authentication Modal -->
+    <div id="assignmentAuthModal" class="modal">
+        <div class="modal-content">
+            <h3 id="assignmentAuthTitle">Login</h3>
+            <form id="assignmentAuthForm">
+                <div class="form-group">
+                    <label for="authEmail">Email Address *</label>
+                    <input type="email" id="authEmail" name="authEmail" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="authPassword">Password *</label>
+                    <input type="password" id="authPassword" name="authPassword" class="form-control" required>
+                </div>
+                <p id="assignmentAuthError" class="error-message hidden"></p>
+                <div class="modal-buttons">
+                    <button type="button" id="closeAssignmentAuthModalBtn" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" id="assignmentAuthSubmitBtn" class="btn">Login</button>
+                </div>
+                <p style="text-align: center; margin-top: 1.5rem; opacity: 0.8;">
+                    <a href="#" id="assignmentSwitchToSignupLink">Need an account? Sign Up</a><br>
+                    <a href="#" id="assignmentSwitchToLoginLink" class="hidden" style="margin-top: 0.5rem; display: inline-block;">Have an account? Login</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div id="uploaderProfileModal" class="modal profile-popup-modal">
+        <div class="modal-content">
+            <button class="close-profile-popup" id="closeUploaderProfileModalBtn" aria-label="Close profile">×</button>
+            <div class="profile-header">
+                <div class="profile-avatar" id="modalUploaderProfileAvatar">?</div>
+                <div class="profile-info">
+                    <h3 id="modalUploaderProfileName">Loading...</h3>
+                    <p id="modalUploaderProfileCollege">College: Loading...</p>
+                    <p id="modalUploaderProfileSemester">Semester: Loading...</p>
+                </div>
+            </div>
+            <div class="profile-bio" id="modalUploaderProfileBio">Loading bio...</div>
+            <div class="profile-details">
+                <div class="detail-item">
+                    <span class="detail-label">Email</span>
+                    <span class="detail-value" id="modalUploaderProfileEmail">Loading...</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Instagram</span>
+                    <span class="detail-value" id="modalUploaderProfileInstagram">Loading...</span>
+                </div>
+            </div>
+            <h4>Links:</h4>
+            <div class="profile-links-list" id="modalUploaderProfileLinksList">
+                <p>Loading links...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Settings Modal -->
+    <div id="notificationSettingsModal" class="modal">
+        <div class="modal-content">
+            <h3>Notification Settings</h3>
+            <form id="notificationSettingsForm">
+                <div class="form-group">
+                    <label>Receive notifications for assignments in these semesters:</label>
+                    <div id="semesterNotificationCheckboxes" class="checkbox-group">
+                        <!-- Checkboxes will be dynamically inserted here -->
+                        <label><input type="checkbox" name="notifyAllSemesters" value="all"> All Semesters</label><br>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="enablePushNotifications">Push Notifications:</label>
+                    <button type="button" id="enablePushNotificationsBtn" class="btn">Enable Push Notifications</button>
+                    <p id="pushNotificationStatus" style="font-size: 0.8rem; margin-top: 5px;">Status: Unknown</p>
+                </div>
+                <p id="notificationSettingsError" class="error-message hidden"></p>
+                <div class="modal-buttons">
+                    <button type="button" id="closeNotificationSettingsModalBtn" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn">Save Settings</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script type="module" src="assignment.js"></script>
+</body>
+</html>
