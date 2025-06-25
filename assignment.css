@@ -1,0 +1,1188 @@
+  /* Mobile-First CSS Reset */
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #e0e0e0;
+            font-size: 14px; /* Mobile base font size */
+            background-color: #0c0c0c;
+            padding-top: 60px; /* Mobile header height */
+        }
+        
+        /* Desktop font size */
+        @media (min-width: 768px) {
+            body { 
+                font-size: 16px; 
+                padding-top: 80px; 
+            }
+        }
+
+        .container {
+            width: 95%; /* More space on mobile */
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 10px; /* Reduced mobile padding */
+            position: relative;
+            z-index: 1;
+        }
+        
+        @media (min-width: 768px) {
+            .container { 
+                width: 90%; 
+                padding: 20px; 
+            }
+        }
+
+        /* Mobile-First Header */
+        header {
+            background-color: rgba(10, 10, 10, 0.95);
+            padding: 0.5rem 0; /* Compact mobile header */
+            position: fixed;
+            width: 100%;
+            top: 0; 
+            left: 0; 
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        @media (min-width: 768px) {
+            header { 
+                padding: 1.2rem 0; 
+            }
+        }
+
+        nav {
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            width: 95%; /* Match container width on mobile */
+            max-width: 1200px; 
+            margin: 0 auto;
+            padding: 0 10px; /* Mobile padding */
+        }
+        
+        @media (min-width: 768px) {
+            nav {
+                width: 90%;
+                padding: 0 20px;
+            }
+        }
+
+        .logo { 
+            font-size: 1.2rem; /* Smaller on mobile */
+            font-weight: bold; 
+            color: #fff; 
+        }
+        
+        @media (min-width: 768px) { 
+            .logo { 
+                font-size: 1.7rem; 
+            } 
+        }
+
+        /* Mobile-First Navigation */
+        .header-nav-links {
+            display: flex;
+            gap: 8px; /* Tight spacing on mobile */
+        }
+        
+        .header-nav-links a { 
+            color: #ccc; 
+            text-decoration: none; 
+            font-size: 0.75rem; /* Small mobile text */
+            transition: color 0.3s ease, text-shadow 0.3s ease; 
+            padding: 4px 6px; /* Touch-friendly padding */
+        }
+        
+        .header-nav-links a:hover { 
+            color: #fff; 
+            text-shadow: 0 0 5px rgba(255,255,255,0.7); 
+        }
+        
+        @media (min-width: 768px) {
+            .header-nav-links {
+                gap: 25px;
+            }
+            .header-nav-links a { 
+                font-size: 1rem;
+                padding: 0;
+            }
+        }
+
+        /* Mobile-First User Auth */
+        .user-auth-info { 
+            display: flex; 
+            align-items: center; 
+            color: #fff; 
+            gap: 6px; /* Mobile gap */
+        }
+        
+        .user-auth-info span { 
+            font-size: 0.7rem; /* Very small on mobile */
+            opacity: 0.8; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            max-width: 60px; /* Very constrained on mobile */
+        }
+        
+        @media (min-width: 768px) {
+            .user-auth-info {
+                gap: 15px;
+            }
+            .user-auth-info span { 
+                font-size: 0.9rem; 
+                max-width: 150px;
+            }
+        }
+
+        /* Mobile-First Buttons */
+        .btn, button[type="submit"], button[type="button"] {
+            display: inline-block; 
+            padding: 0.4rem 0.6rem; /* Compact mobile buttons */
+            text-decoration: none; 
+            border-radius: 20px; /* More rounded on mobile */
+            transition: all 0.3s ease; 
+            border: none; 
+            cursor: pointer;
+            font-size: 0.75rem; /* Small mobile text */
+            font-weight: bold; 
+            text-align: center; 
+            background-color: #fff; 
+            color: #000;
+            min-height: 32px; /* Touch-friendly height */
+        }
+        
+        @media (min-width: 768px) {
+            .btn, button[type="submit"], button[type="button"] {
+                padding: 0.7rem 1.5rem;
+                font-size: 0.95rem;
+                border-radius: 25px;
+            }
+        }
+
+        .btn:hover, button[type="submit"]:hover, button[type="button"]:hover {
+            background-color: #e0e0e0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .btn-secondary { 
+            background-color: #333; 
+            color: #fff; 
+            border: 1px solid #555; 
+        }
+        
+        .btn-secondary:hover { 
+            background-color: #444; 
+            border-color: #666;
+        }
+
+        button:disabled {
+            background-color: #555 !important;
+            color: #999 !important;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Mobile-First Typography */
+        h1, h2, h3 { 
+            color: #fff; 
+            margin-bottom: 0.75rem; /* Reduced mobile margins */
+        }
+        
+        h1 { 
+            font-size: 1.5rem; /* Smaller mobile heading */
+            margin-bottom: 1rem; 
+            text-align: center; 
+        }
+        
+        @media (min-width: 768px) {
+            h1 { 
+                font-size: 2.5rem; 
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        /* Mobile-First Filters Bar */
+        .filters-bar {
+            background-color: rgba(20, 20, 20, 0.85); 
+            padding: 0.75rem; /* Compact mobile padding */
+            border-radius: 8px; /* Less rounded on mobile */
+            margin-bottom: 1rem; 
+            display: flex; /* Stack vertically on mobile */
+            flex-direction: column;
+            gap: 0.5rem; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        @media (min-width: 768px) {
+            .filters-bar {
+                padding: 1.5rem;
+                margin-bottom: 2.5rem;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 1.25rem;
+                border-radius: 12px;
+            }
+        }
+
+        .filters-bar input[type="text"], .filters-bar select {
+            padding: 0.6rem; /* Mobile padding */
+            border-radius: 4px; /* Less rounded on mobile */
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background-color: rgba(30, 30, 30, 0.9); 
+            color: #fff; 
+            font-size: 0.8rem; /* Mobile font size */
+            transition: all 0.3s ease;
+            width: 100%; 
+            min-height: 40px; /* Touch-friendly height */
+        }
+        
+        @media (min-width: 768px) {
+            .filters-bar input[type="text"], .filters-bar select {
+                padding: 0.85rem;
+                font-size: 1rem;
+                border-radius: 6px;
+            }
+        }
+
+        .filters-bar input[type="text"]::placeholder { 
+            color: rgba(255, 255, 255, 0.5); 
+        }
+        
+        .filters-bar input[type="text"]:focus, .filters-bar select:focus {
+            outline: none; 
+            border-color: #a0cfff;
+            background-color: rgba(40, 40, 40, 0.95);
+            box-shadow: 0 0 0 3px rgba(160, 207, 255, 0.25);
+        }
+
+        .filters-bar .filter-buttons-container { 
+            display: flex; 
+            gap: 0.5rem; 
+            margin-top: 0.5rem; 
+            justify-content: stretch; /* Full width buttons on mobile */
+            flex-wrap: wrap; 
+        }
+        
+        .filters-bar .filter-buttons-container .btn {
+            flex: 1; /* Equal width buttons on mobile */
+            min-width: 0; /* Allow shrinking */
+        }
+        
+        @media (min-width: 768px) {
+            .filters-bar .filter-buttons-container {
+                grid-column: 1 / -1; 
+                margin-top: 1rem;
+                gap: 1rem;
+                justify-content: flex-start;
+            }
+            .filters-bar .filter-buttons-container .btn {
+                flex: none;
+            }
+        }
+
+        #applyFiltersBtn::before { content: "\1F50D "; }
+        #resetFiltersBtn::before { content: "\21BA "; }
+
+        /* UPDATED: Specific Grid Layout - 2 columns mobile, 4 columns desktop */
+        .assignments-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* Exactly 2 columns on mobile */
+            gap: 0.75rem; 
+        }
+        
+        /* 4 columns for PC/Laptop (768px and above) */
+        @media (min-width: 768px) { 
+            .assignments-grid {
+                grid-template-columns: repeat(4, 1fr); /* Exactly 4 columns on PC/Laptop */
+                gap: 1.5rem; 
+            }
+        }
+        
+        /* For very large screens, maintain 4 columns but with larger gaps */
+        @media (min-width: 1200px) {
+            .assignments-grid {
+                gap: 2rem; 
+            }
+        }
+
+        /* Mobile-First Assignment Cards */
+        .assignment-card {
+            background-color: rgba(22, 22, 22, 0.9); 
+            padding: 0.75rem; /* Compact mobile padding */
+            border-radius: 8px; /* Less rounded on mobile */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            min-height: 280px; /* Ensure consistent card heights on mobile */
+        }
+        
+        @media (min-width: 768px) {
+            .assignment-card {
+                padding: 1.2rem; /* Adjusted for 4-column layout */
+                border-radius: 12px;
+                min-height: 320px; /* Consistent height for 4-column layout */
+            }
+        }
+
+        .assignment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.4);
+        }
+
+        .assignment-card h3 {
+            font-size: 0.85rem; /* Smaller for 2-column mobile layout */
+            margin-bottom: 0.5rem;
+            color: #a0cfff;
+            word-break: break-word;
+            line-height: 1.3;
+        }
+        
+        @media (min-width: 768px) {
+            .assignment-card h3 {
+                font-size: 1.1rem; /* Adjusted for 4-column layout */
+                margin-bottom: 0.75rem;
+            }
+        }
+
+        .assignment-card p {
+            margin: 0.2rem 0; /* Tighter spacing for mobile */
+            font-size: 0.7rem; /* Smaller text for 2-column layout */
+            opacity: 0.85;
+            word-break: break-word;
+            line-height: 1.4;
+        }
+        
+        @media (min-width: 768px) {
+            .assignment-card p {
+                font-size: 0.85rem; /* Adjusted for 4-column layout */
+                margin: 0.3rem 0;
+            }
+        }
+
+        .assignment-card p strong { 
+            opacity: 1; 
+            font-weight: 600; 
+            color: #f0f0f0;
+        }
+
+        .assignment-card .keywords { 
+            margin-top: 0.5rem; 
+        }
+        
+        .assignment-card .keywords span {
+            background-color: rgba(255, 255, 255, 0.1); 
+            padding: 0.15rem 0.3rem; /* Very compact for mobile */
+            border-radius: 8px;
+            font-size: 0.6rem; /* Very small for 2-column layout */
+            margin-right: 0.2rem; 
+            display: inline-block; 
+            margin-bottom: 0.2rem;
+            border: 1px solid rgba(255,255,255,0.15);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        @media (min-width: 768px) {
+            .assignment-card .keywords { 
+                margin-top: 0.7rem; 
+            }
+            .assignment-card .keywords span {
+                padding: 0.25rem 0.5rem; /* Adjusted for 4-column layout */
+                font-size: 0.7rem;
+                margin-right: 0.3rem; 
+                margin-bottom: 0.3rem;
+            }
+        }
+
+        .assignment-card .uploader-name-link {
+            color: #82c0ff; 
+            text-decoration: none; 
+            font-weight: bold;
+            cursor: pointer; 
+            transition: color 0.2s, text-decoration 0.2s;
+        }
+        
+        .assignment-card .uploader-name-link:hover { 
+            color: #baddff; 
+            text-decoration: underline; 
+        }
+
+        /* Mobile-First Card Footer */
+        .card-footer {
+            display: flex;
+            flex-direction: column; /* Stack on mobile */
+            align-items: stretch; /* Full width elements */
+            gap: 0.4rem; /* Tighter gap for mobile */
+            margin-top: 0.6rem;
+            padding-top: 0.4rem; 
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        @media (min-width: 768px) { 
+            .card-footer {
+                flex-direction: column; /* Keep stacked for 4-column layout */
+                align-items: stretch;
+                gap: 0.6rem; 
+                padding-top: 0.6rem; 
+            }
+        }
+
+        .assignment-card .view-button { 
+            padding: 0.4rem 0.8rem; /* Compact mobile button */
+            font-size: 0.75rem; /* Small mobile text */
+            width: 100%; /* Full width */
+            text-align: center;
+            order: 2; /* Place below vote section */
+        }
+        
+        @media (min-width: 768px) {
+            .assignment-card .view-button {
+                padding: 0.5rem 1rem; /* Adjusted for 4-column layout */
+                font-size: 0.8rem;
+                order: 2; /* Keep below vote section for 4-column layout */
+            }
+        }
+
+        .assignment-card .view-button::after { 
+            content: " \00BB"; 
+        }
+
+        .vote-section {
+            display: flex;
+            align-items: center;
+            justify-content: center; 
+            gap: 0.4rem; /* Compact gap */
+            order: 1; /* Place above button */
+        }
+
+        .vote-btn {
+            background: none; 
+            border: 1px solid #555; 
+            color: #ccc;
+            padding: 0.3rem 0.5rem; /* Compact mobile button */
+            font-size: 0.8rem; 
+            border-radius: 14px; 
+            cursor: pointer; 
+            line-height: 1;
+            transition: all 0.2s ease; 
+            font-weight: bold;
+            min-width: 30px; /* Smaller touch target for mobile */
+            min-height: 28px;
+        }
+        
+        @media (min-width: 768px) {
+            .vote-btn {
+                padding: 0.4rem 0.6rem; 
+                font-size: 0.85rem;
+                border-radius: 16px;
+                min-width: 32px;
+                min-height: 30px;
+            }
+        }
+
+        .vote-btn:hover {
+            background-color: rgba(255,255,255,0.1); 
+            color: #fff;
+            border-color: #777; 
+            transform: scale(1.05);
+        }
+
+        .vote-btn.voted {
+            background-color: #a0cfff; 
+            color: #0c0c0c; 
+            border-color: #a0cfff;
+        }
+
+        .vote-btn.voted:hover { 
+            background-color: #82c0ff; 
+        }
+
+        .vote-count {
+            font-size: 0.8rem; /* Mobile count size */
+            font-weight: bold; 
+            color: #e0e0e0; 
+            min-width: 1.5ch; 
+            text-align: center;
+        }
+        
+        @media (min-width: 768px) {
+            .vote-count {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Mobile-First Action Bar */
+        .action-bar { 
+            text-align: center; /* Center on mobile */
+            margin-bottom: 1rem; 
+        }
+        
+        @media (min-width: 768px) {
+            .action-bar { 
+                text-align: right; 
+                margin-bottom: 2rem; 
+            }
+        }
+
+        .action-bar .btn { 
+            padding: 0.6rem 1.2rem; 
+            font-size: 0.85rem; 
+            width: 100%; /* Full width on mobile */
+            max-width: 300px; /* Constrain max width */
+        }
+        
+        @media (min-width: 768px) {
+            .action-bar .btn { 
+                padding: 0.8rem 1.8rem; 
+                font-size: 1rem;
+                width: auto;
+            }
+        }
+
+        #showUploadFormBtn::before { 
+            content: "\2795 "; 
+        }
+
+        /* Mobile-First Modals */
+        .modal {
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85); 
+            z-index: 2000;
+            align-items: flex-start; /* Start from top on mobile */
+            justify-content: center; 
+            opacity: 0; 
+            transition: opacity 0.3s ease;
+            padding: 1rem; 
+            overflow-y: auto; /* Allow scrolling on mobile */
+        }
+        
+        @media (min-width: 768px) {
+            .modal {
+                align-items: center;
+            }
+        }
+
+        .modal.active { 
+            display: flex; 
+            opacity: 1; 
+        }
+
+        .modal-content {
+            background-color: #1a1a1a; 
+            border-radius: 8px; /* Less rounded on mobile */
+            width: 100%; 
+            max-width: 500px; /* Smaller max width for mobile */
+            max-height: 90vh; 
+            overflow-y: auto;
+            padding: 1rem; /* Compact mobile padding */
+            position: relative; 
+            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-top: 2rem; /* Space from top on mobile */
+        }
+        
+        @media (min-width: 600px) {
+            .modal-content {
+                max-width: 650px;
+                padding: 2rem 2.5rem;
+                border-radius: 12px;
+                margin-top: 0;
+            }
+        }
+
+        #uploadModal .modal-content h3 {
+            margin-bottom: 1rem; /* Reduced mobile margin */
+            font-size: 1.3rem; /* Smaller mobile heading */
+            text-align: center; 
+            color: #a0cfff; 
+            padding-bottom: 0.5rem; 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        @media (min-width: 768px) {
+            #uploadModal .modal-content h3 {
+                margin-bottom: 2rem; 
+                font-size: 1.7rem; 
+                padding-bottom: 1rem;
+            }
+        }
+
+        .modal-content h3 { 
+            margin-bottom: 1rem; 
+            font-size: 1.2rem; 
+            text-align: center;
+        }
+        
+        @media (min-width: 768px) {
+            .modal-content h3 { 
+                margin-bottom: 1.8rem; 
+                font-size: 1.6rem;
+            }
+        }
+
+        /* Mobile-First Form Elements */
+        .form-group { 
+            margin-bottom: 0.75rem; /* Compact mobile spacing */
+            position: relative; 
+        }
+        
+        @media (min-width: 768px) {
+            .form-group { 
+                margin-bottom: 1.25rem; 
+            }
+        }
+
+        .form-group label { 
+            display: block; 
+            margin-bottom: 0.3rem; /* Reduced mobile margin */
+            font-size: 0.85rem; /* Smaller mobile labels */
+            font-weight: 600; 
+            opacity: 0.85; 
+        }
+        
+        @media (min-width: 768px) {
+            .form-group label { 
+                margin-bottom: 0.5rem; 
+                font-size: 0.95rem; 
+            }
+        }
+
+        .form-control {
+            width: 100%; 
+            padding: 0.6rem; /* Mobile padding */
+            border-radius: 4px; /* Less rounded on mobile */
+            border: 1px solid rgba(255, 255, 255, 0.2); 
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #fff; 
+            font-size: 0.85rem; /* Mobile font size */
+            transition: all 0.3s ease; 
+            min-height: 40px; /* Touch-friendly height */
+        }
+        
+        @media (min-width: 768px) {
+            .form-control { 
+                padding: 0.85rem; 
+                font-size: 1rem;
+                border-radius: 6px;
+            }
+        }
+
+        .form-control:focus {
+            outline: none; 
+            border-color: #a0cfff;
+            background-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 3px rgba(160, 207, 255, 0.25);
+        }
+
+        /* Mobile-First Form Rows */
+        .form-row {
+            display: flex; /* Stack on mobile */
+            flex-direction: column;
+            gap: 0; 
+            margin-bottom: 0; 
+        }
+        
+        .form-row .form-group {
+            margin-bottom: 0.75rem; 
+        }
+
+        @media (min-width: 550px) { 
+            .form-row {
+                flex-direction: row;
+                gap: 1rem; 
+                margin-bottom: 1.25rem; 
+            }
+            .form-row .form-group {
+                margin-bottom: 0; 
+                flex: 1;
+            }
+        }
+
+        #getDriveLinkHelperBtn {
+            margin-top: 0.5rem; 
+            padding: 0.4rem 0.6rem; 
+            font-size: 0.7rem; /* Small mobile helper button */
+            background-color: #4a4a4a; 
+            color: #fff; 
+            border: 1px solid #666;
+            width: 100%; /* Full width on mobile */
+        }
+        
+        @media (min-width: 768px) {
+            #getDriveLinkHelperBtn { 
+                margin-top: 0.75rem; 
+                padding: 0.6rem 1rem; 
+                font-size: 0.8rem;
+                width: auto;
+            }
+        }
+
+        #getDriveLinkHelperBtn:hover { 
+            background-color: #5a5a5a; 
+            border-color: #777; 
+        }
+
+        /* Mobile-First Modal Buttons */
+        .modal-buttons { 
+            display: flex; 
+            flex-direction: column; /* Stack on mobile */
+            gap: 0.5rem; 
+            margin-top: 1.5rem;
+        }
+        
+        .modal-buttons .btn {
+            width: 100%; /* Full width buttons on mobile */
+        }
+        
+        @media (min-width: 768px) {
+            .modal-buttons { 
+                flex-direction: row;
+                justify-content: flex-end;
+                gap: 1rem; 
+                margin-top: 2.5rem;
+            }
+            .modal-buttons .btn {
+                width: auto;
+            }
+        }
+
+        .error-message { 
+            color: #ff6b6b; 
+            font-size: 0.8rem; /* Mobile error text */
+            margin-top: 0.5rem; 
+            text-align: left; 
+        }
+        
+        @media (min-width: 768px) {
+            .error-message { 
+                font-size: 0.9rem; 
+                margin-top: 0.75rem;
+            }
+        }
+
+        .hidden { 
+            display: none !important; 
+        }
+
+        /* Mobile-First No Assignments Message */
+        .no-assignments-message { 
+            text-align: center; 
+            padding: 1.5rem 1rem; /* Compact mobile padding */
+            opacity: 0.7; 
+            font-size: 0.9rem; /* Mobile font size */
+            color: #aaa; 
+            border: 2px dashed rgba(255,255,255,0.15);
+            border-radius: 8px;
+            margin: 1rem auto; 
+            grid-column: 1 / -1; 
+        }
+        
+        @media (min-width: 768px) {
+            .no-assignments-message { 
+                padding: 4rem 2rem; 
+                font-size: 1.25rem; 
+                margin: 2rem auto;
+                border-radius: 10px;
+            }
+        }
+
+        .no-assignments-message::before {
+            content: "\1F4C1"; 
+            font-size: 1.5rem; /* Smaller mobile icon */
+            display: block; 
+            margin-bottom: 0.5rem; 
+            opacity: 0.5; 
+        }
+        
+        @media (min-width: 768px) {
+            .no-assignments-message::before { 
+                font-size: 2.5rem; 
+                margin-bottom: 1rem; 
+            }
+        }
+
+        /* Mobile-First Profile Modal */
+        .profile-popup-modal .modal-content { 
+            max-width: 500px; /* Smaller on mobile */
+        }
+        
+        @media (min-width: 768px) {
+            .profile-popup-modal .modal-content {
+                max-width: 750px;
+            }
+        }
+
+        .profile-popup-modal .close-profile-popup {
+            position: absolute; 
+            top: 0.5rem; 
+            right: 0.5rem; 
+            font-size: 1.5rem; /* Smaller mobile close button */
+            background: none; 
+            border: none; 
+            color: #bbb; 
+            cursor: pointer;
+            transition: color 0.2s, transform 0.2s; 
+            padding: 8px; /* Touch-friendly padding */
+            line-height: 1;
+            min-width: 40px;
+            min-height: 40px;
+        }
+        
+        @media (min-width: 768px) {
+            .profile-popup-modal .close-profile-popup { 
+                top: 1.2rem; 
+                right: 1.2rem; 
+                font-size: 2rem; 
+            }
+        }
+
+        .profile-popup-modal .close-profile-popup:hover { 
+            color: #fff; 
+            transform: rotate(90deg) scale(1.1); 
+        }
+
+        .profile-popup-modal .profile-header { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            margin-bottom: 1rem; /* Reduced mobile margin */
+            gap: 0.75rem; 
+            text-align: center;
+        }
+        
+        @media (min-width: 600px) { 
+            .profile-popup-modal .profile-header { 
+                flex-direction: row; 
+                align-items: center; 
+                margin-bottom: 2.5rem; 
+                gap: 1.5rem; 
+                text-align: left;
+            }
+        }
+
+        .profile-popup-modal .profile-avatar {
+            width: 70px; 
+            height: 70px; /* Smaller mobile avatar */
+            border-radius: 50%; 
+            background-color: rgba(255, 255, 255, 0.07); 
+            display: flex; 
+            align-items: center;
+            justify-content: center; 
+            font-size: 2rem; /* Smaller mobile avatar text */
+            border: 2px solid #a0cfff; 
+            color: #a0cfff; 
+            font-weight: bold; 
+            flex-shrink: 0;
+        }
+        
+        @media (min-width: 600px) {
+            .profile-popup-modal .profile-avatar { 
+                width: 110px; 
+                height: 110px; 
+                font-size: 3rem; 
+                border: 3px solid #a0cfff;
+            }
+        }
+
+        .profile-popup-modal .profile-info h3 { 
+            font-size: 1.2rem; /* Smaller mobile heading */
+            margin-bottom: 0.25rem; 
+            color: #fff; 
+        }
+        
+        @media (min-width: 600px) {
+            .profile-popup-modal .profile-info h3 { 
+                font-size: 2rem; 
+                margin-bottom: 0.5rem; 
+            }
+        }
+
+        .profile-popup-modal .profile-info p { 
+            opacity: 0.7; 
+            margin-bottom: 0.15rem; 
+            font-size: 0.8rem; /* Smaller mobile text */
+        }
+        
+        @media (min-width: 600px) {
+            .profile-popup-modal .profile-info p { 
+                margin-bottom: 0.4rem; 
+                font-size: 1rem; 
+            }
+        }
+
+        .profile-popup-modal .profile-bio {
+            margin-bottom: 1rem; /* Reduced mobile margin */
+            padding-bottom: 0.75rem; 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            opacity: 0.9; 
+            word-break: break-word; 
+            line-height: 1.5; 
+            font-size: 0.85rem; /* Mobile bio text */
+        }
+        
+        @media (min-width: 768px) {
+            .profile-popup-modal .profile-bio { 
+                margin-bottom: 2rem; 
+                padding-bottom: 1.5rem; 
+                line-height: 1.7; 
+                font-size: 1.05rem; 
+            }
+        }
+
+        .profile-popup-modal .profile-details {
+            display: grid; 
+            grid-template-columns: 1fr; /* Single column on mobile */
+            gap: 0.75rem; 
+            margin-bottom: 1rem; 
+        }
+        
+        @media (min-width: 768px) {
+            .profile-popup-modal .profile-details { 
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+                gap: 1.8rem; 
+                margin-bottom: 2.5rem; 
+            }
+        }
+
+        .profile-popup-modal .detail-item { 
+            display: flex; 
+            flex-direction: column;
+            background-color: rgba(255,255,255,0.03); 
+            padding: 0.6rem; /* Compact mobile padding */
+            border-radius: 6px; 
+            border: 1px solid rgba(255,255,255,0.07);
+        }
+        
+        @media (min-width: 768px) {
+            .profile-popup-modal .detail-item { 
+                padding: 1rem; 
+                border-radius: 8px;
+            }
+        }
+
+        .profile-popup-modal .detail-label { 
+            font-size: 0.7rem; /* Small mobile labels */
+            color: #bbb; 
+            margin-bottom: 0.2rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+        }
+        
+        @media (min-width: 768px) {
+            .profile-popup-modal .detail-label { 
+                font-size: 0.9rem; 
+                margin-bottom: 0.35rem; 
+            }
+        }
+
+        .profile-popup-modal .detail-value { 
+            font-size: 0.8rem; /* Mobile value text */
+            word-break: break-all; 
+            color: #e0e0e0;
+        }
+        
+        @media (min-width: 768px) {
+            .profile-popup-modal .detail-value { 
+                font-size: 1rem; 
+            }
+        }
+
+        .profile-popup-modal .detail-value a { 
+            color: #82c0ff; 
+            text-decoration: none;
+        }
+        
+        .profile-popup-modal .detail-value a:hover { 
+            text-decoration: underline; 
+            color: #baddff;
+        }
+
+        .profile-popup-modal h4 { 
+            margin-top: 1rem; /* Reduced mobile margin */
+            margin-bottom: 0.5rem; 
+            font-size: 1rem; /* Smaller mobile heading */
+            border-bottom: 1px solid rgba(255,255,255,0.1); 
+            padding-bottom: 0.3rem;
+        }
+        
+        @media (min-width: 768px) {
+            .profile-popup-modal h4 { 
+                margin-top: 2rem; 
+                margin-bottom: 1rem; 
+                font-size: 1.3rem; 
+                padding-bottom: 0.5rem;
+            }
+        }
+
+        .profile-popup-modal .profile-links-list { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 0.5rem; /* Compact mobile gap */
+            margin-top: 0.5rem; 
+        }
+        
+        @media (min-width: 768px) {
+            .profile-popup-modal .profile-links-list { 
+                gap: 1rem; 
+            }
+        }
+
+        .profile-popup-modal .profile-link-item {
+            display: inline-block; 
+            padding: 0.4rem 0.8rem; /* Compact mobile padding */
+            background-color: rgba(255, 255, 255, 0.08); 
+            border-radius: 4px; 
+            text-decoration: none; 
+            color: #ccc; 
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.1); 
+            font-size: 0.75rem; /* Small mobile text */
+        }
+        
+        @media (min-width: 768px) {
+            .profile-popup-modal .profile-link-item { 
+                padding: 0.6rem 1.2rem; 
+                font-size: 0.85rem;
+                border-radius: 6px;
+            }
+        }
+
+        .profile-popup-modal .profile-link-item:hover { 
+            background-color: rgba(255, 255, 255, 0.15); 
+            color: #fff; 
+            transform: translateY(-1px); 
+        }
+
+        #assignmentAuthForm p a { 
+            color: #82c0ff; 
+            text-decoration: none; 
+        }
+        
+        #assignmentAuthForm p a:hover { 
+            color: #baddff; 
+            text-decoration: underline; 
+        }
+        
+        #assignmentAuthForm p { 
+            font-size: 0.8rem; /* Mobile auth text */
+        }
+        
+        @media (min-width: 768px) {
+            #assignmentAuthForm p { 
+                font-size: 0.9rem; 
+            }
+        }
+
+        /* Mobile-First Loader */
+        .loader-container {
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            padding: 2rem 0; /* Reduced mobile padding */
+            grid-column: 1 / -1; 
+        }
+        
+        @media (min-width: 768px) {
+            .loader-container { 
+                padding: 4rem 0; 
+            }
+        }
+
+        .loader {
+            border: 4px solid rgba(255, 255, 255, 0.2); /* Thinner mobile border */
+            border-top: 4px solid #a0cfff; 
+            border-radius: 50%;
+            width: 40px; 
+            height: 40px; /* Smaller mobile loader */
+            animation: spin 1s linear infinite;
+        }
+        
+        @media (min-width: 768px) {
+            .loader { 
+                border-width: 6px; 
+                width: 60px; 
+                height: 60px; 
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+            .assignment-card:hover {
+                transform: none; /* Disable hover effects on touch devices */
+            }
+            .btn:hover, button:hover {
+                transform: none;
+            }
+        }
+
+        /* Accessibility improvements */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .assignment-card {
+                border: 2px solid #fff;
+            }
+            .btn {
+                border: 2px solid #000;
+            }
+        }
+        /* ... (all your existing CSS) ... */
+
+/* Notification Settings Button in Header */
+#notificationSettingsBtn {
+    padding: 0.4rem 0.6rem; /* Match other small buttons */
+    font-size: 1rem; /* Adjust for icon size */
+    margin-left: 5px; /* Spacing */
+}
+@media (min-width: 768px) {
+    #notificationSettingsBtn {
+        padding: 0.5rem 0.8rem;
+        font-size: 1.2rem;
+    }
+}
+
+/* Notification Settings Modal */
+#notificationSettingsModal .modal-content {
+    max-width: 550px;
+}
+
+#notificationSettingsModal .checkbox-group label {
+    display: inline-block; /* Or block for vertical list */
+    margin-right: 15px;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+#notificationSettingsModal .checkbox-group input[type="checkbox"] {
+    margin-right: 5px;
+    vertical-align: middle;
+}
