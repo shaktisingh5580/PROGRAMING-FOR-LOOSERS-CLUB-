@@ -1,0 +1,21 @@
+{
+    "name": "PFL Assignments Hub",
+    "short_name": "PFL Hub",
+    "start_url": "/PROGRAMING-FOR-LOOSERS-CLUB-/assignment.html",
+    "display": "standalone",
+    "background_color": "#0c0c0c",
+    "theme_color": "#0c0c0c",
+    "icons": [
+        {
+            "src": "/PROGRAMING-FOR-LOOSERS-CLUB-/HummingBird (1).png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/PROGRAMING-FOR-LOOSERS-CLUB-/HummingBird (1).png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "scope": "/PROGRAMING-FOR-LOOSERS-CLUB-/"
+}
