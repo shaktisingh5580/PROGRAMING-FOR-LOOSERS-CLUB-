@@ -40,7 +40,7 @@ exports.handler = async (event, context) => {
     return { statusCode: 401, body: 'Unauthorized' };
   }
 
-  // 3. The main notification logic (copied from our old function)
+  // 3. The main notification logic
   const { assignmentTitle, subject, semester } = assignment;
 
   if (!semester || !assignmentTitle) {
@@ -60,10 +60,33 @@ exports.handler = async (event, context) => {
   const tokensArray = Array.from(tokens);
 
   if (tokensArray.length > 0) {
-    const payload = { /* ... (notification payload) ... */ };
+    // Define the notification payload
+    const payload = {
+      notification: {
+        title: `New Assignment: ${subject || 'General'}`,
+        body: assignmentTitle
+      },
+      data: {
+        // You can add custom data here to handle clicks in your app
+        screen: 'Assignments',
+        semester: semester.toString()
+      }
+    };
+    
+    // Create the message object for sendMulticast
+    const message = {
+      ...payload,
+      tokens: tokensArray,
+    };
+
     try {
-      await admin.messaging().sendToDevice(tokensArray, payload);
-      console.log(`Sent notifications to ${tokensArray.length} users.`);
+      // ** FIX: Use sendMulticast instead of sendToDevice **
+      const response = await admin.messaging().sendMulticast(message);
+      console.log(`Successfully sent message to ${response.successCount} users.`);
+      if (response.failureCount > 0) {
+        // You can add more detailed logging here for failed tokens if needed
+        console.log(`Failed to send to ${response.failureCount} users.`);
+      }
     } catch (error) {
       console.error("Error sending message:", error);
     }
@@ -72,6 +95,6 @@ exports.handler = async (event, context) => {
   // 4. Return a success response
   return {
     statusCode: 200,
-    body: JSON.stringify({ message: `Processed notifications for semester ${semester}.` })
+    body: JSON.stringify({ message: `Processed notifications for ${tokensArray.length} potential recipients for semester ${semester}.` })
   };
-};
+};g
