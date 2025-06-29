@@ -149,7 +149,6 @@ async function requestNotificationPermission() {
         if (permission === 'granted') {
             console.log('Notification permission granted.');
             pushNotificationStatusEl.textContent = 'Status: Granted. Fetching token...';
-            // VAPID Key provided by you
             const currentToken = await getToken(messaging, { vapidKey: 'BCZbrYYJ_xUYnUyq0fRtJx-VWmtMDUirXrrzqnX-nRvcDnIFlYkCEcvElKFP2_PkZAmO6j5ExR8KRJZu6Aj7X_s' });
             if (currentToken) {
                 console.log('FCM Token:', currentToken);
@@ -250,7 +249,6 @@ async function saveNotificationSettings(event) {
 
     if (Notification.permission === 'granted') {
         try {
-            // VAPID Key provided by you
             const currentToken = await getToken(messaging, { vapidKey: 'BCZbrYYJ_xUYnUyq0fRtJx-VWmtMDUirXrrzqnX-nRvcDnIFlYkCEcvElKFP2_PkZAmO6j5ExR8KRJZu6Aj7X_s' });
             if (currentToken) {
                 prefData.fcmToken = currentToken;
@@ -310,13 +308,12 @@ enablePushNotificationsBtnEl.addEventListener('click', async () => {
 
 notificationSettingsFormEl.addEventListener('submit', saveNotificationSettings);
 
-// Handle incoming messages when the app is in the foreground
 onMessage(messaging, (payload) => {
     console.log('Message received in foreground. ', payload);
     const notificationTitle = payload.notification.title;
     const notificationOptions = {
         body: payload.notification.body,
-        icon: payload.notification.icon || '/PROGRAMING-FOR-LOOSERS-CLUB-/HummingBird (1).png' // Adjusted for GitHub Pages
+        icon: payload.notification.icon || '/PROGRAMING-FOR-LOOSERS-CLUB-/HummingBird (1).png'
     };
     new Notification(notificationTitle, notificationOptions);
 });
@@ -345,6 +342,7 @@ function getUniqueValues(key) {
     });
     return Array.from(unique).sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
 }
+
 function populateFilterDropdown(selectElement, items, defaultOptionText) {
     if (!selectElement) return;
     const currentValue = selectElement.value;
@@ -355,6 +353,7 @@ function populateFilterDropdown(selectElement, items, defaultOptionText) {
     });
     if (items.includes(currentValue)) selectElement.value = currentValue;
 }
+
 function populateAllFilters() {
     populateFilterDropdown(filterSemesterSelectEl, getUniqueValues('semester'), 'All Semesters');
     populateFilterDropdown(filterSubjectSelectEl, getUniqueValues('subject'), 'All Subjects');
@@ -496,43 +495,98 @@ function showUploadModal() {
     document.body.style.overflow = 'hidden';
     if (uploadAssignmentFormEl.assignmentTitle) uploadAssignmentFormEl.assignmentTitle.focus();
 }
+
 closeUploadModalBtnEl.addEventListener('click', () => {
     uploadModalEl.classList.remove('active'); document.body.style.overflow = '';
 });
+
 uploadModalEl.addEventListener('click', (event) => {
     if (event.target === uploadModalEl) {
         uploadModalEl.classList.remove('active'); document.body.style.overflow = '';
     }
 });
 
+// --- UPDATED FUNCTION to trigger Netlify ---
 async function handleFormSubmit(event) {
-    event.preventDefault(); clearError(uploadFormErrorEl);
+    event.preventDefault();
+    clearError(uploadFormErrorEl);
     const user = auth.currentUser;
-    if (!user) { showError(uploadFormErrorEl, "You must be logged in to upload."); return; }
+    if (!user) {
+        showError(uploadFormErrorEl, "You must be logged in to upload.");
+        return;
+    }
     const submitButton = uploadAssignmentFormEl.querySelector('button[type="submit"]');
     if (!submitButton) return;
+
     const originalButtonText = submitButton.textContent;
-    submitButton.disabled = true; submitButton.textContent = 'Submitting...';
-    const newAssignment = {
-        uploaderId: user.uid, uploaderEmail: user.email,
+    submitButton.disabled = true;
+    submitButton.textContent = 'Submitting...';
+
+    // This object has the serverTimestamp for saving to Firestore
+    const newAssignmentForDb = {
+        uploaderId: user.uid,
+        uploaderEmail: user.email,
         assignmentTitle: uploadAssignmentFormEl.assignmentTitle.value.trim(),
         subject: uploadAssignmentFormEl.subject.value.trim(),
         semester: uploadAssignmentFormEl.semester.value,
         assignmentNumber: uploadAssignmentFormEl.assignmentNumber.value.trim(),
         keywords: uploadAssignmentFormEl.keywords.value ? uploadAssignmentFormEl.keywords.value.split(',').map(k => k.trim().toLowerCase()).filter(k => k) : [],
         driveLink: uploadAssignmentFormEl.driveLink.value.trim(),
-        uploadDate: serverTimestamp(), votes: 0, votedBy: []
+        uploadDate: serverTimestamp(), // For Firestore
+        votes: 0,
+        votedBy: []
     };
+
+    // This is a plain version of the object to send to our function
+    const newAssignmentForFunction = {
+        assignmentTitle: newAssignmentForDb.assignmentTitle,
+        subject: newAssignmentForDb.subject,
+        semester: newAssignmentForDb.semester
+    };
+
     try {
-        await addDoc(collection(db, "assignments"), newAssignment);
-        uploadModalEl.classList.remove('active'); document.body.style.overflow = '';
+        // 1. Save the assignment to the database
+        await addDoc(collection(db, "assignments"), newAssignmentForDb);
+
+        // 2. Close the modal and give user feedback
+        uploadModalEl.classList.remove('active');
+        document.body.style.overflow = '';
         alert('Assignment uploaded successfully!');
+
+        // 3. Trigger the Netlify notification function in the background
+        const netlifyFunctionUrl = 'https://programmingforlosers.netlify.app/.netlify/functions/sendNotification';
+        
+        // IMPORTANT: Replace this with your own strong, random secret key.
+        // It must be the SAME key you set in the Netlify dashboard.
+        const mySecret = 'replace-this-with-your-own-strong-secret-key'; 
+
+        // We don't need to wait for this to finish (no 'await')
+        fetch(netlifyFunctionUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                assignment: newAssignmentForFunction,
+                secret: mySecret
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                console.error('Notification function responded with an error.', response.status);
+            } else {
+                console.log('Notification function triggered successfully.');
+            }
+        })
+        .catch(err => console.error('Error triggering notification function:', err));
+
+        // 4. Refresh the assignments list on the page
         fetchAssignments();
+
     } catch (error) {
         console.error("Error adding assignment: ", error);
         showError(uploadFormErrorEl, `Upload Error: ${error.message}`);
     } finally {
-        submitButton.disabled = false; submitButton.textContent = originalButtonText;
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonText;
     }
 }
 
