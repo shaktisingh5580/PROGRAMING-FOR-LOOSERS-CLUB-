@@ -1,0 +1,11 @@
+# This is the main build configuration for your site
+[build]
+  # This explicitly tells Netlify where your serverless functions are located.
+  functions = "netlify/functions"
+
+# This section sets up a redirect rule that makes function calls a bit cleaner,
+# though your current URL format is also correct. This is good practice.
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
