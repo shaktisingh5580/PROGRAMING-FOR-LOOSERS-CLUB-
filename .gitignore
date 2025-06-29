@@ -67,3 +67,5 @@ node_modules/
 
 # dataconnect generated files
 .dataconnect
+node_modules
+```    You can also add other things you want to ignore, like the `firebase-debug.log` files. A good `.gitignore` would be:
