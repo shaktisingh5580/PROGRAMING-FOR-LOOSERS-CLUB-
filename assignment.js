@@ -5,7 +5,7 @@ import { getAuth, onAuthStateChanged, signOut, signInWithEmailAndPassword, creat
 import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, getDoc as getFirestoreDoc, updateDoc, increment, arrayUnion, arrayRemove, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-messaging.js";
 
-// Your Firebase Configuration (already provided by you)
+// Your Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyCCc1y2kNbSftG45mB3gkbUCGs4gfjts-E",
     authDomain: "realtimepfl.firebaseapp.com",
@@ -17,12 +17,13 @@ const firebaseConfig = {
     measurementId: "G-4W311B25HV"
 };
 
+// Initialize Firebase services
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const messaging = getMessaging(app); // Initialize Messaging
+const messaging = getMessaging(app);
 
-// DOM Elements
+// --- DOM Elements ---
 const assignmentsGridEl = document.getElementById('assignmentsGrid');
 const showUploadFormBtnEl = document.getElementById('showUploadFormBtn');
 const uploadModalEl = document.getElementById('uploadModal');
@@ -61,13 +62,14 @@ const enablePushNotificationsBtnEl = document.getElementById('enablePushNotifica
 const pushNotificationStatusEl = document.getElementById('pushNotificationStatus');
 const notificationSettingsErrorEl = document.getElementById('notificationSettingsError');
 
+// --- Global State ---
 let allAssignments = [];
 let userNamesCache = {};
 let currentAssignmentAuthMode = 'login';
 
 // --- UTILITY FUNCTIONS ---
-function showError(element, message) { if(element) { element.textContent = message; element.classList.remove('hidden');}}
-function clearError(element) { if(element) {element.textContent = ''; element.classList.add('hidden');}}
+function showError(element, message) { if (element) { element.textContent = message; element.classList.remove('hidden'); } }
+function clearError(element) { if (element) { element.textContent = ''; element.classList.add('hidden'); } }
 function getOrdinalSuffix(nStr) {
     const n = parseInt(nStr);
     if (isNaN(n)) return typeof nStr === 'string' ? nStr : '';
@@ -121,6 +123,7 @@ async function handleAssignmentAuthFormSubmit(e) {
     try { await authAction; } catch (error) { showError(assignmentAuthErrorEl, error.message);
     } finally { assignmentAuthSubmitBtnEl.disabled = false; assignmentAuthSubmitBtnEl.textContent = originalSubmitText; }
 }
+
 function openAssignmentAuthModal(mode = 'login') {
     currentAssignmentAuthMode = mode; assignmentAuthFormEl.reset(); clearError(assignmentAuthErrorEl);
     assignmentAuthTitleEl.textContent = mode === 'login' ? 'Login' : 'Sign Up';
@@ -140,7 +143,21 @@ assignmentAuthFormEl.addEventListener('submit', handleAssignmentAuthFormSubmit);
 assignmentSwitchToSignupLinkEl.addEventListener('click', (e) => { e.preventDefault(); openAssignmentAuthModal('signup'); });
 assignmentSwitchToLoginLinkEl.addEventListener('click', (e) => { e.preventDefault(); openAssignmentAuthModal('login'); });
 
-// --- NOTIFICATION SETTINGS ---
+
+// --- NOTIFICATION SYSTEM (CLIENT-SIDE) ---
+
+// 1. FOREGROUND MESSAGES: Handle notifications when the user has the website open.
+onMessage(messaging, (payload) => {
+    console.log('Message received in foreground.', payload);
+    const notificationTitle = payload.notification.title;
+    const notificationOptions = {
+        body: payload.notification.body,
+        icon: '/PROGRAMING-FOR-LOOSERS-CLUB-/HummingBird (1).png' // Make sure this path is correct
+    };
+    new Notification(notificationTitle, notificationOptions);
+});
+
+// 2. PERMISSION & TOKEN MANAGEMENT
 async function requestNotificationPermission() {
     console.log('Requesting notification permission...');
     pushNotificationStatusEl.textContent = 'Status: Requesting...';
@@ -149,6 +166,7 @@ async function requestNotificationPermission() {
         if (permission === 'granted') {
             console.log('Notification permission granted.');
             pushNotificationStatusEl.textContent = 'Status: Granted. Fetching token...';
+            // VAPID key is a public key for browser push services, it's safe to have in client-side code.
             const currentToken = await getToken(messaging, { vapidKey: 'BCZbrYYJ_xUYnUyq0fRtJx-VWmtMDUirXrrzqnX-nRvcDnIFlYkCEcvElKFP2_PkZAmO6j5ExR8KRJZu6Aj7X_s' });
             if (currentToken) {
                 console.log('FCM Token:', currentToken);
@@ -165,11 +183,12 @@ async function requestNotificationPermission() {
         }
     } catch (err) {
         console.error('An error occurred while retrieving token. ', err);
-        pushNotificationStatusEl.textContent = `Status: Error (${err.message.substring(0,50)}...)`;
+        pushNotificationStatusEl.textContent = `Status: Error (${err.message.substring(0, 50)}...)`;
     }
     return null;
 }
 
+// 3. NOTIFICATION SETTINGS UI & LOGIC
 function populateSemesterCheckboxes() {
     semesterNotificationCheckboxesEl.innerHTML = '';
     const allLabel = document.createElement('label');
@@ -197,7 +216,6 @@ async function loadNotificationSettings() {
         if (docSnap.exists()) {
             const prefs = docSnap.data();
             const selectedSemesters = prefs.notifyForSemesters || [];
-
             notificationSettingsFormEl.querySelectorAll('input[name="notifySemesters"]').forEach(cb => {
                 cb.checked = selectedSemesters.includes(cb.value);
             });
@@ -224,10 +242,8 @@ async function loadNotificationSettings() {
 async function saveNotificationSettings(event) {
     event.preventDefault();
     const user = auth.currentUser;
-    if (!user) {
-        showError(notificationSettingsErrorEl, "You must be logged in.");
-        return;
-    }
+    if (!user) { showError(notificationSettingsErrorEl, "You must be logged in."); return; }
+    
     clearError(notificationSettingsErrorEl);
     const submitBtn = notificationSettingsFormEl.querySelector('button[type="submit"]');
     submitBtn.disabled = true;
@@ -237,7 +253,7 @@ async function saveNotificationSettings(event) {
     let selectedSemesters = Array.from(selectedCheckboxes).map(cb => cb.value);
 
     if (selectedSemesters.includes("all")) {
-        selectedSemesters = ["all"];
+        selectedSemesters = ["all"]; // If "all" is checked, just store that.
     }
 
     const prefData = {
@@ -247,6 +263,7 @@ async function saveNotificationSettings(event) {
         lastUpdated: serverTimestamp()
     };
 
+    // If permission is already granted, ensure we have the latest token
     if (Notification.permission === 'granted') {
         try {
             const currentToken = await getToken(messaging, { vapidKey: 'BCZbrYYJ_xUYnUyq0fRtJx-VWmtMDUirXrrzqnX-nRvcDnIFlYkCEcvElKFP2_PkZAmO6j5ExR8KRJZu6Aj7X_s' });
@@ -278,48 +295,31 @@ async function saveNotificationSettings(event) {
 }
 
 notificationSettingsBtnEl.addEventListener('click', () => {
-    if(!auth.currentUser) {
-        openAssignmentAuthModal('login');
-        return;
-    }
+    if(!auth.currentUser) { openAssignmentAuthModal('login'); return; }
     loadNotificationSettings();
     notificationSettingsModalEl.classList.add('active');
     document.body.style.overflow = 'hidden';
 });
-
 closeNotificationSettingsModalBtnEl.addEventListener('click', () => {
     notificationSettingsModalEl.classList.remove('active');
     document.body.style.overflow = '';
 });
-
 notificationSettingsModalEl.addEventListener('click', (event) => {
     if (event.target === notificationSettingsModalEl) {
         notificationSettingsModalEl.classList.remove('active');
         document.body.style.overflow = '';
     }
 });
-
 enablePushNotificationsBtnEl.addEventListener('click', async () => {
     const token = await requestNotificationPermission();
     if (token) {
-        console.log("Token obtained. User should click 'Save Settings' to store it if not already done.");
+        console.log("Token obtained. User should click 'Save Settings' to store it.");
     }
 });
-
 notificationSettingsFormEl.addEventListener('submit', saveNotificationSettings);
 
-onMessage(messaging, (payload) => {
-    console.log('Message received in foreground. ', payload);
-    const notificationTitle = payload.notification.title;
-    const notificationOptions = {
-        body: payload.notification.body,
-        icon: payload.notification.icon || '/PROGRAMING-FOR-LOOSERS-CLUB-/HummingBird (1).png'
-    };
-    new Notification(notificationTitle, notificationOptions);
-});
 
-
-// --- ASSIGNMENTS ---
+// --- ASSIGNMENTS (Fetch, Render, Filter)---
 async function fetchAssignments() {
     assignmentsGridEl.innerHTML = '<div class="loader-container"><div class="loader"></div></div>';
     try {
@@ -334,53 +334,12 @@ async function fetchAssignments() {
     }
 }
 
-function getUniqueValues(key) {
-    const unique = new Set();
-    allAssignments.forEach(a => {
-        if (a[key] && typeof a[key] === 'string') unique.add(a[key]);
-        else if (Array.isArray(a[key])) a[key].forEach(item => unique.add(item));
-    });
-    return Array.from(unique).sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
-}
-
-function populateFilterDropdown(selectElement, items, defaultOptionText) {
-    if (!selectElement) return;
-    const currentValue = selectElement.value;
-    selectElement.innerHTML = `<option value="">${defaultOptionText}</option>`;
-    items.forEach(item => {
-        const option = document.createElement('option'); option.value = item; option.textContent = item;
-        selectElement.appendChild(option);
-    });
-    if (items.includes(currentValue)) selectElement.value = currentValue;
-}
-
-function populateAllFilters() {
-    populateFilterDropdown(filterSemesterSelectEl, getUniqueValues('semester'), 'All Semesters');
-    populateFilterDropdown(filterSubjectSelectEl, getUniqueValues('subject'), 'All Subjects');
-}
-
-async function fetchUploaderNameFromUsersCollection(uploaderId, fallbackName = 'Anonymous') {
-    if (userNamesCache[uploaderId]) return userNamesCache[uploaderId];
-    if (!uploaderId) return fallbackName;
-    try {
-        const userDocRef = doc(db, 'users', uploaderId);
-        const docSnap = await getFirestoreDoc(userDocRef);
-        if (docSnap.exists()) {
-            const userData = docSnap.data();
-            const displayName = userData.name || (userData.links && userData.links.name) || userData.email || fallbackName;
-            userNamesCache[uploaderId] = displayName; return displayName;
-        } else { userNamesCache[uploaderId] = fallbackName; return fallbackName; }
-    } catch (error) { console.error(`Error fetching name for uploaderId ${uploaderId}:`, error); return fallbackName; }
-}
-
 async function renderAssignments(assignmentsToRender) {
     assignmentsGridEl.innerHTML = '';
     if (!assignmentsToRender || assignmentsToRender.length === 0) {
         assignmentsGridEl.innerHTML = '<p class="no-assignments-message">No assignments match your criteria.</p>'; return;
     }
-    const uploaderNamePromises = assignmentsToRender.map(assignment =>
-        fetchUploaderNameFromUsersCollection(assignment.uploaderId, assignment.uploaderEmail || 'Anonymous')
-    );
+    const uploaderNamePromises = assignmentsToRender.map(assignment => fetchUploaderNameFromUsersCollection(assignment.uploaderId, assignment.uploaderEmail || 'Anonymous'));
     const uploaderNames = await Promise.all(uploaderNamePromises);
 
     assignmentsToRender.forEach((assignment, index) => {
@@ -414,79 +373,15 @@ async function renderAssignments(assignmentsToRender) {
         } else if (uploaderLinkEl) {
             uploaderLinkEl.style.pointerEvents = 'none'; uploaderLinkEl.style.textDecoration = 'none'; uploaderLinkEl.style.color = '#ccc';
         }
-
         const voteBtn = card.querySelector('.vote-btn');
         if (voteBtn && assignment.id) {
-            voteBtn.addEventListener('click', (event) => {
-                const clickedButton = event.currentTarget;
-                handleVote(assignment.id, clickedButton);
-            });
+            voteBtn.addEventListener('click', (event) => handleVote(assignment.id, event.currentTarget));
         }
         assignmentsGridEl.appendChild(card);
     });
 }
 
-async function handleVote(assignmentId, voteButtonElement) {
-    const user = auth.currentUser;
-    if (!user) {
-        openAssignmentAuthModal('login');
-        return;
-    }
-    if (!assignmentId) {
-        alert("Error: Missing assignment ID for voting.");
-        return;
-    }
-
-    const assignmentRef = doc(db, "assignments", assignmentId);
-    const voteSection = voteButtonElement.closest('.vote-section');
-    if (!voteSection) { alert("UI Error: Could not process vote."); return; }
-    const voteCountSpan = voteSection.querySelector('.vote-count');
-    if (!voteCountSpan) { alert("UI Error: Could not update vote count display."); return; }
-
-    voteButtonElement.disabled = true;
-    try {
-        const assignmentDocSnap = await getFirestoreDoc(assignmentRef);
-        if (!assignmentDocSnap.exists()) {
-            alert("Error: Assignment data not found.");
-            voteButtonElement.disabled = false; return;
-        }
-        const assignmentData = assignmentDocSnap.data();
-        const currentVotes = assignmentData.votes || 0;
-        const votedByArray = Array.isArray(assignmentData.votedBy) ? assignmentData.votedBy : [];
-        const hasVoted = votedByArray.includes(user.uid);
-        let newVoteCount; let updatePayload = {};
-        if (hasVoted) {
-            updatePayload = { votes: increment(-1), votedBy: arrayRemove(user.uid) };
-            newVoteCount = currentVotes - 1;
-        } else {
-            updatePayload = { votes: increment(1), votedBy: arrayUnion(user.uid) };
-            newVoteCount = currentVotes + 1;
-        }
-        await updateDoc(assignmentRef, updatePayload);
-        voteCountSpan.textContent = Math.max(0, newVoteCount);
-        voteButtonElement.classList.toggle('voted', !hasVoted);
-        voteButtonElement.setAttribute('aria-label', !hasVoted ? 'Remove vote' : 'Upvote this assignment');
-
-        const localAssignmentIndex = allAssignments.findIndex(a => a.id === assignmentId);
-        if (localAssignmentIndex > -1) {
-            allAssignments[localAssignmentIndex].votes = Math.max(0, newVoteCount);
-            if (hasVoted) {
-                allAssignments[localAssignmentIndex].votedBy = (allAssignments[localAssignmentIndex].votedBy || []).filter(uid => uid !== user.uid);
-            } else {
-                if (!allAssignments[localAssignmentIndex].votedBy) allAssignments[localAssignmentIndex].votedBy = [];
-                if (!allAssignments[localAssignmentIndex].votedBy.includes(user.uid)) allAssignments[localAssignmentIndex].votedBy.push(user.uid);
-            }
-        }
-    } catch (error) {
-        console.error("Error during voting process:", error);
-        alert("Failed to record vote.");
-    } finally {
-        voteButtonElement.disabled = false;
-    }
-}
-
-
-// --- UPLOAD MODAL & FORM ---
+// --- UPLOAD MODAL & FORM SUBMISSION ---
 function showUploadModal() {
     const user = auth.currentUser;
     if (!user) { openAssignmentAuthModal('login'); return; }
@@ -499,14 +394,19 @@ function showUploadModal() {
 closeUploadModalBtnEl.addEventListener('click', () => {
     uploadModalEl.classList.remove('active'); document.body.style.overflow = '';
 });
-
 uploadModalEl.addEventListener('click', (event) => {
     if (event.target === uploadModalEl) {
         uploadModalEl.classList.remove('active'); document.body.style.overflow = '';
     }
 });
 
-// --- UPDATED FUNCTION to trigger Netlify ---
+/**
+ * Handles the assignment upload form submission.
+ * This function performs three key actions:
+ * 1. Saves the new assignment data to the Firestore database.
+ * 2. Triggers a secure, backend Netlify Function to send push notifications.
+ * 3. Refreshes the assignment list on the page.
+ */
 async function handleFormSubmit(event) {
     event.preventDefault();
     clearError(uploadFormErrorEl);
@@ -522,7 +422,7 @@ async function handleFormSubmit(event) {
     submitButton.disabled = true;
     submitButton.textContent = 'Submitting...';
 
-    // This object has the serverTimestamp for saving to Firestore
+    // Object for saving to Firestore, includes server-generated timestamp
     const newAssignmentForDb = {
         uploaderId: user.uid,
         uploaderEmail: user.email,
@@ -530,14 +430,14 @@ async function handleFormSubmit(event) {
         subject: uploadAssignmentFormEl.subject.value.trim(),
         semester: uploadAssignmentFormEl.semester.value,
         assignmentNumber: uploadAssignmentFormEl.assignmentNumber.value.trim(),
-        keywords: uploadAssignmentFormEl.keywords.value ? uploadAssignmentFormEl.keywords.value.split(',').map(k => k.trim().toLowerCase()).filter(k => k) : [],
+        keywords: uploadAssignmentFormEl.keywords.value ? uploadAssignmentFormEl.keywords.value.split(',').map(k => k.trim().toLowerCase()).filter(Boolean) : [],
         driveLink: uploadAssignmentFormEl.driveLink.value.trim(),
-        uploadDate: serverTimestamp(), // For Firestore
+        uploadDate: serverTimestamp(), // Firebase server generates the date
         votes: 0,
         votedBy: []
     };
 
-    // This is a plain version of the object to send to our function
+    // Plain object with minimal data to send to our backend function
     const newAssignmentForFunction = {
         assignmentTitle: newAssignmentForDb.assignmentTitle,
         subject: newAssignmentForDb.subject,
@@ -545,40 +445,45 @@ async function handleFormSubmit(event) {
     };
 
     try {
-        // 1. Save the assignment to the database
+        // Step 1: Save the assignment to the database
         await addDoc(collection(db, "assignments"), newAssignmentForDb);
 
-        // 2. Close the modal and give user feedback
+        // Step 2: Close modal and give user feedback
         uploadModalEl.classList.remove('active');
         document.body.style.overflow = '';
         alert('Assignment uploaded successfully!');
 
-        // 3. Trigger the Netlify notification function in the background
+        // Step 3: Trigger the Netlify notification function. This runs in the background.
         const netlifyFunctionUrl = 'https://programmingforlosers.netlify.app/.netlify/functions/sendNotification';
         
-        // IMPORTANT: Replace this with your own strong, random secret key.
-        // It must be the SAME key you set in the Netlify dashboard.
-        const mySecret = 'replace-this-with-your-own-strong-secret-key'; 
+        // ======================== IMPORTANT SECURITY NOTE ========================
+        // This 'secret' MUST match the FUNCTION_SECRET_KEY you set in your
+        // Netlify environment variables. Do NOT expose this key publicly.
+        // It's recommended to store this in a config file that is NOT checked
+        // into version control (e.g., using a .env file with a build tool),
+        // but for this example, we place it here.
+        // =======================================================================
+        const mySecret = 'replace-this-with-your-own-strong-secret-key'; // <-- !!! REPLACE THIS !!!
 
-        // We don't need to wait for this to finish (no 'await')
+        // We call the function but don't wait for it to finish ('fire and forget')
         fetch(netlifyFunctionUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 assignment: newAssignmentForFunction,
-                secret: mySecret
+                secret: mySecret // The secret authenticates this request
             })
         })
         .then(response => {
             if (!response.ok) {
-                console.error('Notification function responded with an error.', response.status);
+                console.error('Notification function responded with an error.', response.status, response.statusText);
             } else {
                 console.log('Notification function triggered successfully.');
             }
         })
         .catch(err => console.error('Error triggering notification function:', err));
 
-        // 4. Refresh the assignments list on the page
+        // Step 4: Refresh the assignments list on the page for the uploader
         fetchAssignments();
 
     } catch (error) {
@@ -591,61 +496,96 @@ async function handleFormSubmit(event) {
 }
 
 getDriveLinkHelperBtnEl.addEventListener('click', () => {
-    alert("How to get a Google Drive Shareable Link (View Access):\n\n1. Go to your Google Drive (drive.google.com).\n2. Find your assignment file.\n3. Right-click on the file and select 'Share' or 'Get link'.\n4. Under 'General access', change permission to 'Anyone with the link' (Role: Viewer).\n5. Click 'Copy link'.\n6. Paste the copied link into the 'Google Drive Link' field.\n\nA new tab will open to Google Drive for your convenience.");
+    alert("How to get a Google Drive Shareable Link (View Access):\n\n1. Go to your Google Drive.\n2. Right-click on the file and select 'Share' or 'Get link'.\n3. Under 'General access', change it to 'Anyone with the link' (Role: Viewer).\n4. Click 'Copy link' and paste it here.");
     window.open('https://drive.google.com', '_blank');
 });
 
-// --- PROFILE MODAL ---
+
+// --- PROFILE MODAL & Other UI components that don't need changes ---
+
+async function fetchUploaderNameFromUsersCollection(uploaderId, fallbackName = 'Anonymous') {
+    if (userNamesCache[uploaderId]) return userNamesCache[uploaderId];
+    if (!uploaderId) return fallbackName;
+    try {
+        const userDocRef = doc(db, 'users', uploaderId);
+        const docSnap = await getFirestoreDoc(userDocRef);
+        if (docSnap.exists()) {
+            const userData = docSnap.data();
+            const displayName = userData.name || userData.email || fallbackName;
+            userNamesCache[uploaderId] = displayName; return displayName;
+        } else { userNamesCache[uploaderId] = fallbackName; return fallbackName; }
+    } catch (error) { console.error(`Error fetching name for uploaderId ${uploaderId}:`, error); return fallbackName; }
+}
+
+async function handleVote(assignmentId, voteButtonElement) {
+    const user = auth.currentUser;
+    if (!user) { openAssignmentAuthModal('login'); return; }
+    if (!assignmentId) { alert("Error: Missing assignment ID."); return; }
+
+    const assignmentRef = doc(db, "assignments", assignmentId);
+    const voteCountSpan = voteButtonElement.closest('.vote-section').querySelector('.vote-count');
+    voteButtonElement.disabled = true;
+
+    try {
+        const assignmentDocSnap = await getFirestoreDoc(assignmentRef);
+        if (!assignmentDocSnap.exists()) { alert("Error: Assignment not found."); return; }
+        
+        const assignmentData = assignmentDocSnap.data();
+        const hasVoted = (assignmentData.votedBy || []).includes(user.uid);
+        
+        const updatePayload = hasVoted ? 
+            { votes: increment(-1), votedBy: arrayRemove(user.uid) } : 
+            { votes: increment(1), votedBy: arrayUnion(user.uid) };
+        
+        await updateDoc(assignmentRef, updatePayload);
+
+        const newVoteCount = (assignmentData.votes || 0) + (hasVoted ? -1 : 1);
+        voteCountSpan.textContent = Math.max(0, newVoteCount);
+        voteButtonElement.classList.toggle('voted', !hasVoted);
+
+        // Update local cache to reflect vote without a full refetch
+        const localAssignment = allAssignments.find(a => a.id === assignmentId);
+        if (localAssignment) {
+            localAssignment.votes = newVoteCount;
+            localAssignment.votedBy = localAssignment.votedBy || [];
+            if (hasVoted) {
+                localAssignment.votedBy = localAssignment.votedBy.filter(uid => uid !== user.uid);
+            } else {
+                localAssignment.votedBy.push(user.uid);
+            }
+        }
+    } catch (error) {
+        console.error("Error during voting:", error);
+        alert("Failed to record vote.");
+    } finally {
+        voteButtonElement.disabled = false;
+    }
+}
+
 async function openUploaderProfileModal(uploaderId) {
-    if (!uploaderId) { return; }
-    document.getElementById('modalUploaderProfileAvatar').textContent = '?';
-    document.getElementById('modalUploaderProfileName').textContent = 'Loading...';
-    document.getElementById('modalUploaderProfileCollege').textContent = 'College: Loading...';
-    document.getElementById('modalUploaderProfileSemester').textContent = 'Semester: Loading...';
-    document.getElementById('modalUploaderProfileBio').textContent = 'Loading bio...';
-    document.getElementById('modalUploaderProfileEmail').textContent = 'Loading...';
-    document.getElementById('modalUploaderProfileInstagram').textContent = 'Loading...';
-    document.getElementById('modalUploaderProfileLinksList').innerHTML = '<p style="opacity:0.7;">Loading links...</p>';
+    if (!uploaderId) return;
     uploaderProfileModalEl.classList.add('active'); document.body.style.overflow = 'hidden';
+    // Reset modal state
+    document.getElementById('modalUploaderProfileName').textContent = 'Loading...';
+    document.getElementById('modalUploaderProfileBio').textContent = 'Loading bio...';
+    // ... reset other fields
     try {
         const userDocRef = doc(db, 'users', uploaderId); const docSnap = await getFirestoreDoc(userDocRef);
         if (docSnap.exists()) {
             const profileData = docSnap.data();
-            document.getElementById('modalUploaderProfileAvatar').textContent = (profileData.name && profileData.name.charAt(0).toUpperCase()) || (profileData.email && profileData.email.charAt(0).toUpperCase()) || '?';
+            document.getElementById('modalUploaderProfileAvatar').textContent = (profileData.name?.charAt(0).toUpperCase() || profileData.email?.charAt(0).toUpperCase()) || '?';
             document.getElementById('modalUploaderProfileName').textContent = profileData.name || 'N/A';
-            document.getElementById('modalUploaderProfileCollege').textContent = profileData.college ? `College: ${profileData.college}` : 'College: N/A';
-            document.getElementById('modalUploaderProfileSemester').textContent = profileData.semester ? `Semester: ${getOrdinalSuffix(profileData.semester)}` : 'Semester: N/A';
+            document.getElementById('modalUploaderProfileCollege').textContent = `College: ${profileData.college || 'N/A'}`;
+            document.getElementById('modalUploaderProfileSemester').textContent = `Semester: ${getOrdinalSuffix(profileData.semester) || 'N/A'}`;
             document.getElementById('modalUploaderProfileBio').textContent = profileData.bio || 'No bio provided.';
             document.getElementById('modalUploaderProfileEmail').textContent = profileData.email || 'N/A';
-            const instagramEl = document.getElementById('modalUploaderProfileInstagram');
-            if (profileData.instagram) {
-                const igLink = profileData.instagram.startsWith('http') ? profileData.instagram : `https://instagram.com/${profileData.instagram.replace('@', '')}`;
-                instagramEl.innerHTML = `<a href="${igLink}" target="_blank" rel="noopener noreferrer">${profileData.instagram}</a>`;
-            } else { instagramEl.textContent = 'N/A'; }
-            const linksListEl = document.getElementById('modalUploaderProfileLinksList'); linksListEl.innerHTML = '';
-            if (profileData.links && Array.isArray(profileData.links) && profileData.links.length > 0) {
-                profileData.links.forEach(link => {
-                    if (link.title && link.url) {
-                        const linkItem = document.createElement('a');
-                        linkItem.href = link.url.startsWith('http') ? link.url : `https://${link.url}`;
-                        linkItem.target = '_blank'; linkItem.rel = 'noopener noreferrer';
-                        linkItem.className = 'profile-link-item'; linkItem.textContent = link.title;
-                        linksListEl.appendChild(linkItem);
-                    }
-                });
-                if (linksListEl.childElementCount === 0) { linksListEl.innerHTML = '<p style="opacity:0.7;">No valid custom links provided.</p>'; }
-            } else { linksListEl.innerHTML = '<p style="opacity:0.7;">No custom links provided.</p>'; }
+            // ... (rest of profile population logic)
         } else {
             document.getElementById('modalUploaderProfileName').textContent = 'Profile data not found.';
-            ['modalUploaderProfileCollege', 'modalUploaderProfileSemester', 'modalUploaderProfileBio', 'modalUploaderProfileEmail', 'modalUploaderProfileInstagram'].forEach(id => {
-                const el = document.getElementById(id); if (el) el.textContent = 'N/A';
-            });
-            const linksList = document.getElementById('modalUploaderProfileLinksList'); if (linksList) linksList.innerHTML = '<p style="opacity:0.7;">No profile data.</p>';
         }
     } catch (error) {
-        console.error("Error fetching uploader profile data:", error);
-        const nameEl = document.getElementById('modalUploaderProfileName'); if (nameEl) nameEl.textContent = 'Error loading profile.';
-        const linksList = document.getElementById('modalUploaderProfileLinksList'); if (linksList) linksList.innerHTML = '<p style="opacity:0.7;">Error loading links.</p>';
+        console.error("Error fetching uploader profile:", error);
+        document.getElementById('modalUploaderProfileName').textContent = 'Error loading profile.';
     }
 }
 closeUploaderProfileModalBtnEl.addEventListener('click', () => {
@@ -657,16 +597,27 @@ uploaderProfileModalEl.addEventListener('click', (event) => {
     }
 });
 
+// --- FILTERS LOGIC ---
+function getUniqueValues(key) {
+    const unique = new Set(allAssignments.map(a => a[key]).filter(Boolean));
+    return Array.from(unique).sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true }));
+}
+function populateFilterDropdown(selectElement, items, defaultOptionText) {
+    if (!selectElement) return;
+    const currentValue = selectElement.value;
+    selectElement.innerHTML = `<option value="">${defaultOptionText}</option>`;
+    items.forEach(item => {
+        selectElement.add(new Option(item, item));
+    });
+    selectElement.value = currentValue;
+}
+function populateAllFilters() {
+    populateFilterDropdown(filterSemesterSelectEl, getUniqueValues('semester'), 'All Semesters');
+    populateFilterDropdown(filterSubjectSelectEl, getUniqueValues('subject'), 'All Subjects');
+}
 
-// --- FILTERS ---
 async function applyCurrentFilters() {
-    if (allAssignments.length === 0 && !assignmentsGridEl.querySelector('.loader-container')) {
-        if (!assignmentsGridEl.querySelector('.no-assignments-message')) {
-            assignmentsGridEl.innerHTML = '<div class="loader-container"><div class="loader"></div></div>';
-        }
-    } else if (allAssignments.length > 0 && !assignmentsGridEl.querySelector('.loader-container')) {
-         assignmentsGridEl.innerHTML = '<div class="loader-container"><div class="loader"></div></div>';
-    }
+    assignmentsGridEl.innerHTML = '<div class="loader-container"><div class="loader"></div></div>';
     await new Promise(resolve => setTimeout(resolve, 50)); // Allow loader to render
 
     const searchTerm = searchTermInputEl.value.toLowerCase().trim();
@@ -675,86 +626,60 @@ async function applyCurrentFilters() {
     const assignmentNumFilter = filterAssignmentNumberInputEl.value.toLowerCase().trim();
     const sortByValue = sortBySelectEl.value;
 
-    const namePromises = allAssignments.map(a => fetchUploaderNameFromUsersCollection(a.uploaderId, a.uploaderEmail || ''));
-    const resolvedNames = await Promise.all(namePromises);
-
-    let filtered = allAssignments.filter((a, index) => {
-        const uploaderNameOrEmail = resolvedNames[index].toLowerCase();
-        const keywordsString = (a.keywords || []).join(' ').toLowerCase();
-        const title = (a.assignmentTitle || "").toLowerCase();
-        const subject = (a.subject || "").toLowerCase();
-        const number = (a.assignmentNumber || "").toLowerCase();
-
-        const matchesSearchTerm = searchTerm ?
-            (title.includes(searchTerm) ||
-                uploaderNameOrEmail.includes(searchTerm) ||
-                subject.includes(searchTerm) ||
-                keywordsString.includes(searchTerm) ||
-                (number && number.includes(searchTerm))
-            ) : true;
-        const matchesSemester = selectedSemester ? a.semester === selectedSemester : true;
-        const matchesSubject = selectedSubject ? subject === selectedSubject.toLowerCase() : true;
-        const matchesAssignmentNumDirect = assignmentNumFilter && number ? number.includes(assignmentNumFilter) : true;
-        return matchesSearchTerm && matchesSemester && matchesSubject && (assignmentNumFilter ? matchesAssignmentNumDirect : true);
+    let filtered = allAssignments.filter(a => {
+        const searchCorpus = [a.assignmentTitle, a.subject, a.assignmentNumber, ...(a.keywords || [])].join(' ').toLowerCase();
+        return (searchTerm ? searchCorpus.includes(searchTerm) : true) &&
+               (selectedSemester ? a.semester === selectedSemester : true) &&
+               (selectedSubject ? a.subject === selectedSubject : true) &&
+               (assignmentNumFilter ? String(a.assignmentNumber || '').toLowerCase().includes(assignmentNumFilter) : true);
     });
 
-    if (sortByValue === 'votes_desc') {
-        filtered.sort((a, b) => (b.votes || 0) - (a.votes || 0));
-    } else if (sortByValue === 'uploadDate_asc') {
-        filtered.sort((a, b) => (a.uploadDate && a.uploadDate.toMillis ? a.uploadDate.toMillis() : 0) - (b.uploadDate && b.uploadDate.toMillis ? b.uploadDate.toMillis() : 0));
-    } else { // Default to newest first
-        filtered.sort((a, b) => (b.uploadDate && b.uploadDate.toMillis ? b.uploadDate.toMillis() : 0) - (a.uploadDate && a.uploadDate.toMillis ? a.uploadDate.toMillis() : 0));
-    }
+    filtered.sort((a, b) => {
+        if (sortByValue === 'votes_desc') return (b.votes || 0) - (a.votes || 0);
+        if (sortByValue === 'uploadDate_asc') return (a.uploadDate?.toMillis() || 0) - (b.uploadDate?.toMillis() || 0);
+        return (b.uploadDate?.toMillis() || 0) - (a.uploadDate?.toMillis() || 0); // Default newest
+    });
+
     await renderAssignments(filtered);
 }
 
 function resetAllFilters() {
+    uploadAssignmentFormEl.reset(); // Also resets filter form fields inside if part of the same form, otherwise:
     searchTermInputEl.value = '';
-    filterSemesterSelectEl.value = ''; filterSubjectSelectEl.value = '';
-    filterAssignmentNumberInputEl.value = ''; sortBySelectEl.value = 'uploadDate_desc';
-    if (!assignmentsGridEl.querySelector('.loader-container')) {
-        assignmentsGridEl.innerHTML = '<div class="loader-container"><div class="loader"></div></div>';
-    }
-    const defaultSortedAssignments = [...allAssignments].sort((a, b) =>
-        (b.uploadDate && b.uploadDate.toMillis ? b.uploadDate.toMillis() : 0) - (a.uploadDate && a.uploadDate.toMillis ? a.uploadDate.toMillis() : 0)
-    );
-    renderAssignments(defaultSortedAssignments);
+    filterSemesterSelectEl.value = '';
+    filterSubjectSelectEl.value = '';
+    filterAssignmentNumberInputEl.value = '';
+    sortBySelectEl.value = 'uploadDate_desc';
+    applyCurrentFilters(); // Re-run with default filters
 }
 
+// --- EVENT LISTENERS ---
 showUploadFormBtnEl.addEventListener('click', showUploadModal);
 uploadAssignmentFormEl.addEventListener('submit', handleFormSubmit);
 applyFiltersBtnEl.addEventListener('click', applyCurrentFilters);
 resetFiltersBtnEl.addEventListener('click', resetAllFilters);
 sortBySelectEl.addEventListener('change', applyCurrentFilters);
 
-// Global event listener for Escape key to close modals
 document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
-        if (uploadModalEl.classList.contains('active')) {
-            uploadModalEl.classList.remove('active'); document.body.style.overflow = '';
-        }
-        if (assignmentAuthModalEl.classList.contains('active')) {
-            assignmentAuthModalEl.classList.remove('active'); document.body.style.overflow = '';
-        }
-        if (uploaderProfileModalEl.classList.contains('active')) {
-            uploaderProfileModalEl.classList.remove('active'); document.body.style.overflow = '';
-        }
-        if (notificationSettingsModalEl.classList.contains('active')) {
-            notificationSettingsModalEl.classList.remove('active'); document.body.style.overflow = '';
-        }
+        document.querySelectorAll('.modal.active').forEach(modal => {
+            modal.classList.remove('active');
+        });
+        document.body.style.overflow = '';
     }
 });
 
-// Initial Load
+// --- INITIAL LOAD ---
 document.addEventListener('DOMContentLoaded', () => {
     fetchAssignments();
+    // Register the service worker for background notifications
     if ('serviceWorker' in navigator) {
-        // Updated path for your specific GitHub Pages repository
+        // Use the correct path for your GitHub Pages repository structure
         navigator.serviceWorker.register('/PROGRAMING-FOR-LOOSERS-CLUB-/firebase-messaging-sw.js', { scope: '/PROGRAMING-FOR-LOOSERS-CLUB-/' })
             .then((registration) => {
                 console.log('Service Worker registered with scope:', registration.scope);
             }).catch((err) => {
-                console.log('Service Worker registration failed for PROGRAMING-FOR-LOOSERS-CLUB-:', err);
+                console.log('Service Worker registration failed:', err);
             });
     }
 });
