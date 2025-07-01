@@ -1,108 +1,115 @@
-const admin = require("firebase-admin");
+// netlify/functions/sendNotification.js
 
-// Get service account credentials from environment variables
-const serviceAccount = {
-  type: process.env.FIREBASE_TYPE,
-  project_id: process.env.FIREBASE_PROJECT_ID,
-  private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID,
-  private_key: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'), // handle newlines
-  client_email: process.env.FIREBASE_CLIENT_EMAIL,
-  client_id: process.env.FIREBASE_CLIENT_ID,
-  auth_uri: process.env.FIREBASE_AUTH_URI,
-  token_uri: process.env.FIREBASE_TOKEN_URI,
-  auth_provider_x509_cert_url: process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
-  client_x509_cert_url: process.env.FIREBASE_CLIENT_X509_CERT_URL
-};
+const admin = require('firebase-admin');
 
-// Initialize Firebase Admin SDK
+// IMPORTANT: This reads the secret key from your Netlify Environment Variables
+const serviceAccount = JSON.parse(process.env.FIREBASE_ADMIN_CONFIG);
+
+// IMPORTANT: This reads your secret function key from Netlify Environment Variables
+const FUNCTION_SECRET = process.env.FUNCTION_SECRET_KEY;
+
+// Initialize the app if it's not already initialized
 if (!admin.apps.length) {
   admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://realtimepfl-default-rtdb.firebaseio.com" // Your DB URL
   });
 }
 
-// Secret key to secure function access
-const MY_SECRET_KEY = process.env.MY_SECRET_KEY;
+const db = admin.firestore();
+const messaging = admin.messaging();
 
 exports.handler = async (event, context) => {
-  // Allow only POST requests
+  // Only allow POST requests
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
 
-  // Parse request body
-  let body;
   try {
-    body = JSON.parse(event.body);
-  } catch (error) {
-    return { statusCode: 400, body: 'Invalid JSON format.' };
-  }
+    const body = JSON.parse(event.body);
+    const { assignment, secret } = body;
 
-  const { assignment, secret } = body;
+    // --- SECURITY CHECK ---
+    if (secret !== FUNCTION_SECRET) {
+      console.warn("Unauthorized attempt to trigger notification function.");
+      return { statusCode: 401, body: 'Unauthorized' };
+    }
 
-  // Validate secret key
-  if (secret !== MY_SECRET_KEY) {
-    return { statusCode: 401, body: 'Unauthorized' };
-  }
+    if (!assignment || !assignment.semester || !assignment.subject) {
+      return { statusCode: 400, body: 'Missing assignment data (semester, subject).' };
+    }
 
-  // Validate assignment data
-  const { assignmentTitle, subject, semester } = assignment || {};
-  if (!semester || !assignmentTitle) {
-    return { statusCode: 400, body: 'Missing required assignment data.' };
-  }
+    // --- FIND SUBSCRIBERS ---
+    const semesterQuery = db.collection('userNotificationPreferences')
+      .where('notifyForSemesters', 'array-contains', String(assignment.semester));
+      
+    const allSemestersQuery = db.collection('userNotificationPreferences')
+      .where('notifyForSemesters', 'array-contains', 'all');
 
-  const prefsRef = admin.firestore().collection("userNotificationPreferences");
-  const semesterQuery = prefsRef.where("notifyForSemesters", "array-contains", semester.toString());
-  const allSemestersQuery = prefsRef.where("notifyForSemesters", "array-contains", "all");
-
-  let semesterSnapshot, allSnapshot;
-  try {
-    [semesterSnapshot, allSnapshot] = await Promise.all([
+    const [semesterSnap, allSemestersSnap] = await Promise.all([
       semesterQuery.get(),
       allSemestersQuery.get()
     ]);
-  } catch (error) {
-    console.error("Error querying Firestore:", error);
-    return { statusCode: 500, body: 'Error querying user preferences.' };
-  }
+    
+    const tokens = new Set();
+    semesterSnap.forEach(doc => {
+        if (doc.data().fcmToken) tokens.add(doc.data().fcmToken);
+    });
+    allSemestersSnap.forEach(doc => {
+        if (doc.data().fcmToken) tokens.add(doc.data().fcmToken);
+    });
 
-  // Collect tokens
-  const tokens = new Set();
-  semesterSnapshot.forEach(doc => doc.data().fcmToken && tokens.add(doc.data().fcmToken));
-  allSnapshot.forEach(doc => doc.data().fcmToken && tokens.add(doc.data().fcmToken));
-  const tokensArray = Array.from(tokens);
+    const tokenList = Array.from(tokens);
 
-  if (tokensArray.length > 0) {
-    const payload = {
+    if (tokenList.length === 0) {
+      console.log('No subscribers found for this assignment.');
+      return { statusCode: 200, body: JSON.stringify({ message: "Success, but no subscribers to notify." }) };
+    }
+
+    // --- THIS SECTION IS UPDATED ---
+
+    // 1. Create the message payload. The list of tokens is now part of this object.
+    const message = {
       notification: {
-        title: `New Assignment: ${subject || 'General'}`,
-        body: assignmentTitle
+        title: 'New PFL Assignment Uploaded!',
+        body: `A new assignment for ${assignment.subject} (Sem ${assignment.semester}) is available.`,
+        icon: 'https://programmingforlosers.netlify.app/HummingBird%20(1).png' // Use the absolute URL to your icon
       },
-      data: {
-        screen: 'Assignments',
-        semester: semester.toString()
-      }
+      webpush: {
+        fcmOptions: {
+          // This is the link that will be opened when the notification is clicked
+          link: 'https://programmingforlosers.netlify.app/assignment.html'
+        }
+      },
+      tokens: tokenList, // Use the 'tokens' key for multicast
     };
 
-    try {
-      const response = await admin.messaging().sendToDevice(tokensArray, payload);
-      console.log(`Successfully sent message to ${response.successCount} users.`);
-      if (response.failureCount > 0) {
-        console.log(`Failed to send to ${response.failureCount} users.`);
-      }
-    } catch (error) {
-      console.error("Error sending message:", error);
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: 'Failed to send notifications', details: error.message })
-      };
+    // 2. Use the correct `sendEachForMulticast` method.
+    console.log(`Attempting to send notification to ${tokenList.length} tokens.`);
+    const response = await messaging.sendEachForMulticast(message);
+    
+    console.log(`Successfully sent ${response.successCount} messages.`);
+    if (response.failureCount > 0) {
+        console.error(`Failed to send ${response.failureCount} messages.`);
+        // Optional: Log details about which tokens failed for future cleanup
+        response.responses.forEach((resp, idx) => {
+            if (!resp.success) {
+                console.error(`Failure for token at index ${idx}: ${resp.error}`);
+            }
+        });
     }
-  }
+    // --- END OF UPDATED SECTION ---
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
-      message: `Processed notifications for ${tokensArray.length} potential recipients for semester ${semester}.`
-    })
-  };
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ message: `Notifications sent to ${response.successCount} subscribers.` }),
+    };
+
+  } catch (error) {
+    console.error('Error in sendNotification function:', error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: 'Internal Server Error' }),
+    };
+  }
 };
