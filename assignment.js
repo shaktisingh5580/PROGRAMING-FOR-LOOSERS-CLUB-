@@ -297,7 +297,7 @@ async function handleFormSubmit(event) {
         document.body.style.overflow = '';
         alert('Assignment uploaded successfully!');
         const netlifyFunctionUrl = '/.netlify/functions/sendNotification';
-        const mySecret = 'YOUR_SECRET_KEY_HERE'; // <-- !!! REPLACE THIS with the one you set on Netlify !!!
+        const mySecret = 'my-super-secret-pfl-key-12345'; // <-- !!! REPLACE THIS with the one you set on Netlify !!!
         fetch(netlifyFunctionUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
