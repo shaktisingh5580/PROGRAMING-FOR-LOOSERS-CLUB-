@@ -1,115 +1,67 @@
-// netlify/functions/sendNotification.js
+// File: netlify/functions/sendNotification.js
 
-const admin = require('firebase-admin');
+// You need to install axios: run `npm install axios` in your project's root directory.
+// Also create a package.json by running `npm init -y` first if you don't have one.
+const axios = require('axios');
 
-// IMPORTANT: This reads the secret key from your Netlify Environment Variables
-const serviceAccount = JSON.parse(process.env.FIREBASE_ADMIN_CONFIG);
-
-// IMPORTANT: This reads your secret function key from Netlify Environment Variables
-const FUNCTION_SECRET = process.env.FUNCTION_SECRET_KEY;
-
-// Initialize the app if it's not already initialized
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: "https://realtimepfl-default-rtdb.firebaseio.com" // Your DB URL
-  });
-}
-
-const db = admin.firestore();
-const messaging = admin.messaging();
-
-exports.handler = async (event, context) => {
-  // Only allow POST requests
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
-  }
-
-  try {
-    const body = JSON.parse(event.body);
-    const { assignment, secret } = body;
-
-    // --- SECURITY CHECK ---
-    if (secret !== FUNCTION_SECRET) {
-      console.warn("Unauthorized attempt to trigger notification function.");
-      return { statusCode: 401, body: 'Unauthorized' };
+exports.handler = async function(event, context) {
+    // Only allow POST requests
+    if (event.httpMethod !== 'POST') {
+        return { statusCode: 405, body: 'Method Not Allowed' };
     }
 
-    if (!assignment || !assignment.semester || !assignment.subject) {
-      return { statusCode: 400, body: 'Missing assignment data (semester, subject).' };
-    }
-
-    // --- FIND SUBSCRIBERS ---
-    const semesterQuery = db.collection('userNotificationPreferences')
-      .where('notifyForSemesters', 'array-contains', String(assignment.semester));
-      
-    const allSemestersQuery = db.collection('userNotificationPreferences')
-      .where('notifyForSemesters', 'array-contains', 'all');
-
-    const [semesterSnap, allSemestersSnap] = await Promise.all([
-      semesterQuery.get(),
-      allSemestersQuery.get()
-    ]);
+    // --- SECURITY ---
+    // Get secret keys from environment variables
+    const { ONESIGNAL_APP_ID, ONESIGNAL_REST_API_KEY, FUNCTION_SECRET_KEY } = process.env;
     
-    const tokens = new Set();
-    semesterSnap.forEach(doc => {
-        if (doc.data().fcmToken) tokens.add(doc.data().fcmToken);
-    });
-    allSemestersSnap.forEach(doc => {
-        if (doc.data().fcmToken) tokens.add(doc.data().fcmToken);
-    });
-
-    const tokenList = Array.from(tokens);
-
-    if (tokenList.length === 0) {
-      console.log('No subscribers found for this assignment.');
-      return { statusCode: 200, body: JSON.stringify({ message: "Success, but no subscribers to notify." }) };
+    if (!ONESIGNAL_APP_ID || !ONESIGNAL_REST_API_KEY || !FUNCTION_SECRET_KEY) {
+        console.error('OneSignal environment variables are not set.');
+        return { statusCode: 500, body: 'Server configuration error.' };
     }
 
-    // --- THIS SECTION IS UPDATED ---
+    const { assignment, secret } = JSON.parse(event.body);
 
-    // 1. Create the message payload. The list of tokens is now part of this object.
-    const message = {
-      notification: {
-        title: 'New PFL Assignment Uploaded!',
-        body: `A new assignment for ${assignment.subject} (Sem ${assignment.semester}) is available.`,
-        icon: 'https://programmingforlosers.netlify.app/HummingBird%20(1).png' // Use the absolute URL to your icon
-      },
-      webpush: {
-        fcmOptions: {
-          // This is the link that will be opened when the notification is clicked
-          link: 'https://programmingforlosers.netlify.app/assignment.html'
-        }
-      },
-      tokens: tokenList, // Use the 'tokens' key for multicast
+    // A simple secret to prevent unauthorized calls to this function
+    if (secret !== FUNCTION_SECRET_KEY) {
+        return { statusCode: 401, body: 'Unauthorized' };
+    }
+    
+    // --- NOTIFICATION PAYLOAD ---
+    const notification = {
+        app_id: ONESIGNAL_APP_ID,
+        headings: { "en": `New Assignment: ${assignment.subject}` },
+        contents: { "en": `Title: ${assignment.assignmentTitle}\nSemester: ${assignment.semester}` },
+        url: "https://programmingforlosers.netlify.app/assignment.html", // URL to open when clicked
+
+        // --- TARGETING ---
+        // This is the magic. It sends to users who have tagged themselves
+        // for this specific semester OR for "all" semesters.
+        filters: [
+            { "field": "tag", "key": `semester_${assignment.semester}`, "relation": "=", "value": "true" },
+            { "operator": "OR" },
+            { "field": "tag", "key": "semester_all", "relation": "=", "value": "true" }
+        ]
     };
 
-    // 2. Use the correct `sendEachForMulticast` method.
-    console.log(`Attempting to send notification to ${tokenList.length} tokens.`);
-    const response = await messaging.sendEachForMulticast(message);
-    
-    console.log(`Successfully sent ${response.successCount} messages.`);
-    if (response.failureCount > 0) {
-        console.error(`Failed to send ${response.failureCount} messages.`);
-        // Optional: Log details about which tokens failed for future cleanup
-        response.responses.forEach((resp, idx) => {
-            if (!resp.success) {
-                console.error(`Failure for token at index ${idx}: ${resp.error}`);
+    try {
+        const response = await axios.post('https://onesignal.com/api/v1/notifications', notification, {
+            headers: {
+                'Content-Type': 'application/json; charset=utf-8',
+                'Authorization': `Basic ${ONESIGNAL_REST_API_KEY}`
             }
         });
+        
+        console.log('OneSignal response:', response.data);
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ message: "Notification sent!", data: response.data })
+        };
+
+    } catch (error) {
+        console.error('Error sending OneSignal notification:', error.response ? error.response.data : error.message);
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: "Failed to send notification." })
+        };
     }
-    // --- END OF UPDATED SECTION ---
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ message: `Notifications sent to ${response.successCount} subscribers.` }),
-    };
-
-  } catch (error) {
-    console.error('Error in sendNotification function:', error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'Internal Server Error' }),
-    };
-  }
 };
