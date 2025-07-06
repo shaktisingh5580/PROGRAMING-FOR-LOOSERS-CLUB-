@@ -8,6 +8,17 @@
     <link rel="stylesheet" href="assignment.css">
     <!-- Add manifest for PWA capabilities (optional but good for FCM) -->
     <link rel="manifest" href="manifest.json">
+    <!-- in assignment.html, inside the <head> section -->
+<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+<script>
+  window.OneSignal = window.OneSignal || [];
+  OneSignal.push(function() {
+    OneSignal.init({
+      // IMPORTANT: Replace this with your actual App ID from the OneSignal dashboard
+      appId: "49c5c810-9210-481c-9570-cd0b91be1e96", 
+    });
+  });
+</script>
 </head>
 <body>
     <header>
