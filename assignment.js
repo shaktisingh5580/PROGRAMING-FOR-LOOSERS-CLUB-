@@ -1,8 +1,25 @@
-// assignment.js - FINAL VERSION WITH IMPROVED UI LOGIC
+// assignment.js - FINAL CORRECTED VERSION WITH ALL BUTTONS WORKING
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
 import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, getDoc as getFirestoreDoc, updateDoc, increment, arrayUnion, arrayRemove, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+// Your Firebase Configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyCCc1y2kNbSftG45mB3gkbUCGs4gfjts-E",
+    authDomain: "realtimepfl.firebaseapp.com",
+    databaseURL: "https://realtimepfl-default-rtdb.firebaseio.com",
+    projectId: "realtimepfl",
+    storageBucket: "realtimepfl.firebasestorage.app",
+    messagingSenderId: "984202175754",
+    appId: "1:984202175754:web:a0d689738832cc48b686f3",
+    measurementId: "G-4W311B25HV"
+};
+
+// Initialize Firebase services
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
 // --- DOM Elements ---
 const assignmentsGridEl = document.getElementById('assignmentsGrid');
@@ -39,6 +56,9 @@ const semesterNotificationCheckboxesEl = document.getElementById('semesterNotifi
 const enablePushNotificationsBtnEl = document.getElementById('enablePushNotificationsBtn');
 const pushNotificationStatusEl = document.getElementById('pushNotificationStatus');
 
+// --- THIS LINE WAS THE MISSING FIX ---
+const subscribeBtnEl = document.getElementById('subscribeBtn');
+
 // --- Global State ---
 let allAssignments = [];
 let userNamesCache = {};
@@ -55,15 +75,13 @@ function getOrdinalSuffix(nStr) {
     return n + (s[(v - 20) % 10] || s[v] || s[0]);
 }
 
-// --- AUTHENTICATION ---
-// This logic is now much simpler.
+// --- AUTHENTICATION & UI ---
 onAuthStateChanged(auth, user => {
     if (user) {
         assignmentUserEmailEl.textContent = user.email;
         assignmentLoginBtnEl.classList.add('hidden');
         assignmentLogoutBtnEl.classList.remove('hidden');
         showUploadFormBtnEl.classList.remove('hidden');
-        notificationSettingsBtnEl.classList.remove('hidden'); // <-- ALWAYS SHOW for logged-in users
         OneSignal.push(() => OneSignal.setExternalUserId(user.uid));
         if (assignmentAuthModalEl.classList.contains('active')) {
             assignmentAuthModalEl.classList.remove('active');
@@ -74,40 +92,50 @@ onAuthStateChanged(auth, user => {
         assignmentLoginBtnEl.classList.remove('hidden');
         assignmentLogoutBtnEl.classList.add('hidden');
         showUploadFormBtnEl.classList.add('hidden');
-        notificationSettingsBtnEl.classList.add('hidden'); // <-- HIDE for logged-out users
         OneSignal.push(() => OneSignal.removeExternalUserId());
     }
+    updateSubscriptionUi();
     applyCurrentFilters();
 });
 
-// --- NOTIFICATION SYSTEM (MODIFIED) ---
+// --- NOTIFICATION SYSTEM ---
+async function updateSubscriptionUi() {
+    const isSubscribed = await OneSignal.isPushNotificationsEnabled();
+    const permission = await OneSignal.getNotificationPermission();
+    const isBlocked = permission === 'denied';
+    const user = auth.currentUser;
 
-// This function now runs when the user clicks the bell icon.
-// It will intelligently show the right content inside the modal.
+    subscribeBtnEl.classList.add('hidden');
+    notificationSettingsBtnEl.classList.add('hidden');
+
+    if (user) {
+        if (isSubscribed) {
+            notificationSettingsBtnEl.classList.remove('hidden');
+        } else if (!isBlocked) {
+            subscribeBtnEl.classList.remove('hidden');
+        }
+    }
+}
+
 async function loadAndShowNotificationSettings() {
     if (!auth.currentUser) return;
-
-    // First, check the subscription status
     const isSubscribed = await OneSignal.isPushNotificationsEnabled();
     const permission = await OneSignal.getNotificationPermission();
 
-    // Show the modal regardless
     notificationSettingsModalEl.classList.add('active');
     document.body.style.overflow = 'hidden';
 
     if (isSubscribed) {
-        // --- User IS subscribed ---
-        // Show the semester preferences and hide the enable button
         semesterNotificationCheckboxesEl.parentElement.classList.remove('hidden');
         enablePushNotificationsBtnEl.parentElement.classList.add('hidden');
-        pushNotificationStatusEl.textContent = 'You are subscribed to notifications.';
+        notificationSettingsFormEl.querySelector('button[type="submit"]').classList.remove('hidden');
+        pushNotificationStatusEl.textContent = 'You are subscribed. Select which semesters to get notifications for.';
         populateSemesterCheckboxes();
         loadSavedSemesterPreferences();
     } else {
-        // --- User IS NOT subscribed ---
-        // Hide the semester preferences and show the enable button
         semesterNotificationCheckboxesEl.parentElement.classList.add('hidden');
         enablePushNotificationsBtnEl.parentElement.classList.remove('hidden');
+        notificationSettingsFormEl.querySelector('button[type="submit"]').classList.add('hidden');
         if (permission === 'denied') {
             pushNotificationStatusEl.textContent = 'Notifications are blocked in your browser settings. You must unblock them to subscribe.';
             enablePushNotificationsBtnEl.disabled = true;
@@ -123,7 +151,6 @@ function populateSemesterCheckboxes() {
     const allLabel = document.createElement('label');
     allLabel.innerHTML = `<input type="checkbox" name="notifySemesters" value="all"> All Semesters`;
     semesterNotificationCheckboxesEl.appendChild(allLabel);
-    // ... rest of the function is the same
     for (let i = 1; i <= 8; i++) {
         const label = document.createElement('label');
         label.innerHTML = `<input type="checkbox" name="notifySemesters" value="${i}"> ${getOrdinalSuffix(i)} Semester`;
@@ -133,46 +160,28 @@ function populateSemesterCheckboxes() {
 }
 
 async function loadSavedSemesterPreferences() {
-    const user = auth.currentUser;
-    if (!user) return;
+    const user = auth.currentUser; if (!user) return;
     const prefDocRef = doc(db, 'userNotificationPreferences', user.uid);
     try {
         const docSnap = await getFirestoreDoc(prefDocRef);
         if (docSnap.exists()) {
             const prefs = docSnap.data();
             const selectedSemesters = prefs.notifyForSemesters || [];
-            notificationSettingsFormEl.querySelectorAll('input[name="notifySemesters"]').forEach(cb => {
-                cb.checked = selectedSemesters.includes(cb.value);
-            });
+            notificationSettingsFormEl.querySelectorAll('input[name="notifySemesters"]').forEach(cb => { cb.checked = selectedSemesters.includes(cb.value); });
         }
-    } catch (error) {
-        showError(notificationSettingsErrorEl, "Could not load settings.");
-    }
+    } catch (error) { showError(notificationSettingsErrorEl, "Could not load settings."); }
 }
 
 async function saveNotificationSettings(event) {
-    event.preventDefault();
-    const user = auth.currentUser;
-    if (!user) { showError(notificationSettingsErrorEl, "You must be logged in."); return; }
-    // ... (This function remains unchanged, it works correctly)
-    const submitBtn = notificationSettingsFormEl.querySelector('button[type="submit"]');
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Saving...';
+    event.preventDefault(); const user = auth.currentUser; if (!user) return;
+    const submitBtn = notificationSettingsFormEl.querySelector('button[type="submit"]'); submitBtn.disabled = true; submitBtn.textContent = 'Saving...';
     const selectedCheckboxes = notificationSettingsFormEl.querySelectorAll('input[name="notifySemesters"]:checked');
     let selectedSemesters = Array.from(selectedCheckboxes).map(cb => cb.value);
     if (selectedSemesters.includes("all")) selectedSemesters = ["all"];
     const allPossibleTags = ['semester_1', 'semester_2', 'semester_3', 'semester_4', 'semester_5', 'semester_6', 'semester_7', 'semester_8', 'semester_all'];
-    const newTags = {};
-    selectedSemesters.forEach(sem => { newTags[`semester_${sem}`] = 'true'; });
-    OneSignal.push(() => {
-        OneSignal.deleteTags(allPossibleTags).then(() => { OneSignal.sendTags(newTags); });
-    });
-    const prefData = {
-        userId: user.uid,
-        email: user.email,
-        notifyForSemesters: selectedSemesters,
-        lastUpdated: serverTimestamp()
-    };
+    const newTags = {}; selectedSemesters.forEach(sem => { newTags[`semester_${sem}`] = 'true'; });
+    OneSignal.push(() => { OneSignal.deleteTags(allPossibleTags).then(() => { OneSignal.sendTags(newTags); }); });
+    const prefData = { userId: user.uid, email: user.email, notifyForSemesters: selectedSemesters, lastUpdated: serverTimestamp() };
     const prefDocRef = doc(db, 'userNotificationPreferences', user.uid);
     try {
         await setDoc(prefDocRef, prefData, { merge: true });
@@ -182,17 +191,11 @@ async function saveNotificationSettings(event) {
     } catch (error) {
         showError(notificationSettingsErrorEl, `Save Error: ${error.message}`);
     } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Save Settings';
+        submitBtn.disabled = false; submitBtn.textContent = 'Save Settings';
     }
 }
 
-
-// --- All other functions (auth, assignments, filters, modals) remain the same ---
-// They are pasted below for a complete file.
-
-// --- The rest of the file ...
-
+// --- ALL OTHER FUNCTIONS ---
 async function handleAssignmentAuthFormSubmit(e) {
     e.preventDefault(); clearError(assignmentAuthErrorEl); const email = assignmentAuthFormEl.authEmail.value; const password = assignmentAuthFormEl.authPassword.value; assignmentAuthSubmitBtnEl.disabled = true; const originalSubmitText = assignmentAuthSubmitBtnEl.textContent; assignmentAuthSubmitBtnEl.textContent = currentAssignmentAuthMode === 'login' ? 'Logging in...' : 'Signing up...'; try { if (currentAssignmentAuthMode === 'login') { await signInWithEmailAndPassword(auth, email, password); } else { await createUserWithEmailAndPassword(auth, email, password); } } catch (error) { showError(assignmentAuthErrorEl, error.message); } finally { assignmentAuthSubmitBtnEl.disabled = false; assignmentAuthSubmitBtnEl.textContent = originalSubmitText; }
 }
@@ -262,23 +265,22 @@ closeUploadModalBtnEl.addEventListener('click', () => { uploadModalEl.classList.
 applyFiltersBtnEl.addEventListener('click', applyCurrentFilters);
 resetFiltersBtnEl.addEventListener('click', resetAllFilters);
 sortBySelectEl.addEventListener('change', applyCurrentFilters);
-
-// MODIFIED: This now calls our new "smart" function
+subscribeBtnEl.addEventListener('click', () => { OneSignal.showSlidedownPrompt(); });
 notificationSettingsBtnEl.addEventListener('click', loadAndShowNotificationSettings);
-
 closeNotificationSettingsModalBtnEl.addEventListener('click', () => { notificationSettingsModalEl.classList.remove('active'); document.body.style.overflow = ''; });
 notificationSettingsFormEl.addEventListener('submit', saveNotificationSettings);
 enablePushNotificationsBtnEl.addEventListener('click', () => { OneSignal.showSlidedownPrompt(); });
 
 OneSignal.push(() => {
     OneSignal.on('subscriptionChange', () => {
-        // When the user subscribes or unsubscribes, if the modal is open, re-run the logic
-        // to show/hide the correct elements inside it.
+        updateSubscriptionUi();
         if (notificationSettingsModalEl.classList.contains('active')) {
             loadAndShowNotificationSettings();
         }
     });
 });
-
 document.addEventListener('keydown', (event) => { if (event.key === 'Escape') { document.querySelectorAll('.modal.active').forEach(modal => { modal.classList.remove('active'); }); document.body.style.overflow = ''; } });
-document.addEventListener('DOMContentLoaded', fetchAssignments);
+document.addEventListener('DOMContentLoaded', () => {
+    fetchAssignments();
+    updateSubscriptionUi();
+});
