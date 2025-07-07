@@ -1,8 +1,25 @@
-// assignment.js - FULLY CORRECTED VERSION WITH MANUAL SUBSCRIBE BUTTON
+// assignment.js - FINAL CORRECTED VERSION
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
 import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, getDoc as getFirestoreDoc, updateDoc, increment, arrayUnion, arrayRemove, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+// --- FIREBASE INITIALIZATION (This was the missing part) ---
+const firebaseConfig = {
+    apiKey: "AIzaSyCCc1y2kNbSftG45mB3gkbUCGs4gfjts-E",
+    authDomain: "realtimepfl.firebaseapp.com",
+    databaseURL: "https://realtimepfl-default-rtdb.firebaseio.com",
+    projectId: "realtimepfl",
+    storageBucket: "realtimepfl.firebasestorage.app",
+    messagingSenderId: "984202175754",
+    appId: "1:984202175754:web:a0d689738832cc48b686f3",
+    measurementId: "G-4W311B25HV"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
 
 // --- DOM Elements ---
 const assignmentsGridEl = document.getElementById('assignmentsGrid');
@@ -36,8 +53,6 @@ const notificationSettingsModalEl = document.getElementById('notificationSetting
 const closeNotificationSettingsModalBtnEl = document.getElementById('closeNotificationSettingsModalBtn');
 const notificationSettingsFormEl = document.getElementById('notificationSettingsForm');
 const semesterNotificationCheckboxesEl = document.getElementById('semesterNotificationCheckboxes');
-
-// --- ADD THE NEW BUTTON TO THE LIST ---
 const subscribeBtnEl = document.getElementById('subscribeBtn');
 
 // --- Global State ---
@@ -56,24 +71,20 @@ function getOrdinalSuffix(nStr) {
     return n + (s[(v - 20) % 10] || s[v] || s[0]);
 }
 
-// --- NEW "BRAIN" FUNCTION FOR NOTIFICATION UI ---
+// --- "BRAIN" FUNCTION FOR NOTIFICATION UI ---
 async function updateSubscriptionUi() {
     const isSubscribed = await OneSignal.isPushNotificationsEnabled();
     const permission = await OneSignal.getNotificationPermission();
     const isBlocked = permission === 'denied';
     const user = auth.currentUser;
 
-    // By default, hide both buttons
     subscribeBtnEl.classList.add('hidden');
     notificationSettingsBtnEl.classList.add('hidden');
 
     if (user && !isBlocked) {
-        // If the user is logged in and hasn't blocked notifications...
         if (isSubscribed) {
-            // ...and they ARE subscribed, show the "Settings" bell icon.
             notificationSettingsBtnEl.classList.remove('hidden');
         } else {
-            // ...and they are NOT subscribed, show the big "Subscribe" button.
             subscribeBtnEl.classList.remove('hidden');
         }
     }
@@ -91,16 +102,15 @@ onAuthStateChanged(auth, user => {
             assignmentAuthModalEl.classList.remove('active');
             document.body.style.overflow = '';
         }
-        updateSubscriptionUi(); // Update UI after login
+        updateSubscriptionUi();
     } else {
         assignmentUserEmailEl.textContent = 'Not logged in';
         assignmentLoginBtnEl.classList.remove('hidden');
         assignmentLogoutBtnEl.classList.add('hidden');
         showUploadFormBtnEl.classList.add('hidden');
         OneSignal.push(() => OneSignal.removeExternalUserId());
-        updateSubscriptionUi(); // Update UI after logout
+        updateSubscriptionUi();
     }
-    // Fetch assignments whether user is logged in or not
     if (allAssignments.length === 0) {
         fetchAssignments();
     } else {
