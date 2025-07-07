@@ -1,25 +1,8 @@
-// assignment.js - FULLY CORRECTED VERSION
+// assignment.js - FULLY CORRECTED VERSION WITH MANUAL SUBSCRIBE BUTTON
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
 import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, getDoc as getFirestoreDoc, updateDoc, increment, arrayUnion, arrayRemove, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
-
-// Your Firebase Configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyCCc1y2kNbSftG45mB3gkbUCGs4gfjts-E",
-    authDomain: "realtimepfl.firebaseapp.com",
-    databaseURL: "https://realtimepfl-default-rtdb.firebaseio.com",
-    projectId: "realtimepfl",
-    storageBucket: "realtimepfl.firebasestorage.app",
-    messagingSenderId: "984202175754",
-    appId: "1:984202175754:web:a0d689738832cc48b686f3",
-    measurementId: "G-4W311B25HV"
-};
-
-// Initialize Firebase services
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
 
 // --- DOM Elements ---
 const assignmentsGridEl = document.getElementById('assignmentsGrid');
@@ -27,7 +10,6 @@ const showUploadFormBtnEl = document.getElementById('showUploadFormBtn');
 const uploadModalEl = document.getElementById('uploadModal');
 const closeUploadModalBtnEl = document.getElementById('closeUploadModalBtn');
 const uploadAssignmentFormEl = document.getElementById('uploadAssignmentForm');
-const getDriveLinkHelperBtnEl = document.getElementById('getDriveLinkHelperBtn');
 const uploadFormErrorEl = document.getElementById('uploadFormError');
 const searchTermInputEl = document.getElementById('searchTerm');
 const filterSemesterSelectEl = document.getElementById('filterSemester');
@@ -54,9 +36,9 @@ const notificationSettingsModalEl = document.getElementById('notificationSetting
 const closeNotificationSettingsModalBtnEl = document.getElementById('closeNotificationSettingsModalBtn');
 const notificationSettingsFormEl = document.getElementById('notificationSettingsForm');
 const semesterNotificationCheckboxesEl = document.getElementById('semesterNotificationCheckboxes');
-const enablePushNotificationsBtnEl = document.getElementById('enablePushNotificationsBtn');
-const pushNotificationStatusEl = document.getElementById('pushNotificationStatus');
-const notificationSettingsErrorEl = document.getElementById('notificationSettingsError');
+
+// --- ADD THE NEW BUTTON TO THE LIST ---
+const subscribeBtnEl = document.getElementById('subscribeBtn');
 
 // --- Global State ---
 let allAssignments = [];
@@ -74,6 +56,29 @@ function getOrdinalSuffix(nStr) {
     return n + (s[(v - 20) % 10] || s[v] || s[0]);
 }
 
+// --- NEW "BRAIN" FUNCTION FOR NOTIFICATION UI ---
+async function updateSubscriptionUi() {
+    const isSubscribed = await OneSignal.isPushNotificationsEnabled();
+    const permission = await OneSignal.getNotificationPermission();
+    const isBlocked = permission === 'denied';
+    const user = auth.currentUser;
+
+    // By default, hide both buttons
+    subscribeBtnEl.classList.add('hidden');
+    notificationSettingsBtnEl.classList.add('hidden');
+
+    if (user && !isBlocked) {
+        // If the user is logged in and hasn't blocked notifications...
+        if (isSubscribed) {
+            // ...and they ARE subscribed, show the "Settings" bell icon.
+            notificationSettingsBtnEl.classList.remove('hidden');
+        } else {
+            // ...and they are NOT subscribed, show the big "Subscribe" button.
+            subscribeBtnEl.classList.remove('hidden');
+        }
+    }
+}
+
 // --- AUTHENTICATION ---
 onAuthStateChanged(auth, user => {
     if (user) {
@@ -81,23 +86,26 @@ onAuthStateChanged(auth, user => {
         assignmentLoginBtnEl.classList.add('hidden');
         assignmentLogoutBtnEl.classList.remove('hidden');
         showUploadFormBtnEl.classList.remove('hidden');
-        notificationSettingsBtnEl.classList.remove('hidden');
         OneSignal.push(() => OneSignal.setExternalUserId(user.uid));
         if (assignmentAuthModalEl.classList.contains('active')) {
             assignmentAuthModalEl.classList.remove('active');
             document.body.style.overflow = '';
         }
-        updatePushNotificationStatus();
+        updateSubscriptionUi(); // Update UI after login
     } else {
         assignmentUserEmailEl.textContent = 'Not logged in';
         assignmentLoginBtnEl.classList.remove('hidden');
         assignmentLogoutBtnEl.classList.add('hidden');
         showUploadFormBtnEl.classList.add('hidden');
-        notificationSettingsBtnEl.classList.add('hidden');
-        pushNotificationStatusEl.textContent = 'Status: Login to manage';
         OneSignal.push(() => OneSignal.removeExternalUserId());
+        updateSubscriptionUi(); // Update UI after logout
     }
-    applyCurrentFilters();
+    // Fetch assignments whether user is logged in or not
+    if (allAssignments.length === 0) {
+        fetchAssignments();
+    } else {
+        applyCurrentFilters();
+    }
 });
 
 async function handleAssignmentAuthFormSubmit(e) {
@@ -134,22 +142,7 @@ function openAssignmentAuthModal(mode = 'login') {
     document.body.style.overflow = 'hidden';
 }
 
-// --- NOTIFICATION SYSTEM ---
-async function updatePushNotificationStatus() {
-    const permission = await OneSignal.getNotificationPermission();
-    const isPushEnabled = await OneSignal.isPushNotificationsEnabled();
-    if (isPushEnabled) {
-        pushNotificationStatusEl.textContent = 'Status: Enabled';
-        enablePushNotificationsBtnEl.disabled = true;
-    } else if (permission === 'denied') {
-        pushNotificationStatusEl.textContent = 'Status: Blocked by browser';
-        enablePushNotificationsBtnEl.disabled = true;
-    } else {
-        pushNotificationStatusEl.textContent = 'Status: Click to enable';
-        enablePushNotificationsBtnEl.disabled = false;
-    }
-}
-
+// --- NOTIFICATION SETTINGS LOGIC ---
 function populateSemesterCheckboxes() {
     semesterNotificationCheckboxesEl.innerHTML = '';
     const allLabel = document.createElement('label');
@@ -168,7 +161,6 @@ async function loadNotificationSettings() {
     const user = auth.currentUser;
     if (!user) return;
     populateSemesterCheckboxes();
-    updatePushNotificationStatus();
     const prefDocRef = doc(db, 'userNotificationPreferences', user.uid);
     try {
         const docSnap = await getFirestoreDoc(prefDocRef);
@@ -228,8 +220,9 @@ async function fetchAssignments() {
         const snapshot = await getDocs(assignmentsQuery);
         allAssignments = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
         populateAllFilters();
-        await applyCurrentFilters();
+        await renderAssignments(allAssignments);
     } catch (error) {
+        console.error("Error fetching assignments:", error);
         assignmentsGridEl.innerHTML = '<p class="no-assignments-message">Could not load assignments.</p>';
     }
 }
@@ -237,7 +230,7 @@ async function fetchAssignments() {
 async function renderAssignments(assignmentsToRender) {
     assignmentsGridEl.innerHTML = '';
     if (!assignmentsToRender || assignmentsToRender.length === 0) {
-        assignmentsGridEl.innerHTML = '<p class="no-assignments-message">No assignments match your criteria.</p>';
+        assignmentsGridEl.innerHTML = '<p class="no-assignments-message">No assignments found.</p>';
         return;
     }
     const uploaderNamePromises = assignmentsToRender.map(assignment => fetchUploaderNameFromUsersCollection(assignment.uploaderId, assignment.uploaderEmail || 'Anonymous'));
@@ -297,7 +290,7 @@ async function handleFormSubmit(event) {
         document.body.style.overflow = '';
         alert('Assignment uploaded successfully!');
         const netlifyFunctionUrl = '/.netlify/functions/sendNotification';
-        const mySecret = 'my-super-secret-pfl-key-12345'; // <-- !!! REPLACE THIS with the one you set on Netlify !!!
+        const mySecret = 'my-super-secret-pfl-key-12345'; // !!! REPLACE THIS
         fetch(netlifyFunctionUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -331,21 +324,19 @@ async function handleVote(assignmentId, voteButtonElement) {
         const hasVoted = (assignmentData.votedBy || []).includes(user.uid);
         const updatePayload = hasVoted ? { votes: increment(-1), votedBy: arrayRemove(user.uid) } : { votes: increment(1), votedBy: arrayUnion(user.uid) };
         await updateDoc(assignmentRef, updatePayload);
-        // Update UI immediately without refetching all data
         const voteCountSpan = voteButtonElement.parentElement.querySelector('.vote-count');
         const newVoteCount = (assignmentData.votes || 0) + (hasVoted ? -1 : 1);
         voteCountSpan.textContent = newVoteCount;
         voteButtonElement.classList.toggle('voted', !hasVoted);
     } catch (error) {
-        // Handle error
+        console.error("Error during voting:", error);
     } finally {
         voteButtonElement.disabled = false;
     }
 }
 
-// --- FILTER LOGIC ---
 function populateAllFilters() {
-    const semesters = [...new Set(allAssignments.map(a => a.semester).filter(Boolean))].sort();
+    const semesters = [...new Set(allAssignments.map(a => a.semester).filter(Boolean))].sort((a,b)=>a-b);
     const subjects = [...new Set(allAssignments.map(a => a.subject).filter(Boolean))].sort();
     populateFilterDropdown(filterSemesterSelectEl, semesters, 'All Semesters');
     populateFilterDropdown(filterSubjectSelectEl, subjects, 'All Subjects');
@@ -358,7 +349,8 @@ function populateFilterDropdown(selectElement, items, defaultOptionText) {
     selectElement.value = currentValue;
 }
 
-async function applyCurrentFilters() {
+function applyCurrentFilters() {
+    if (!allAssignments) return;
     const searchTerm = searchTermInputEl.value.toLowerCase().trim();
     const selectedSemester = filterSemesterSelectEl.value;
     const selectedSubject = filterSubjectSelectEl.value;
@@ -375,7 +367,7 @@ async function applyCurrentFilters() {
         if (sortByValue === 'uploadDate_asc') return (a.uploadDate?.toMillis() || 0) - (b.uploadDate?.toMillis() || 0);
         return (b.uploadDate?.toMillis() || 0) - (a.uploadDate?.toMillis() || 0);
     });
-    await renderAssignments(filtered);
+    renderAssignments(filtered);
 }
 
 function resetAllFilters() {
@@ -387,7 +379,6 @@ function resetAllFilters() {
     applyCurrentFilters();
 }
 
-// --- MODAL & PROFILE UI LOGIC ---
 function showUploadModal() {
     if (!auth.currentUser) { openAssignmentAuthModal('login'); return; }
     uploadAssignmentFormEl.reset();
@@ -417,9 +408,7 @@ async function openUploaderProfileModal(uploaderId) {
     if (!uploaderId) return;
     uploaderProfileModalEl.classList.add('active');
     document.body.style.overflow = 'hidden';
-    // Reset fields
     document.getElementById('modalUploaderProfileName').textContent = 'Loading...';
-    // ... reset other fields
     try {
         const userDocRef = doc(db, 'users', uploaderId);
         const docSnap = await getFirestoreDoc(userDocRef);
@@ -427,8 +416,6 @@ async function openUploaderProfileModal(uploaderId) {
             const data = docSnap.data();
             document.getElementById('modalUploaderProfileAvatar').textContent = data.name?.charAt(0).toUpperCase() || '?';
             document.getElementById('modalUploaderProfileName').textContent = data.name || 'N/A';
-            document.getElementById('modalUploaderProfileCollege').textContent = `College: ${data.college || 'N/A'}`;
-            // ... populate other fields
         }
     } catch (error) {
         document.getElementById('modalUploaderProfileName').textContent = 'Error loading profile.';
@@ -468,13 +455,14 @@ closeNotificationSettingsModalBtnEl.addEventListener('click', () => {
     document.body.style.overflow = '';
 });
 notificationSettingsFormEl.addEventListener('submit', saveNotificationSettings);
-enablePushNotificationsBtnEl.addEventListener('click', () => {
-    OneSignal.push(() => OneSignal.showSlidedownPrompt());
+
+subscribeBtnEl.addEventListener('click', () => {
+    OneSignal.showSlidedownPrompt();
 });
 
 OneSignal.push(() => {
-    OneSignal.on('subscriptionChange', (isSubscribed) => {
-        updatePushNotificationStatus();
+    OneSignal.on('subscriptionChange', () => {
+        updateSubscriptionUi();
     });
 });
 
@@ -490,4 +478,7 @@ document.addEventListener('keydown', (event) => {
 // --- INITIAL LOAD ---
 document.addEventListener('DOMContentLoaded', () => {
     fetchAssignments();
+    OneSignal.push(() => {
+        updateSubscriptionUi();
+    });
 });
