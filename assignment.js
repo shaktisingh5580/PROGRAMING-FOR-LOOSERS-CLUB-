@@ -1,8 +1,6 @@
-// assignment.js - FINAL CORRECTED VERSION WITH ALL BUTTONS WORKING
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, getDoc as getFirestoreDoc, updateDoc, increment, arrayUnion, arrayRemove, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, getDoc as getFirestoreDoc, updateDoc, increment, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 // Your Firebase Configuration
 const firebaseConfig = {
@@ -47,17 +45,6 @@ const closeAssignmentAuthModalBtnEl = document.getElementById('closeAssignmentAu
 const assignmentSwitchToSignupLinkEl = document.getElementById('assignmentSwitchToSignupLink');
 const assignmentSwitchToLoginLinkEl = document.getElementById('assignmentSwitchToLoginLink');
 const uploaderProfileModalEl = document.getElementById('uploaderProfileModal');
-const closeUploaderProfileModalBtnEl = document.getElementById('closeUploaderProfileModalBtn');
-const notificationSettingsBtnEl = document.getElementById('notificationSettingsBtn');
-const notificationSettingsModalEl = document.getElementById('notificationSettingsModal');
-const closeNotificationSettingsModalBtnEl = document.getElementById('closeNotificationSettingsModalBtn');
-const notificationSettingsFormEl = document.getElementById('notificationSettingsForm');
-const semesterNotificationCheckboxesEl = document.getElementById('semesterNotificationCheckboxes');
-const enablePushNotificationsBtnEl = document.getElementById('enablePushNotificationsBtn');
-const pushNotificationStatusEl = document.getElementById('pushNotificationStatus');
-
-// --- THIS LINE WAS THE MISSING FIX ---
-const subscribeBtnEl = document.getElementById('subscribeBtn');
 
 // --- Global State ---
 let allAssignments = [];
@@ -82,7 +69,6 @@ onAuthStateChanged(auth, user => {
         assignmentLoginBtnEl.classList.add('hidden');
         assignmentLogoutBtnEl.classList.remove('hidden');
         showUploadFormBtnEl.classList.remove('hidden');
-        OneSignal.push(() => OneSignal.setExternalUserId(user.uid));
         if (assignmentAuthModalEl.classList.contains('active')) {
             assignmentAuthModalEl.classList.remove('active');
             document.body.style.overflow = '';
@@ -92,121 +78,83 @@ onAuthStateChanged(auth, user => {
         assignmentLoginBtnEl.classList.remove('hidden');
         assignmentLogoutBtnEl.classList.add('hidden');
         showUploadFormBtnEl.classList.add('hidden');
-        OneSignal.push(() => OneSignal.removeExternalUserId());
     }
-    updateSubscriptionUi();
+    // Re-apply filters to update the voted status on cards
     applyCurrentFilters();
 });
 
-// --- NOTIFICATION SYSTEM ---
-async function updateSubscriptionUi() {
-    const isSubscribed = await OneSignal.isPushNotificationsEnabled();
-    const permission = await OneSignal.getNotificationPermission();
-    const isBlocked = permission === 'denied';
-    const user = auth.currentUser;
 
-    subscribeBtnEl.classList.add('hidden');
-    notificationSettingsBtnEl.classList.add('hidden');
-
-    if (user) {
-        if (isSubscribed) {
-            notificationSettingsBtnEl.classList.remove('hidden');
-        } else if (!isBlocked) {
-            subscribeBtnEl.classList.remove('hidden');
-        }
-    }
-}
-
-async function loadAndShowNotificationSettings() {
-    if (!auth.currentUser) return;
-    const isSubscribed = await OneSignal.isPushNotificationsEnabled();
-    const permission = await OneSignal.getNotificationPermission();
-
-    notificationSettingsModalEl.classList.add('active');
-    document.body.style.overflow = 'hidden';
-
-    if (isSubscribed) {
-        semesterNotificationCheckboxesEl.parentElement.classList.remove('hidden');
-        enablePushNotificationsBtnEl.parentElement.classList.add('hidden');
-        notificationSettingsFormEl.querySelector('button[type="submit"]').classList.remove('hidden');
-        pushNotificationStatusEl.textContent = 'You are subscribed. Select which semesters to get notifications for.';
-        populateSemesterCheckboxes();
-        loadSavedSemesterPreferences();
-    } else {
-        semesterNotificationCheckboxesEl.parentElement.classList.add('hidden');
-        enablePushNotificationsBtnEl.parentElement.classList.remove('hidden');
-        notificationSettingsFormEl.querySelector('button[type="submit"]').classList.add('hidden');
-        if (permission === 'denied') {
-            pushNotificationStatusEl.textContent = 'Notifications are blocked in your browser settings. You must unblock them to subscribe.';
-            enablePushNotificationsBtnEl.disabled = true;
-        } else {
-            pushNotificationStatusEl.textContent = 'You are not subscribed. Click below to enable notifications.';
-            enablePushNotificationsBtnEl.disabled = false;
-        }
-    }
-}
-
-function populateSemesterCheckboxes() {
-    semesterNotificationCheckboxesEl.innerHTML = '';
-    const allLabel = document.createElement('label');
-    allLabel.innerHTML = `<input type="checkbox" name="notifySemesters" value="all"> All Semesters`;
-    semesterNotificationCheckboxesEl.appendChild(allLabel);
-    for (let i = 1; i <= 8; i++) {
-        const label = document.createElement('label');
-        label.innerHTML = `<input type="checkbox" name="notifySemesters" value="${i}"> ${getOrdinalSuffix(i)} Semester`;
-        semesterNotificationCheckboxesEl.appendChild(label);
-        if (i % 2 === 0 && i < 8) semesterNotificationCheckboxesEl.appendChild(document.createElement('br'));
-    }
-}
-
-async function loadSavedSemesterPreferences() {
-    const user = auth.currentUser; if (!user) return;
-    const prefDocRef = doc(db, 'userNotificationPreferences', user.uid);
-    try {
-        const docSnap = await getFirestoreDoc(prefDocRef);
-        if (docSnap.exists()) {
-            const prefs = docSnap.data();
-            const selectedSemesters = prefs.notifyForSemesters || [];
-            notificationSettingsFormEl.querySelectorAll('input[name="notifySemesters"]').forEach(cb => { cb.checked = selectedSemesters.includes(cb.value); });
-        }
-    } catch (error) { showError(notificationSettingsErrorEl, "Could not load settings."); }
-}
-
-async function saveNotificationSettings(event) {
-    event.preventDefault(); const user = auth.currentUser; if (!user) return;
-    const submitBtn = notificationSettingsFormEl.querySelector('button[type="submit"]'); submitBtn.disabled = true; submitBtn.textContent = 'Saving...';
-    const selectedCheckboxes = notificationSettingsFormEl.querySelectorAll('input[name="notifySemesters"]:checked');
-    let selectedSemesters = Array.from(selectedCheckboxes).map(cb => cb.value);
-    if (selectedSemesters.includes("all")) selectedSemesters = ["all"];
-    const allPossibleTags = ['semester_1', 'semester_2', 'semester_3', 'semester_4', 'semester_5', 'semester_6', 'semester_7', 'semester_8', 'semester_all'];
-    const newTags = {}; selectedSemesters.forEach(sem => { newTags[`semester_${sem}`] = 'true'; });
-    OneSignal.push(() => { OneSignal.deleteTags(allPossibleTags).then(() => { OneSignal.sendTags(newTags); }); });
-    const prefData = { userId: user.uid, email: user.email, notifyForSemesters: selectedSemesters, lastUpdated: serverTimestamp() };
-    const prefDocRef = doc(db, 'userNotificationPreferences', user.uid);
-    try {
-        await setDoc(prefDocRef, prefData, { merge: true });
-        alert('Notification settings saved!');
-        notificationSettingsModalEl.classList.remove('active');
-        document.body.style.overflow = '';
-    } catch (error) {
-        showError(notificationSettingsErrorEl, `Save Error: ${error.message}`);
-    } finally {
-        submitBtn.disabled = false; submitBtn.textContent = 'Save Settings';
-    }
-}
-
-// --- ALL OTHER FUNCTIONS ---
+// --- AUTH & MODAL FUNCTIONS ---
 async function handleAssignmentAuthFormSubmit(e) {
-    e.preventDefault(); clearError(assignmentAuthErrorEl); const email = assignmentAuthFormEl.authEmail.value; const password = assignmentAuthFormEl.authPassword.value; assignmentAuthSubmitBtnEl.disabled = true; const originalSubmitText = assignmentAuthSubmitBtnEl.textContent; assignmentAuthSubmitBtnEl.textContent = currentAssignmentAuthMode === 'login' ? 'Logging in...' : 'Signing up...'; try { if (currentAssignmentAuthMode === 'login') { await signInWithEmailAndPassword(auth, email, password); } else { await createUserWithEmailAndPassword(auth, email, password); } } catch (error) { showError(assignmentAuthErrorEl, error.message); } finally { assignmentAuthSubmitBtnEl.disabled = false; assignmentAuthSubmitBtnEl.textContent = originalSubmitText; }
+    e.preventDefault();
+    clearError(assignmentAuthErrorEl);
+    const email = assignmentAuthFormEl.authEmail.value;
+    const password = assignmentAuthFormEl.authPassword.value;
+    assignmentAuthSubmitBtnEl.disabled = true;
+    const originalSubmitText = assignmentAuthSubmitBtnEl.textContent;
+    assignmentAuthSubmitBtnEl.textContent = currentAssignmentAuthMode === 'login' ? 'Logging in...' : 'Signing up...';
+    try {
+        if (currentAssignmentAuthMode === 'login') {
+            await signInWithEmailAndPassword(auth, email, password);
+        } else {
+            await createUserWithEmailAndPassword(auth, email, password);
+        }
+    } catch (error) {
+        showError(assignmentAuthErrorEl, error.message);
+    } finally {
+        assignmentAuthSubmitBtnEl.disabled = false;
+        assignmentAuthSubmitBtnEl.textContent = originalSubmitText;
+    }
 }
+
 function openAssignmentAuthModal(mode = 'login') {
-    currentAssignmentAuthMode = mode; assignmentAuthFormEl.reset(); clearError(assignmentAuthErrorEl); assignmentAuthTitleEl.textContent = mode === 'login' ? 'Login' : 'Sign Up'; assignmentAuthSubmitBtnEl.textContent = mode === 'login' ? 'Login' : 'Sign Up'; assignmentSwitchToSignupLinkEl.classList.toggle('hidden', mode === 'signup'); assignmentSwitchToLoginLinkEl.classList.toggle('hidden', mode === 'login'); assignmentAuthModalEl.classList.add('active'); document.body.style.overflow = 'hidden';
+    currentAssignmentAuthMode = mode;
+    assignmentAuthFormEl.reset();
+    clearError(assignmentAuthErrorEl);
+    assignmentAuthTitleEl.textContent = mode === 'login' ? 'Login' : 'Sign Up';
+    assignmentAuthSubmitBtnEl.textContent = mode === 'login' ? 'Login' : 'Sign Up';
+    assignmentSwitchToSignupLinkEl.classList.toggle('hidden', mode === 'signup');
+    assignmentSwitchToLoginLinkEl.classList.toggle('hidden', mode === 'login');
+    assignmentAuthModalEl.classList.add('active');
+    document.body.style.overflow = 'hidden';
 }
+
+// --- ASSIGNMENT FUNCTIONS ---
 async function fetchAssignments() {
-    assignmentsGridEl.innerHTML = '<div class="loader-container"><div class="loader"></div></div>'; try { const assignmentsQuery = query(collection(db, "assignments"), orderBy("uploadDate", "desc")); const snapshot = await getDocs(assignmentsQuery); allAssignments = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() })); populateAllFilters(); await renderAssignments(allAssignments); } catch (error) { console.error("Error fetching assignments:", error); assignmentsGridEl.innerHTML = '<p class="no-assignments-message">Could not load assignments.</p>'; }
+    assignmentsGridEl.innerHTML = '<div class="loader-container"><div class="loader"></div></div>';
+    try {
+        const assignmentsQuery = query(collection(db, "assignments"), orderBy("uploadDate", "desc"));
+        const snapshot = await getDocs(assignmentsQuery);
+        allAssignments = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+        populateAllFilters();
+        await renderAssignments(allAssignments);
+    } catch (error) {
+        console.error("Error fetching assignments:", error);
+        assignmentsGridEl.innerHTML = '<p class="no-assignments-message">Could not load assignments.</p>';
+    }
 }
+
 async function renderAssignments(assignmentsToRender) {
-    assignmentsGridEl.innerHTML = ''; if (!assignmentsToRender || assignmentsToRender.length === 0) { assignmentsGridEl.innerHTML = '<p class="no-assignments-message">No assignments found.</p>'; return; } const uploaderNamePromises = assignmentsToRender.map(assignment => fetchUploaderNameFromUsersCollection(assignment.uploaderId, assignment.uploaderEmail || 'Anonymous')); const uploaderNames = await Promise.all(uploaderNamePromises); assignmentsToRender.forEach((assignment, index) => { const card = document.createElement('div'); card.classList.add('assignment-card'); const uploadDate = assignment.uploadDate?.toDate ? assignment.uploadDate.toDate().toLocaleDateString() : 'N/A'; const uploaderName = uploaderNames[index]; const userHasVoted = auth.currentUser && Array.isArray(assignment.votedBy) && assignment.votedBy.includes(auth.currentUser.uid); card.innerHTML = `
+    assignmentsGridEl.innerHTML = '';
+    if (!assignmentsToRender || assignmentsToRender.length === 0) {
+        assignmentsGridEl.innerHTML = '<p class="no-assignments-message">No assignments found.</p>';
+        return;
+    }
+
+    const uploaderNamePromises = assignmentsToRender.map(assignment =>
+        fetchUploaderNameFromUsersCollection(assignment.uploaderId, assignment.uploaderEmail || 'Anonymous')
+    );
+    const uploaderNames = await Promise.all(uploaderNamePromises);
+
+    assignmentsToRender.forEach((assignment, index) => {
+        const card = document.createElement('div');
+        card.classList.add('assignment-card');
+
+        const uploadDate = assignment.uploadDate?.toDate ? assignment.uploadDate.toDate().toLocaleDateString() : 'N/A';
+        const uploaderName = uploaderNames[index];
+        const userHasVoted = auth.currentUser && Array.isArray(assignment.votedBy) && assignment.votedBy.includes(auth.currentUser.uid);
+
+        card.innerHTML = `
             <div>
                 <h3>${assignment.assignmentTitle || 'Untitled'}</h3>
                 <p><strong>Uploader:</strong> <a href="#" class="uploader-name-link" data-uploader-id="${assignment.uploaderId}">${uploaderName}</a></p>
@@ -222,34 +170,198 @@ async function renderAssignments(assignmentsToRender) {
                     <button class="vote-btn ${userHasVoted ? 'voted' : ''}" data-assignment-id="${assignment.id}" aria-label="Vote">▲</button>
                     <span class="vote-count">${assignment.votes || 0}</span>
                 </div>
-            </div>`; card.querySelector('.uploader-name-link')?.addEventListener('click', (e) => { e.preventDefault(); openUploaderProfileModal(assignment.uploaderId); }); card.querySelector('.vote-btn')?.addEventListener('click', (event) => handleVote(assignment.id, event.currentTarget)); assignmentsGridEl.appendChild(card); });
+            </div>`;
+
+        card.querySelector('.uploader-name-link')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            openUploaderProfileModal(assignment.uploaderId);
+        });
+        card.querySelector('.vote-btn')?.addEventListener('click', (event) => handleVote(assignment.id, event.currentTarget));
+
+        assignmentsGridEl.appendChild(card);
+    });
 }
+
 async function handleFormSubmit(event) {
-    event.preventDefault(); const user = auth.currentUser; if (!user) { showError(uploadFormErrorEl, "You must be logged in."); return; } const submitButton = uploadAssignmentFormEl.querySelector('button[type="submit"]'); submitButton.disabled = true; submitButton.textContent = 'Submitting...'; const newAssignmentForDb = { uploaderId: user.uid, uploaderEmail: user.email, assignmentTitle: uploadAssignmentFormEl.assignmentTitle.value.trim(), subject: uploadAssignmentFormEl.subject.value.trim(), semester: uploadAssignmentFormEl.semester.value, assignmentNumber: uploadAssignmentFormEl.assignmentNumber.value.trim(), keywords: uploadAssignmentFormEl.keywords.value.split(',').map(k => k.trim().toLowerCase()).filter(Boolean), driveLink: uploadAssignmentFormEl.driveLink.value.trim(), uploadDate: serverTimestamp(), votes: 0, votedBy: [] }; try { await addDoc(collection(db, "assignments"), newAssignmentForDb); uploadModalEl.classList.remove('active'); document.body.style.overflow = ''; alert('Assignment uploaded successfully!'); const netlifyFunctionUrl = '/.netlify/functions/sendNotification'; const mySecret = 'my-super-secret-pfl-key-12345'; fetch(netlifyFunctionUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ assignment: { assignmentTitle: newAssignmentForDb.assignmentTitle, subject: newAssignmentForDb.subject, semester: newAssignmentForDb.semester }, secret: mySecret }) }).catch(err => console.error('Error triggering notification function:', err)); fetchAssignments(); } catch (error) { showError(uploadFormErrorEl, `Upload Error: ${error.message}`); } finally { submitButton.disabled = false; submitButton.textContent = 'Upload Assignment'; }
+    event.preventDefault();
+    const user = auth.currentUser;
+    if (!user) {
+        showError(uploadFormErrorEl, "You must be logged in.");
+        return;
+    }
+
+    const submitButton = uploadAssignmentFormEl.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+    submitButton.textContent = 'Submitting...';
+
+    const newAssignmentForDb = {
+        uploaderId: user.uid,
+        uploaderEmail: user.email,
+        assignmentTitle: uploadAssignmentFormEl.assignmentTitle.value.trim(),
+        subject: uploadAssignmentFormEl.subject.value.trim(),
+        semester: uploadAssignmentFormEl.semester.value,
+        assignmentNumber: uploadAssignmentFormEl.assignmentNumber.value.trim(),
+        keywords: uploadAssignmentFormEl.keywords.value.split(',').map(k => k.trim().toLowerCase()).filter(Boolean),
+        driveLink: uploadAssignmentFormEl.driveLink.value.trim(),
+        uploadDate: serverTimestamp(),
+        votes: 0,
+        votedBy: []
+    };
+
+    try {
+        await addDoc(collection(db, "assignments"), newAssignmentForDb);
+        uploadModalEl.classList.remove('active');
+        document.body.style.overflow = '';
+        alert('Assignment uploaded successfully!');
+        fetchAssignments(); // Refresh the list
+    } catch (error) {
+        showError(uploadFormErrorEl, `Upload Error: ${error.message}`);
+    } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Upload Assignment';
+    }
 }
+
 async function handleVote(assignmentId, voteButtonElement) {
-    const user = auth.currentUser; if (!user) { openAssignmentAuthModal('login'); return; } const assignmentRef = doc(db, "assignments", assignmentId); voteButtonElement.disabled = true; try { const docSnap = await getFirestoreDoc(assignmentRef); if (!docSnap.exists()) return; const assignmentData = docSnap.data(); const hasVoted = (assignmentData.votedBy || []).includes(user.uid); const updatePayload = hasVoted ? { votes: increment(-1), votedBy: arrayRemove(user.uid) } : { votes: increment(1), votedBy: arrayUnion(user.uid) }; await updateDoc(assignmentRef, updatePayload); const voteCountSpan = voteButtonElement.parentElement.querySelector('.vote-count'); const newVoteCount = (assignmentData.votes || 0) + (hasVoted ? -1 : 1); voteCountSpan.textContent = newVoteCount; voteButtonElement.classList.toggle('voted', !hasVoted); } catch (error) { console.error("Vote error:", error); } finally { voteButtonElement.disabled = false; }
+    const user = auth.currentUser;
+    if (!user) {
+        openAssignmentAuthModal('login');
+        return;
+    }
+
+    const assignmentRef = doc(db, "assignments", assignmentId);
+    voteButtonElement.disabled = true;
+
+    try {
+        const docSnap = await getFirestoreDoc(assignmentRef);
+        if (!docSnap.exists()) return;
+
+        const assignmentData = docSnap.data();
+        const hasVoted = (assignmentData.votedBy || []).includes(user.uid);
+
+        const updatePayload = hasVoted
+            ? { votes: increment(-1), votedBy: arrayRemove(user.uid) }
+            : { votes: increment(1), votedBy: arrayUnion(user.uid) };
+
+        await updateDoc(assignmentRef, updatePayload);
+
+        const voteCountSpan = voteButtonElement.parentElement.querySelector('.vote-count');
+        const newVoteCount = (assignmentData.votes || 0) + (hasVoted ? -1 : 1);
+        voteCountSpan.textContent = newVoteCount;
+        voteButtonElement.classList.toggle('voted', !hasVoted);
+
+    } catch (error) {
+        console.error("Vote error:", error);
+    } finally {
+        voteButtonElement.disabled = false;
+    }
 }
+
+// --- FILTERING AND SORTING ---
 function populateAllFilters() {
-    const semesters = [...new Set(allAssignments.map(a => a.semester).filter(Boolean))].sort((a,b)=>a-b); const subjects = [...new Set(allAssignments.map(a => a.subject).filter(Boolean))].sort(); populateFilterDropdown(filterSemesterSelectEl, semesters, 'All Semesters'); populateFilterDropdown(filterSubjectSelectEl, subjects, 'All Subjects');
+    const semesters = [...new Set(allAssignments.map(a => a.semester).filter(Boolean))].sort((a,b)=>a-b);
+    const subjects = [...new Set(allAssignments.map(a => a.subject).filter(Boolean))].sort();
+    populateFilterDropdown(filterSemesterSelectEl, semesters, 'All Semesters');
+    populateFilterDropdown(filterSubjectSelectEl, subjects, 'All Subjects');
 }
+
 function populateFilterDropdown(selectElement, items, defaultOptionText) {
-    const currentValue = selectElement.value; selectElement.innerHTML = `<option value="">${defaultOptionText}</option>`; items.forEach(item => selectElement.add(new Option(item, item))); selectElement.value = currentValue;
+    const currentValue = selectElement.value;
+    selectElement.innerHTML = `<option value="">${defaultOptionText}</option>`;
+    items.forEach(item => selectElement.add(new Option(item, item)));
+    selectElement.value = currentValue;
 }
+
 function applyCurrentFilters() {
-    if (!allAssignments) return; const searchTerm = searchTermInputEl.value.toLowerCase().trim(); const selectedSemester = filterSemesterSelectEl.value; const selectedSubject = filterSubjectSelectEl.value; const assignmentNumFilter = filterAssignmentNumberInputEl.value.toLowerCase().trim(); const sortByValue = sortBySelectEl.value; let filtered = allAssignments.filter(a => (searchTerm ? [a.assignmentTitle, a.subject, ...(a.keywords || [])].join(' ').toLowerCase().includes(searchTerm) : true) && (selectedSemester ? a.semester === selectedSemester : true) && (selectedSubject ? a.subject === selectedSubject : true) && (assignmentNumFilter ? String(a.assignmentNumber || '').toLowerCase().includes(assignmentNumFilter) : true)); filtered.sort((a, b) => { if (sortByValue === 'votes_desc') return (b.votes || 0) - (a.votes || 0); if (sortByValue === 'uploadDate_asc') return (a.uploadDate?.toMillis() || 0) - (b.uploadDate?.toMillis() || 0); return (b.uploadDate?.toMillis() || 0) - (a.uploadDate?.toMillis() || 0); }); renderAssignments(filtered);
+    if (!allAssignments) return;
+    const searchTerm = searchTermInputEl.value.toLowerCase().trim();
+    const selectedSemester = filterSemesterSelectEl.value;
+    const selectedSubject = filterSubjectSelectEl.value;
+    const assignmentNumFilter = filterAssignmentNumberInputEl.value.toLowerCase().trim();
+    const sortByValue = sortBySelectEl.value;
+
+    let filtered = allAssignments.filter(a =>
+        (searchTerm ? [a.assignmentTitle, a.subject, ...(a.keywords || [])].join(' ').toLowerCase().includes(searchTerm) : true) &&
+        (selectedSemester ? a.semester === selectedSemester : true) &&
+        (selectedSubject ? a.subject === selectedSubject : true) &&
+        (assignmentNumFilter ? String(a.assignmentNumber || '').toLowerCase().includes(assignmentNumFilter) : true)
+    );
+
+    filtered.sort((a, b) => {
+        if (sortByValue === 'votes_desc') return (b.votes || 0) - (a.votes || 0);
+        if (sortByValue === 'uploadDate_asc') return (a.uploadDate?.toMillis() || 0) - (b.uploadDate?.toMillis() || 0);
+        return (b.uploadDate?.toMillis() || 0) - (a.uploadDate?.toMillis() || 0); // Default: Newest first
+    });
+
+    renderAssignments(filtered);
 }
+
 function resetAllFilters() {
-    searchTermInputEl.value = ''; filterSemesterSelectEl.value = ''; filterSubjectSelectEl.value = ''; filterAssignmentNumberInputEl.value = ''; sortBySelectEl.value = 'uploadDate_desc'; applyCurrentFilters();
+    searchTermInputEl.value = '';
+    filterSemesterSelectEl.value = '';
+    filterSubjectSelectEl.value = '';
+    filterAssignmentNumberInputEl.value = '';
+    sortBySelectEl.value = 'uploadDate_desc';
+    applyCurrentFilters();
 }
+
 function showUploadModal() {
-    if (!auth.currentUser) { openAssignmentAuthModal('login'); return; } uploadAssignmentFormEl.reset(); clearError(uploadFormErrorEl); uploadModalEl.classList.add('active'); document.body.style.overflow = 'hidden';
+    if (!auth.currentUser) {
+        openAssignmentAuthModal('login');
+        return;
+    }
+    uploadAssignmentFormEl.reset();
+    clearError(uploadFormErrorEl);
+    uploadModalEl.classList.add('active');
+    document.body.style.overflow = 'hidden';
 }
+
+// --- PROFILE MODAL FUNCTIONS ---
 async function fetchUploaderNameFromUsersCollection(uploaderId, fallbackName = 'Anonymous') {
-    if (userNamesCache[uploaderId]) return userNamesCache[uploaderId]; if (!uploaderId) return fallbackName; try { const userDocRef = doc(db, 'users', uploaderId); const docSnap = await getFirestoreDoc(userDocRef); if (docSnap.exists()) { const displayName = docSnap.data().name || docSnap.data().email || fallbackName; userNamesCache[uploaderId] = displayName; return displayName; } return fallbackName; } catch { return fallbackName; }
+    if (userNamesCache[uploaderId]) return userNamesCache[uploaderId];
+    if (!uploaderId) return fallbackName;
+    try {
+        const userDocRef = doc(db, 'users', uploaderId);
+        const docSnap = await getFirestoreDoc(userDocRef);
+        if (docSnap.exists()) {
+            const displayName = docSnap.data().name || docSnap.data().email || fallbackName;
+            userNamesCache[uploaderId] = displayName;
+            return displayName;
+        }
+        return fallbackName;
+    } catch {
+        return fallbackName;
+    }
 }
+
 async function openUploaderProfileModal(uploaderId) {
-    if (!uploaderId) return; uploaderProfileModalEl.classList.add('active'); document.body.style.overflow = 'hidden'; document.getElementById('modalUploaderProfileName').textContent = 'Loading...'; document.getElementById('modalUploaderProfileCollege').textContent = 'College: Loading...'; document.getElementById('modalUploaderProfileSemester').textContent = 'Semester: Loading...'; document.getElementById('modalUploaderProfileBio').textContent = 'Loading bio...'; document.getElementById('modalUploaderProfileEmail').textContent = 'Loading...'; try { const userDocRef = doc(db, 'users', uploaderId); const docSnap = await getFirestoreDoc(userDocRef); if (docSnap.exists()) { const data = docSnap.data(); document.getElementById('modalUploaderProfileAvatar').textContent = data.name?.charAt(0).toUpperCase() || '?'; document.getElementById('modalUploaderProfileName').textContent = data.name || 'N/A'; } } catch (error) { document.getElementById('modalUploaderProfileName').textContent = 'Error loading profile.'; }
+    if (!uploaderId) return;
+    uploaderProfileModalEl.classList.add('active');
+    document.body.style.overflow = 'hidden';
+
+    // Simple loading state for profile modal (assumes you have these IDs in your HTML)
+    document.getElementById('modalUploaderProfileName').textContent = 'Loading...';
+    // The following lines assume you have elements with these IDs in your profile modal.
+    // If not, you should add them or remove these lines.
+    // document.getElementById('modalUploaderProfileCollege').textContent = 'College: Loading...';
+    // document.getElementById('modalUploaderProfileSemester').textContent = 'Semester: Loading...';
+    // document.getElementById('modalUploaderProfileBio').textContent = 'Loading bio...';
+    // document.getElementById('modalUploaderProfileEmail').textContent = 'Loading...';
+
+    try {
+        const userDocRef = doc(db, 'users', uploaderId);
+        const docSnap = await getFirestoreDoc(userDocRef);
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            document.getElementById('modalUploaderProfileAvatar').textContent = data.name?.charAt(0).toUpperCase() || '?';
+            document.getElementById('modalUploaderProfileName').textContent = data.name || 'N/A';
+            // You can populate other fields here if they exist in your 'users' collection
+        } else {
+             document.getElementById('modalUploaderProfileName').textContent = 'Profile not found.';
+        }
+    } catch (error) {
+        document.getElementById('modalUploaderProfileName').textContent = 'Error loading profile.';
+    }
 }
 
 // --- EVENT LISTENERS ---
@@ -265,22 +377,18 @@ closeUploadModalBtnEl.addEventListener('click', () => { uploadModalEl.classList.
 applyFiltersBtnEl.addEventListener('click', applyCurrentFilters);
 resetFiltersBtnEl.addEventListener('click', resetAllFilters);
 sortBySelectEl.addEventListener('change', applyCurrentFilters);
-subscribeBtnEl.addEventListener('click', () => { OneSignal.showSlidedownPrompt(); });
-notificationSettingsBtnEl.addEventListener('click', loadAndShowNotificationSettings);
-closeNotificationSettingsModalBtnEl.addEventListener('click', () => { notificationSettingsModalEl.classList.remove('active'); document.body.style.overflow = ''; });
-notificationSettingsFormEl.addEventListener('submit', saveNotificationSettings);
-enablePushNotificationsBtnEl.addEventListener('click', () => { OneSignal.showSlidedownPrompt(); });
 
-OneSignal.push(() => {
-    OneSignal.on('subscriptionChange', () => {
-        updateSubscriptionUi();
-        if (notificationSettingsModalEl.classList.contains('active')) {
-            loadAndShowNotificationSettings();
-        }
-    });
+// Global event listener to close modals with the Escape key
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        document.querySelectorAll('.modal.active').forEach(modal => {
+            modal.classList.remove('active');
+        });
+        document.body.style.overflow = '';
+    }
 });
-document.addEventListener('keydown', (event) => { if (event.key === 'Escape') { document.querySelectorAll('.modal.active').forEach(modal => { modal.classList.remove('active'); }); document.body.style.overflow = ''; } });
+
+// Initial Load
 document.addEventListener('DOMContentLoaded', () => {
     fetchAssignments();
-    updateSubscriptionUi();
 });
