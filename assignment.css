@@ -1137,6 +1137,70 @@ h1 {
         transform: none;
     }
 }
+/* ADDED: Profile Card Styles from profile.html */
+.profile-popup-modal .profile-card {
+    border: 1px solid #2a2a2e;
+    border-radius: 16px;
+    padding: 24px;
+    background: #121214;
+    display: grid;
+    gap: 12px;
+    color: #d9d9db;
+}
+
+.profile-popup-modal .profile-card .name {
+    font-weight: 700;
+    font-size: 22px;
+    color: #ffffff;
+}
+
+.profile-popup-modal .profile-card .sub {
+    color: #a9a9ad;
+    font-size: 15px;
+    margin-bottom: 12px;
+}
+
+.profile-popup-modal .profile-card .links {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.profile-popup-modal .profile-card .link {
+    padding: 6px 12px;
+    border: 1px solid #2a2a2e;
+    border-radius: 999px;
+    color: #d9d9db;
+    font-size: 14px;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.profile-popup-modal .profile-card .link:hover {
+    background-color: #2a2a2e;
+    text-decoration: none;
+}
+
+/* Ensure the close button is styled */
+.profile-popup-modal .close-profile-popup {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 2rem;
+    background: none;
+    border: none;
+    color: #bbb;
+    cursor: pointer;
+    transition: color 0.2s, transform 0.2s;
+    padding: 8px;
+    line-height: 1;
+    z-index: 10;
+}
+
+.profile-popup-modal .close-profile-popup:hover {
+    color: #fff;
+    transform: rotate(90deg) scale(1.1);
+}
 
 /* Accessibility improvements */
 @media (prefers-reduced-motion: reduce) {
