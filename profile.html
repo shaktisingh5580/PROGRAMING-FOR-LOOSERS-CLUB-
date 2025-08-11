@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Programming for Losers — Profile</title>
+    <meta name="color-scheme" content="dark light" />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0f0f10;
+        --elev: #151517;
+        --elev-2: #1b1b1e;
+        --muted: #d9d9db;
+        --soft: #a9a9ad;
+        --line: #2a2a2e;
+        --accent: #ffffff;
+        --ok: #43d17a;
+        --warn: #e7c74f;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0; background: var(--bg); color: var(--muted);
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial;
+      }
+      a { color: var(--muted); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      header {
+        position: sticky; top: 0; z-index: 40;
+        background: linear-gradient(180deg, #0f0f10, #0f0f10f0 70%, transparent);
+        border-bottom: 1px solid var(--line);
+      }
+      .container { max-width: 1100px; margin: 0 auto; padding: 16px; }
+      .row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+      .grow { flex: 1; }
+      .pill { padding: 6px 10px; border: 1px solid var(--line); border-radius: 999px; color: var(--soft); font-size: 12px; }
+      button, input, select, textarea {
+        font: inherit; color: var(--muted); background: var(--elev); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; outline: none;
+      }
+      button { cursor: pointer; background: transparent; border-color: var(--muted); }
+      button:hover { background: var(--elev); }
+      .btn-primary { background: var(--muted); color: #0b0b0c; border-color: var(--muted); }
+      .grid { display: grid; gap: 16px; grid-template-columns: 1fr; }
+      @media (min-width: 1000px) { .grid { grid-template-columns: 1.1fr .9fr; } }
+      .card { background: var(--elev-2); border: 1px solid var(--line); border-radius: 16px; overflow: clip; }
+      .card-header { padding: 14px; border-bottom: 1px solid var(--line); font-weight: 600; display:flex; justify-content:space-between; }
+      .card-body { padding: 14px; display: grid; gap: 12px; }
+      .field { display: grid; gap: 6px; }
+      .field label { color: var(--soft); font-size: 13px; }
+      .row-inline { display: grid; gap: 10px; grid-template-columns: 1fr; }
+      @media (min-width:700px) { .row-inline { grid-template-columns: 1fr 1fr; } }
+      .hint { font-size: 13px; color: var(--soft); }
+      .error { color: #ff5d5d; font-size: 13px; }
+      .success { color: var(--ok); font-size: 13px; }
+
+      .profile-card {
+        border: 1px solid var(--line); border-radius: 16px; padding: 16px; background: #121214;
+        display: grid; gap: 8px;
+      }
+      .name { font-weight: 700; font-size: 18px; }
+      .sub { color: var(--soft); font-size: 13px; }
+      .links { display: flex; gap: 8px; flex-wrap: wrap; }
+      .link {
+        padding: 6px 10px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted);
+      }
+      .list { display: grid; gap: 12px; grid-template-columns: 1fr; }
+      @media (min-width: 800px) { .list { grid-template-columns: 1fr 1fr; } }
+      .item { border: 1px solid var(--line); border-radius: 14px; padding: 12px; display: grid; gap: 8px; background: #121214; }
+      .actions { display:flex; gap:8px; flex-wrap:wrap; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container row">
+        <div style="font-weight:700">Programming for Losers</div>
+        <div class="grow"></div>
+        <a class="pill" href="./chat.html">← Back to chat</a>
+      </div>
+    </header>
+
+    <main class="container" style="padding:16px">
+      <div class="grid">
+        <section class="card">
+          <div class="card-header">
+            <span>Complete your profile</span>
+            <span class="pill" id="auth-pill">Guest</span>
+          </div>
+          <div class="card-body">
+            <div class="hint">No profile photos. Keep it simple — just your basic info and links.</div>
+
+            <div class="field">
+              <label for="name">Full name</label>
+              <input id="name" placeholder="Ada Lovelace" maxlength="80" />
+            </div>
+
+            <div class="row-inline">
+              <div class="field">
+                <label for="semester">Semester</label>
+                <select id="semester">
+                  <option value="">Select</option>
+                  <option>1</option><option>2</option><option>3</option><option>4</option>
+                  <option>5</option><option>6</option><option>7</option><option>8</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="college">College</label>
+                <input id="college" placeholder="Your College" maxlength="120" />
+              </div>
+            </div>
+
+            <div class="row-inline">
+              <div class="field">
+                <label for="instagram">Instagram URL</label>
+                <input id="instagram" placeholder="https://instagram.com/your_handle" />
+              </div>
+              <div class="field">
+                <label for="github">GitHub URL</label>
+                <input id="github" placeholder="https://github.com/your_handle" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="linkedin">LinkedIn URL</label>
+              <input id="linkedin" placeholder="https://linkedin.com/in/your_handle" />
+            </div>
+
+            <div class="row">
+              <button class="btn-primary" id="save">Save profile</button>
+              <button id="sign-in" style="display:none">Sign in</button>
+              <button id="sign-out" style="display:none">Sign out</button>
+              <span id="msg" class="success" role="status"></span>
+            </div>
+          </div>
+        </section>
+
+        <aside class="card">
+          <div class="card-header">
+            <span>My profile card</span>
+            <a class="pill" href="./chat.html">Open chat</a>
+          </div>
+          <div class="card-body">
+            <div id="my-card" class="profile-card">
+              <div class="name">Not signed in</div>
+              <div class="sub">Sign in to create your card</div>
+            </div>
+          </div>
+
+          <div class="card-header">
+            <span>Community profiles</span>
+            <span class="pill" id="profiles-count">0</span>
+          </div>
+          <div class="card-body">
+            <div class="list" id="profiles-list"></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+      import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+      import { getFirestore, doc, getDoc, setDoc, collection, getDocs, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyCCc1y2kNbSftG45mB3gkbUCGs4gfjts-E",
+        authDomain: "realtimepfl.firebaseapp.com",
+        databaseURL: "https://realtimepfl-default-rtdb.firebaseio.com",
+        projectId: "realtimepfl",
+        storageBucket: "realtimepfl.firebasestorage.app",
+        messagingSenderId: "984202175754",
+        appId: "1:984202175754:web:a0d689738832cc48b686f3",
+        measurementId: "G-4W311B25HV"
+      };
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      // Elements
+      const pill = document.getElementById('auth-pill');
+      const btnSave = document.getElementById('save');
+      const btnSignIn = document.getElementById('sign-in');
+      const btnSignOut = document.getElementById('sign-out');
+      const msg = document.getElementById('msg');
+
+      const nameEl = document.getElementById('name');
+      const semesterEl = document.getElementById('semester');
+      const collegeEl = document.getElementById('college');
+      const instagramEl = document.getElementById('instagram');
+      const githubEl = document.getElementById('github');
+      const linkedinEl = document.getElementById('linkedin');
+
+      const myCard = document.getElementById('my-card');
+      const profilesCount = document.getElementById('profiles-count');
+      const profilesList = document.getElementById('profiles-list');
+
+      let me = null;
+      let myProfile = null;
+
+      function setAuthUI() {
+        if (me) {
+          pill.textContent = me.email || 'Signed in';
+          btnSignIn.style.display = 'none';
+          btnSignOut.style.display = '';
+          btnSave.disabled = false;
+        } else {
+          pill.textContent = 'Guest';
+          btnSignIn.style.display = '';
+          btnSignOut.style.display = 'none';
+          btnSave.disabled = true;
+        }
+      }
+
+      function isValidUrl(str) {
+        if (!str) return true;
+        try {
+          const u = new URL(str);
+          return u.protocol === 'http:' || u.protocol === 'https:';
+        } catch { return false; }
+      }
+
+      function renderMyCard(p) {
+        myCard.innerHTML = '';
+        if (!me) {
+          myCard.innerHTML = '<div class="name">Not signed in</div><div class="sub">Sign in to create your card</div>';
+          return;
+        }
+        const name = (p && p.name) || 'Unnamed';
+        const sub = [(p && p.college) || '', (p && p.semester) ? ('Sem ' + p.semester) : ''].filter(Boolean).join(' · ');
+        const links = [];
+        if (p && p.instagram) links.push({ name: 'Instagram', href: p.instagram });
+        if (p && p.github) links.push({ name: 'GitHub', href: p.github });
+        if (p && p.linkedin) links.push({ name: 'LinkedIn', href: p.linkedin });
+
+        const card = document.createElement('div'); card.className = 'profile-card';
+        const nameDiv = document.createElement('div'); nameDiv.className = 'name'; nameDiv.textContent = name;
+        const subDiv = document.createElement('div'); subDiv.className = 'sub'; subDiv.textContent = sub || 'Add your details';
+        const linksDiv = document.createElement('div'); linksDiv.className = 'links';
+        for (const l of links) {
+          const a = document.createElement('a'); a.className = 'link'; a.href = l.href; a.target = '_blank'; a.rel = 'noopener noreferrer';
+          a.textContent = l.name;
+          linksDiv.appendChild(a);
+        }
+        card.append(nameDiv, subDiv, linksDiv);
+        myCard.appendChild(card);
+      }
+
+      async function loadMyProfile() {
+        if (!me) { myProfile = null; renderMyCard(null); return; }
+        const snap = await getDoc(doc(db, 'profiles', me.uid));
+        myProfile = snap.exists() ? snap.data() : null;
+        if (myProfile) {
+          nameEl.value = myProfile.name || '';
+          semesterEl.value = myProfile.semester || '';
+          collegeEl.value = myProfile.college || '';
+          instagramEl.value = myProfile.instagram || '';
+          githubEl.value = myProfile.github || '';
+          linkedinEl.value = myProfile.linkedin || '';
+        }
+        renderMyCard(myProfile);
+      }
+
+      async function loadProfiles() {
+        profilesList.innerHTML = '';
+        const snap = await getDocs(collection(db, 'profiles'));
+        let count = 0;
+        snap.forEach((docSnap) => {
+          const p = { id: docSnap.id, ...docSnap.data() };
+          count++;
+          const item = document.createElement('div'); item.className = 'item';
+          const title = document.createElement('div'); title.className = 'name'; title.textContent = p.name || 'Unnamed';
+          const sub = document.createElement('div'); sub.className = 'sub';
+          sub.textContent = [(p.college || ''), (p.semester ? ('Sem ' + p.semester) : '')].filter(Boolean).join(' · ');
+          const linksDiv = document.createElement('div'); linksDiv.className = 'links';
+          if (p.instagram) { const a = document.createElement('a'); a.className='link'; a.href=p.instagram; a.textContent='Instagram'; a.target='_blank'; a.rel='noopener'; linksDiv.appendChild(a); }
+          if (p.github) { const a = document.createElement('a'); a.className='link'; a.href=p.github; a.textContent='GitHub'; a.target='_blank'; a.rel='noopener'; linksDiv.appendChild(a); }
+          if (p.linkedin) { const a = document.createElement('a'); a.className='link'; a.href=p.linkedin; a.textContent='LinkedIn'; a.target='_blank'; a.rel='noopener'; linksDiv.appendChild(a); }
+          const actions = document.createElement('div'); actions.className = 'actions';
+          const msgBtn = document.createElement('a'); msgBtn.className = 'link'; msgBtn.textContent = 'Message';
+          msgBtn.href = './chat.html';
+          actions.appendChild(msgBtn);
+
+          item.append(title, sub, linksDiv, actions);
+          profilesList.appendChild(item);
+        });
+        profilesCount.textContent = count.toString();
+      }
+
+      btnSave.addEventListener('click', async () => {
+        msg.textContent = '';
+        if (!me) { msg.textContent = 'Sign in to save.'; msg.className='error'; return; }
+        const name = nameEl.value.trim();
+        const semester = semesterEl.value;
+        const college = collegeEl.value.trim();
+        const instagram = instagramEl.value.trim();
+        const github = githubEl.value.trim();
+        const linkedin = linkedinEl.value.trim();
+
+        if (!name || !semester || !college) {
+          msg.textContent = 'Name, semester, and college are required.'; msg.className='error'; return;
+        }
+        if (!isValidUrl(instagram) || !isValidUrl(github) || !isValidUrl(linkedin)) {
+          msg.textContent = 'Please enter valid URLs (https://...) for links.'; msg.className='error'; return;
+        }
+        try {
+          await setDoc(doc(db, 'profiles', me.uid), {
+            name, semester, college,
+            instagram: instagram || null,
+            github: github || null,
+            linkedin: linkedin || null,
+            updatedAt: new Date().toISOString()
+          }, { merge: true });
+          msg.textContent = 'Profile saved.'; msg.className='success';
+          await loadMyProfile();
+          await loadProfiles();
+        } catch (e) {
+          msg.textContent = 'Failed to save profile.'; msg.className='error';
+        }
+      });
+
+      btnSignIn.addEventListener('click', async () => {
+        const email = prompt('Email:');
+        if (!email) return;
+        const password = prompt('Password (min 6 chars):') || '';
+        try {
+          await signInWithEmailAndPassword(auth, email, password);
+        } catch (e) {
+          if (confirm('No account? Create one now?')) {
+            try {
+              await createUserWithEmailAndPassword(auth, email, password);
+              alert('Account created. Fill your profile now.');
+            } catch (err) {
+              alert('Signup failed.');
+            }
+          }
+        }
+      });
+      btnSignOut.addEventListener('click', async () => { await signOut(auth); });
+
+      onAuthStateChanged(auth, async (user) => {
+        me = user;
+        setAuthUI();
+        await loadMyProfile();
+        await loadProfiles();
+      });
+
+      // Initial
+      setAuthUI();
+      loadProfiles();
+    </script>
+  </body>
+</html>

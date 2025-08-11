@@ -1,0 +1,1190 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Programming for Losers — Chat</title>
+    <meta name="color-scheme" content="dark light" />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0f0f10;
+        /* matte black */
+        --elev: #151517;
+        /* subtle elevation */
+        --elev-2: #1b1b1e;
+        --muted: #d9d9db;     /* soft white */
+        --soft: #a9a9ad;      /* gray text */
+        --line: #2a2a2e;      /* borders */
+        --accent: #ffffff;    /* white accents */
+        --danger: #ff5d5d;
+        --ok: #43d17a;      }
+      * { box-sizing: border-box; }
+      html, body { height: 100%; }
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        background: var(--bg);
+        color: var(--muted);
+      }
+      a { color: var(--muted); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      button, input, select, textarea {
+        font: inherit;
+        color: var(--muted);
+        background: var(--elev);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px 12px;
+        outline: none;
+      }
+      input::placeholder, textarea::placeholder { color: var(--soft); }
+      button {
+        cursor: pointer;
+        background: transparent;
+        border: 1px solid var(--muted);
+        color: var(--muted);
+      }
+      button:hover { background: var(--elev); }
+      button[disabled] { opacity: .6; cursor: not-allowed; }
+      .btn-primary { background: var(--muted); color: #0b0b0c; border-color: var(--muted); }
+      .btn-primary:hover { filter: brightness(.95); }
+      .btn-ghost { background: transparent; border-color: var(--line); }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        background: linear-gradient(180deg, #0f0f10, #0f0f10f0 70%, transparent);
+        border-bottom: 1px solid var(--line);
+      }
+      .container { max-width: 1200px; margin: 0 auto; padding: 16px; }
+      .brand {
+        display: flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: .2px;
+      }
+      .badge {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 6px 10px; border: 1px solid var(--line); border-radius: 999px;
+        color: var(--soft); font-size: 12px;
+      }
+      .row { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+      .grow { flex: 1; }
+      .toolbar { display: flex; gap: 8px; align-items: center; }
+      .tabs {
+        margin-top: 10px; display: flex; gap: 8px; border-bottom: 1px solid var(--line);
+      }
+      .tab {
+        padding: 10px 14px; border: 1px solid var(--line);
+        border-bottom: none; border-radius: 10px 10px 0 0;
+        background: var(--elev);
+        color: var(--muted);
+      }
+      .tab[aria-selected="true"] { background: var(--elev-2); font-weight: 600; }
+      main { padding: 16px; }
+      .grid {
+        display: grid; gap: 16px;
+        grid-template-columns: 1fr;
+      }
+      @media (min-width: 1024px) {
+        .grid-2 { grid-template-columns: 280px 1fr; }
+      }
+      .panel {
+        background: var(--elev-2);
+        border: 1px solid var(--line);
+        border-radius: 16px; overflow: clip;
+        display: flex; flex-direction: column; min-height: 360px;
+      }
+      .panel-header {
+        padding: 12px 14px; border-bottom: 1px solid var(--line);
+        display: flex; justify-content: space-between; align-items: center; gap: 8px;
+      }
+      .panel-body { padding: 12px; overflow: auto; height: 420px; }
+      .panel-footer { padding: 12px; border-top: 1px solid var(--line); display: flex; gap: 8px; }
+      .msg {
+        display: grid; grid-template-columns: 1fr auto; gap: 6px;
+        padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: #121214;
+      }
+      .msg + .msg { margin-top: 8px; }
+      .msg .meta { color: var(--soft); font-size: 12px; }
+      .msg.me { background: #14161a; border-color: #2c3238; }
+      .msg .text { white-space: pre-wrap; word-wrap: break-word; }
+      /* Made usernames clickable in chat messages */
+      .msg .meta .username {
+        color: var(--accent);
+        cursor: pointer;
+        text-decoration: underline;
+        text-decoration-color: transparent;
+        transition: text-decoration-color 0.2s;
+      }
+      .msg .meta .username:hover {
+        text-decoration-color: var(--accent);
+      }
+      .hint {
+        display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--soft);
+        padding: 10px 12px; border: 1px dashed var(--line); border-radius: 12px; background: #101012;
+      }
+      .error { color: var(--danger); font-size: 13px; }
+      .success { color: var(--ok); font-size: 13px; }
+      .list {
+        display: flex; flex-direction: column; gap: 8px; padding: 10px;
+      }
+      .list-item {
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: #121214;
+      }
+      .list-item .title { font-weight: 600; }
+      .list-item .sub { color: var(--soft); font-size: 12px; }
+      .search { display: flex; gap: 8px; padding: 10px; border-bottom: 1px solid var(--line); }
+      /* Modal */
+      dialog {
+        border: 1px solid var(--line);
+        border-radius: 16px; background: var(--elev-2); color: var(--muted);
+        padding: 0; max-width: 480px; width: calc(100% - 24px);
+      }
+      dialog::backdrop { background: #0008; }
+      .modal-header { padding: 16px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+      .modal-body { padding: 16px; display: grid; gap: 12px; }
+      .field { display: grid; gap: 6px; }
+      .field label { color: var(--soft); font-size: 13px; }
+      .muted-link { color: var(--soft); text-decoration: underline; cursor: pointer; }
+      .pill { padding: 4px 10px; border: 1px solid var(--line); border-radius: 999px; color: var(--soft); font-size: 12px; }
+      .pill.ok { color: var(--ok); border-color: #2b6f51; }
+      .pill.warn { border-style: dashed; }
+      
+      /* Added styles for profile modal */
+      .profile-info {
+        display: grid;
+        gap: 12px;
+      }
+      .profile-field {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .profile-field:last-child {
+        border-bottom: none;
+      }
+      .profile-field .label {
+        color: var(--soft);
+        font-size: 13px;
+      }
+      .profile-field .value {
+        color: var(--muted);
+        font-weight: 500;
+      }
+      .profile-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: var(--elev);
+        border: 2px solid var(--line);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--accent);
+        margin: 0 auto 16px;
+      }
+      .profile-links {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+      }
+      .profile-link {
+        padding: 4px 8px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 12px;
+      }
+      .profile-link:hover {
+        background: var(--elev);
+        text-decoration: none;
+      }
+      
+      /* Added notification popup styles */
+      .notification-badge {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      
+      .notification-count {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: var(--danger);
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: bold;
+      }
+      
+      .notification-popup {
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        background: var(--elev-2);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        width: 320px;
+        max-height: 400px;
+        overflow: hidden;
+        z-index: 50;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        display: none;
+      }
+      
+      .notification-header {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 600;
+      }
+      
+      .notification-list {
+        max-height: 300px;
+        overflow-y: auto;
+      }
+      
+      .notification-item {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--line);
+        cursor: pointer;
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+      }
+      
+      .notification-item:hover {
+        background: var(--elev);
+      }
+      
+      .notification-item.unread {
+        background: rgba(67, 209, 122, 0.05);
+        border-left: 3px solid var(--ok);
+      }
+      
+      .notification-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--line);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        flex-shrink: 0;
+      }
+      
+      .notification-content {
+        flex: 1;
+        min-width: 0;
+      }
+      
+      .notification-name {
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 2px;
+      }
+      
+      .notification-message {
+        color: var(--soft);
+        font-size: 13px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      
+      .notification-time {
+        color: var(--soft);
+        font-size: 11px;
+        margin-top: 2px;
+      }
+      
+      .no-notifications {
+        padding: 32px 16px;
+        text-align: center;
+        color: var(--soft);
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div class="row">
+          <div class="brand">
+            <span class="badge" aria-hidden="true">PFL</span>
+            <div>
+              <div>Programming for Losers</div>
+              <div style="font-size:12px;color:var(--soft)">College community chat · matte black & white</div>
+            </div>
+          </div>
+          <div class="grow"></div>
+          <nav class="toolbar" aria-label="Global">
+            <div class="notification-badge">
+              <button class="btn-ghost" id="notifications-btn" title="Notifications">
+                <span>💬</span>
+              </button>
+              <span class="notification-count" id="notification-count" style="display: none;">0</span>
+            </div>
+            <a href="./profile.html" class="pill warn" id="profile-badge">Complete profile</a>
+            <span class="pill" id="auth-state">Guest</span>
+            <button class="btn-ghost" id="open-auth">Sign in</button>
+            <button class="btn-ghost" id="sign-out" style="display:none">Sign out</button>
+          </nav>
+        </div>
+        <div class="tabs" role="tablist" aria-label="Modes">
+          <button role="tab" id="tab-community" aria-controls="panel-community" aria-selected="true" class="tab">Community</button>
+          <button role="tab" id="tab-dm" aria-controls="panel-dm" aria-selected="false" class="tab">Direct Messages</button>
+        </div>
+      </div>
+    </header>
+    
+    <div class="notification-popup" id="notification-popup">
+      <div class="notification-header">
+        <span>Unread Messages</span>
+        <button class="btn-ghost" id="close-notifications" style="padding: 4px 8px; font-size: 12px;">Close</button>
+        <button class="btn-ghost" id="refresh-notifications" style="padding: 4px 8px; font-size: 12px;">Refresh</button>
+      </div>
+      <div class="notification-list" id="notification-list">
+        <div class="no-notifications">No new messages</div>
+      </div>
+    </div>
+
+    <main class="container">
+      <!-- Community Chat -->
+      <section id="panel-community" role="tabpanel" aria-labelledby="tab-community">
+        <div class="panel" aria-label="Community chat">
+          <div class="panel-header">
+            <div class="row">
+              <strong>Community</strong>
+              <span class="pill" id="community-count">0 online</span>
+            </div>
+            <div class="hint" id="send-hint">
+              <span>Viewing is open. Sign in to send messages.</span>
+            </div>
+          </div>
+          <div class="panel-body" id="community-messages" aria-live="polite" aria-busy="true"></div>
+          <form class="panel-footer" id="community-form">
+            <input id="community-input" type="text" placeholder="Say something to everyone..." autocomplete="off" maxlength="1000" class="grow" />
+            <button class="btn-primary" id="community-send" type="submit">Send</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- Direct Messages -->
+      <section id="panel-dm" role="tabpanel" aria-labelledby="tab-dm" hidden>
+        <div class="grid grid-2">
+          <aside class="panel" aria-label="People">
+            <div class="panel-header row">
+              <strong>People</strong>
+              <a href="./profile.html" class="pill">My profile</a>
+            </div>
+            <div class="panel-header" style="border-top: 1px solid var(--line); border-bottom: none;">
+              <div class="row">
+                <strong>Recent Conversations</strong>
+                <span class="pill" id="conversations-count">0</span>
+              </div>
+            </div>
+            <div class="list" id="conversations-list" aria-live="polite" style="max-height: 200px; overflow-y: auto;"></div>
+            <div class="search">
+              <input id="search-users" placeholder="Search by name or college..." class="grow" />
+            </div>
+            <div class="list" id="users-list" aria-live="polite"></div>
+          </aside>
+          <section class="panel" aria-label="Direct messages">
+            <div class="panel-header">
+              <div class="row" id="dm-header">
+                <strong>No conversation</strong>
+                <span class="pill">Select a person</span>
+              </div>
+            </div>
+            <div class="panel-body" id="dm-messages" aria-live="polite"></div>
+            <form class="panel-footer" id="dm-form">
+              <input id="dm-input" type="text" placeholder="Message..." autocomplete="off" maxlength="1000" class="grow" />
+              <button class="btn-primary" id="dm-send" type="submit">Send</button>
+            </form>
+          </section>
+        </div>
+        <div class="hint" id="dm-hint" style="margin-top:12px">
+          Sign in to use personal chats.
+        </div>
+      </section>
+    </main>
+
+    <!-- Auth Modal -->
+    <dialog id="auth-modal">
+      <form method="dialog">
+        <div class="modal-header">
+          <strong id="auth-title">Sign in</strong>
+          <!-- Fixed cancel button to properly close modal -->
+          <button class="btn-ghost" type="button" id="auth-close" aria-label="Close">Close</button>
+        </div>
+        <div class="modal-body">
+          <div class="field">
+            <label for="auth-email">Email</label>
+            <input id="auth-email" type="email" placeholder="you@example.com" autocomplete="email" required />
+          </div>
+          <div class="field">
+            <label for="auth-pass">Password</label>
+            <input id="auth-pass" type="password" placeholder="••••••••" autocomplete="current-password" required />
+          </div>
+          <div class="row">
+            <button class="btn-primary" id="auth-submit" type="button">Continue</button>
+            <button class="btn-ghost" id="auth-toggle" type="button">Need an account? Sign up</button>
+          </div>
+          <div id="auth-msg" class="error" role="status"></div>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- Added Profile Modal -->
+    <dialog id="profile-modal">
+      <div class="modal-header">
+        <strong id="profile-title">User Profile</strong>
+        <button class="btn-ghost" type="button" id="profile-close" aria-label="Close">Close</button>
+      </div>
+      <div class="modal-body">
+        <div class="profile-avatar" id="profile-avatar"></div>
+        <div class="profile-info" id="profile-info">
+          <!-- Profile information will be populated here -->
+        </div>
+        <div class="row" style="margin-top: 16px;">
+          <button class="btn-primary" id="profile-message" type="button">Send Message</button>
+        </div>
+      </div>
+    </dialog>
+
+    <script type="module">
+      // Firebase SDK: modular imports via ESM from gstatic
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+      import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+      import {
+        getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp,
+        doc, setDoc, getDoc, getDocs, where, limit
+      } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+      // Your Firebase configuration (provided)
+      const firebaseConfig = {
+        apiKey: "AIzaSyCCc1y2kNbSftG45mB3gkbUCGs4gfjts-E",
+        authDomain: "realtimepfl.firebaseapp.com",
+        databaseURL: "https://realtimepfl-default-rtdb.firebaseio.com",
+        projectId: "realtimepfl",
+        storageBucket: "realtimepfl.firebasestorage.app",
+        messagingSenderId: "984202175754",
+        appId: "1:984202175754:web:a0d689738832cc48b686f3",
+        measurementId: "G-4W311B25HV"
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      // UI elements
+      const tabs = {
+        community: document.getElementById('tab-community'),
+        dm: document.getElementById('tab-dm'),
+      };
+      const panels = {
+        community: document.getElementById('panel-community'),
+        dm: document.getElementById('panel-dm'),
+      };
+      const authStateEl = document.getElementById('auth-state');
+      const openAuthBtn = document.getElementById('open-auth');
+      const signOutBtn = document.getElementById('sign-out');
+      const profileBadge = document.getElementById('profile-badge');
+
+      // Auth modal elements
+      const authModal = document.getElementById('auth-modal');
+      const authTitle = document.getElementById('auth-title');
+      const authEmail = document.getElementById('auth-email');
+      const authPass = document.getElementById('auth-pass');
+      const authSubmit = document.getElementById('auth-submit');
+      const authToggle = document.getElementById('auth-toggle');
+      const authMsg = document.getElementById('auth-msg');
+      const authClose = document.getElementById('auth-close');
+
+      const profileModal = document.getElementById('profile-modal');
+      const profileTitle = document.getElementById('profile-title');
+      const profileAvatar = document.getElementById('profile-avatar');
+      const profileInfo = document.getElementById('profile-info');
+      const profileMessage = document.getElementById('profile-message');
+      const profileClose = document.getElementById('profile-close');
+
+      const notificationsBtn = document.getElementById('notifications-btn');
+      const notificationCount = document.getElementById('notification-count');
+      const notificationPopup = document.getElementById('notification-popup');
+      const closeNotifications = document.getElementById('close-notifications');
+      const notificationList = document.getElementById('notification-list');
+      const refreshNotificationsBtn = document.getElementById('refresh-notifications');
+
+      let isSignup = false;
+
+      function switchTab(which) {
+        const isCommunity = which === 'community';
+        tabs.community.setAttribute('aria-selected', String(isCommunity));
+        tabs.dm.setAttribute('aria-selected', String(!isCommunity));
+        panels.community.hidden = !isCommunity;
+        panels.dm.hidden = isCommunity;
+      }
+
+      tabs.community.addEventListener('click', () => switchTab('community'));
+      tabs.dm.addEventListener('click', () => switchTab('dm'));
+
+      // Community chat elements
+      const communityMessagesEl = document.getElementById('community-messages');
+      const communityForm = document.getElementById('community-form');
+      const communityInput = document.getElementById('community-input');
+      const communitySend = document.getElementById('community-send');
+      const sendHint = document.getElementById('send-hint');
+
+      // DM elements
+      const usersList = document.getElementById('users-list');
+      const searchUsers = document.getElementById('search-users');
+      const dmMessagesEl = document.getElementById('dm-messages');
+      const dmForm = document.getElementById('dm-form');
+      const dmInput = document.getElementById('dm-input');
+      const dmSend = document.getElementById('dm-send');
+      const dmHeader = document.getElementById('dm-header');
+      const dmHint = document.getElementById('dm-hint');
+
+      // Presence count (simple: number of authed users connected to app - placeholder)
+      // For simplicity, we reflect "online" as number of users currently loaded in list
+      const communityCount = document.getElementById('community-count');
+      const conversationsCount = document.getElementById('conversations-count');
+
+      // State
+      let currentUser = null;
+      let currentProfile = null;
+      let communityUnsub = null;
+      let dmUnsub = null;
+      let conversationsUnsub = null; // Added conversations listener
+      let selectedPeer = null; // { uid, name, college }
+      let allProfiles = []; // cached for DMs list
+      let unreadMessages = new Map(); // threadId -> { count, lastMessage, peerProfile }
+      let notificationListeners = new Map(); // threadId -> unsubscribe function
+      let recentConversations = []; // Added recent conversations cache
+
+      function el(tag, attrs = {}, children = []) {
+        const e = document.createElement(tag);
+        for (const [k, v] of Object.entries(attrs)) {
+          if (k === 'class') e.className = v;
+          else if (k.startsWith('on') && typeof v === 'function') e.addEventListener(k.slice(2), v);
+          else if (v !== null && v !== undefined) e.setAttribute(k, v);
+        }
+        for (const c of children) e.append(c);
+        return e;
+      }
+
+      function formatTime(ts) {
+        try {
+          if (!ts) return '';
+          const d = ts.toDate ? ts.toDate() : new Date(ts);
+          return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        } catch { return ''; }
+      }
+
+      function threadIdFor(a, b) {
+        return [a, b].sort().join('_');
+      }
+
+      function displayNameFromProfile(profile, fallbackEmail) {
+        return (profile && profile.name) || (fallbackEmail || 'Unknown');
+      }
+
+      async function loadMyProfile(uid) {
+        if (!uid) return null;
+        const snap = await getDoc(doc(db, 'profiles', uid));
+        return snap.exists() ? { id: snap.id, ...snap.data() } : null;
+      }
+
+      const profileCache = new Map();
+
+      async function loadUserProfile(uid) {
+        if (!uid) return null;
+        
+        // Check cache first
+        if (profileCache.has(uid)) {
+          return profileCache.get(uid);
+        }
+        
+        try {
+          const snap = await getDoc(doc(db, 'profiles', uid));
+          const profile = snap.exists() ? { id: snap.id, ...snap.data() } : null;
+          
+          // Cache the result
+          profileCache.set(uid, profile);
+          return profile;
+        } catch (error) {
+          console.error('Error loading user profile:', error);
+          return null;
+        }
+      }
+
+      async function showUserProfile(uid, displayName) {
+        if (!uid) return;
+        
+        const profile = await loadUserProfile(uid);
+        
+        if (!profile) {
+          alert('Profile not found');
+          return;
+        }
+        
+        // Set profile title
+        profileTitle.textContent = `${profile.name || displayName || 'Unknown'}'s Profile`;
+        
+        // Set avatar (first letter of name)
+        const avatarLetter = (profile.name || displayName || 'U').charAt(0).toUpperCase();
+        profileAvatar.textContent = avatarLetter;
+        
+        // Clear and populate profile info
+        profileInfo.innerHTML = '';
+        
+        const fields = [
+          { label: 'Name', value: profile.name || 'Not provided' },
+          { label: 'College', value: profile.college || 'Not provided' },
+          { label: 'Semester', value: profile.semester ? `Semester ${profile.semester}` : 'Not provided' }
+        ];
+        
+        fields.forEach(field => {
+          const fieldEl = el('div', { class: 'profile-field' }, [
+            el('span', { class: 'label' }, [document.createTextNode(field.label)]),
+            el('span', { class: 'value' }, [document.createTextNode(field.value)])
+          ]);
+          profileInfo.appendChild(fieldEl);
+        });
+        
+        const links = [];
+        if (profile.instagram) links.push({ name: 'Instagram', url: profile.instagram });
+        if (profile.github) links.push({ name: 'GitHub', url: profile.github });
+        if (profile.linkedin) links.push({ name: 'LinkedIn', url: profile.linkedin });
+        
+        if (links.length > 0) {
+          const linksContainer = el('div', { class: 'profile-links' });
+          links.forEach(link => {
+            const linkEl = el('a', { 
+              class: 'profile-link', 
+              href: link.url, 
+              target: '_blank', 
+              rel: 'noopener noreferrer' 
+            }, [document.createTextNode(link.name)]);
+            linksContainer.appendChild(linkEl);
+          });
+          profileInfo.appendChild(linksContainer);
+        }
+        
+        // Set up message button
+        profileMessage.onclick = () => {
+          profileModal.close();
+          // Switch to DM tab and open conversation
+          switchTab('dm');
+          openDmWith(profile);
+        };
+        
+        // Show modal
+        profileModal.showModal();
+      }
+
+      function updateNotificationBadge() {
+        const totalUnread = Array.from(unreadMessages.values()).reduce((sum, data) => sum + data.count, 0);
+        if (totalUnread > 0) {
+          notificationCount.textContent = totalUnread > 99 ? '99+' : totalUnread.toString();
+          notificationCount.style.display = 'flex';
+        } else {
+          notificationCount.style.display = 'none';
+        }
+      }
+
+      function renderNotificationList() {
+        if (!notificationList) return;
+        
+        notificationList.innerHTML = '';
+        
+        if (unreadMessages.size === 0) {
+          notificationList.innerHTML = '<div class="no-notifications">No new messages</div>';
+          return;
+        }
+
+        const sortedNotifications = Array.from(unreadMessages.entries())
+          .sort(([,a], [,b]) => b.lastMessage.timestamp - a.lastMessage.timestamp);
+
+        for (const [threadId, data] of sortedNotifications) {
+          const item = document.createElement('div');
+          item.className = 'notification-item unread';
+          
+          const avatar = document.createElement('div');
+          avatar.className = 'notification-avatar';
+          avatar.textContent = (data.peerProfile.name || 'U').charAt(0).toUpperCase();
+          
+          const content = document.createElement('div');
+          content.className = 'notification-content';
+          
+          const name = document.createElement('div');
+          name.className = 'notification-name';
+          name.textContent = data.peerProfile.name || 'Unknown';
+          
+          const message = document.createElement('div');
+          message.className = 'notification-message';
+          message.textContent = data.lastMessage.text;
+          
+          const time = document.createElement('div');
+          time.className = 'notification-time';
+          time.textContent = formatTime(data.lastMessage.timestamp);
+          
+          const countBadge = document.createElement('div');
+          countBadge.style.cssText = 'background: var(--danger); color: white; border-radius: 10px; padding: 2px 6px; font-size: 11px; margin-left: auto;';
+          countBadge.textContent = data.count.toString();
+          
+          content.append(name, message, time);
+          item.append(avatar, content, countBadge);
+          
+          item.addEventListener('click', () => {
+            // Switch to DM tab and open conversation
+            switchTab('dm');
+            openDmWith(data.peerProfile);
+            notificationPopup.style.display = 'none';
+            // Mark as read
+            unreadMessages.delete(threadId);
+            updateNotificationBadge();
+            renderNotificationList();
+          });
+          
+          notificationList.appendChild(item);
+        }
+      }
+
+      async function setupNotificationListeners() {
+        if (!currentUser) return;
+        
+        // Clear existing listeners
+        notificationListeners.forEach(unsub => unsub());
+        notificationListeners.clear();
+        unreadMessages.clear();
+        updateNotificationBadge();
+        
+        try {
+          const threadsQuery = query(
+            collection(db, 'dmThreads'),
+            where('users', 'array-contains', currentUser.uid)
+          );
+          
+          const threadsSnapshot = await getDocs(threadsQuery);
+          
+          for (const threadDoc of threadsSnapshot.docs) {
+            const threadData = threadDoc.data();
+            const threadId = threadDoc.id;
+            const peerUid = threadData.users.find(uid => uid !== currentUser.uid);
+            
+            if (!peerUid) continue;
+            
+            // Get peer profile
+            const peerProfile = await loadUserProfile(peerUid);
+            if (!peerProfile) continue;
+            
+            const messagesRef = collection(db, 'dmThreads', threadId, 'messages');
+            const messagesQuery = query(messagesRef, orderBy('createdAt', 'desc'), limit(50));
+            
+            const unsubscribe = onSnapshot(messagesQuery, (snapshot) => {
+              if (snapshot.empty) return;
+              
+              let unreadCount = 0;
+              let lastMessage = null;
+              const currentTime = new Date();
+              
+              // Get the most recent message and count unread messages from peer
+              snapshot.docs.forEach(doc => {
+                const message = doc.data();
+                const messageTime = message.createdAt?.toDate() || new Date();
+                
+                // Only consider messages from the last 24 hours as potentially unread
+                const hoursDiff = (currentTime - messageTime) / (1000 * 60 * 60);
+                
+                if (message.senderUid !== currentUser.uid && hoursDiff < 24) {
+                  if (!lastMessage || messageTime > (lastMessage.createdAt?.toDate() || new Date(0))) {
+                    lastMessage = message;
+                  }
+                  unreadCount++;
+                }
+              });
+              
+              if (unreadCount > 0 && lastMessage) {
+                const timestamp = lastMessage.createdAt?.toDate() || new Date();
+                
+                unreadMessages.set(threadId, {
+                  count: unreadCount,
+                  lastMessage: {
+                    text: lastMessage.text || 'New message',
+                    timestamp: timestamp
+                  },
+                  peerProfile: peerProfile
+                });
+              } else {
+                unreadMessages.delete(threadId);
+              }
+              
+              updateNotificationBadge();
+              renderNotificationList();
+            }, (error) => {
+              console.error('Error in notification listener for thread', threadId, ':', error);
+            });
+            
+            notificationListeners.set(threadId, unsubscribe);
+          }
+          
+          console.log('Notification listeners set up for', notificationListeners.size, 'conversations');
+        } catch (error) {
+          console.error('Error setting up notification listeners:', error);
+        }
+      }
+
+      async function refreshNotifications() {
+        if (currentUser) {
+          await setupNotificationListeners();
+        }
+      }
+
+      notificationsBtn.addEventListener('click', () => {
+        const isVisible = notificationPopup.style.display === 'block';
+        notificationPopup.style.display = isVisible ? 'none' : 'block';
+        if (!isVisible) {
+          renderNotificationList();
+        }
+      });
+
+      closeNotifications.addEventListener('click', () => {
+        notificationPopup.style.display = 'none';
+      });
+
+      refreshNotificationsBtn.addEventListener('click', () => {
+        refreshNotifications();
+      });
+
+      // Close notification popup when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!notificationPopup.contains(e.target) && !notificationsBtn.contains(e.target)) {
+          notificationPopup.style.display = 'none';
+        }
+      });
+
+      // Auth modal logic
+      openAuthBtn.addEventListener('click', () => {
+        isSignup = false;
+        authTitle.textContent = 'Sign in';
+        authToggle.textContent = 'Need an account? Sign up';
+        authEmail.value = '';
+        authPass.value = '';
+        authMsg.textContent = '';
+        authModal.showModal();
+      });
+
+      authToggle.addEventListener('click', () => {
+        isSignup = !isSignup;
+        authTitle.textContent = isSignup ? 'Create account' : 'Sign in';
+        authToggle.textContent = isSignup ? 'Have an account? Sign in' : 'Need an account? Sign up';
+        authMsg.textContent = '';
+      });
+
+      authSubmit.addEventListener('click', async () => {
+        authMsg.textContent = '';
+        const email = authEmail.value.trim();
+        const pass = authPass.value;
+        if (!email || pass.length < 6) {
+          authMsg.textContent = 'Enter a valid email and a password of at least 6 characters.';
+          return;
+        }
+        try {
+          if (isSignup) {
+            const { user } = await createUserWithEmailAndPassword(auth, email, pass);
+            // After signup, encourage profile completion
+            authModal.close();
+            window.location.href = './profile.html';
+          } else {
+            await signInWithEmailAndPassword(auth, email, pass);
+            authModal.close();
+          }
+        } catch (e) {
+          authMsg.textContent = (e && e.message) ? e.message : 'Authentication failed.';
+        }
+      });
+
+      authClose.addEventListener('click', () => {
+        authModal.close();
+      });
+
+      signOutBtn.addEventListener('click', async () => {
+        await signOut(auth);
+      });
+
+      // Auth state
+      onAuthStateChanged(auth, async (user) => {
+        currentUser = user;
+        currentProfile = user ? await loadMyProfile(user.uid) : null;
+        setAuthUI();
+        setupCommunityListener();
+        refreshUsersList();
+        if (user) {
+          console.log('User signed in, setting up notifications...');
+          await setupNotificationListeners();
+          // Refresh notifications every 30 seconds
+          setInterval(refreshNotifications, 30000);
+        } else {
+          // Clear notifications when user signs out
+          notificationListeners.forEach(unsub => unsub());
+          notificationListeners.clear();
+          unreadMessages.clear();
+          updateNotificationBadge();
+        }
+        // If signed in but no profile, show banner badge
+      });
+
+      // Initialize defaults
+      setAuthUI();
+      setupCommunityListener();
+      refreshUsersList();
+      clearDm();
+      loadRecentConversations(); // Added initial call to load conversations
+
+      function setAuthUI() {
+        if (currentUser) {
+          authStateEl.textContent = displayNameFromProfile(currentProfile, currentUser.email);
+          openAuthBtn.style.display = 'none';
+          signOutBtn.style.display = '';
+          sendHint.style.display = 'none';
+          communityInput.disabled = false;
+          communitySend.disabled = false;
+          dmInput.disabled = false;
+          dmSend.disabled = false;
+          dmHint.style.display = 'none';
+          if (!currentProfile) {
+            profileBadge.style.display = '';
+          } else {
+            profileBadge.style.display = 'none';
+          }
+        } else {
+          authStateEl.textContent = 'Guest';
+          openAuthBtn.style.display = '';
+          signOutBtn.style.display = 'none';
+          sendHint.style.display = '';
+          communityInput.disabled = true;
+          communitySend.disabled = true;
+          dmInput.disabled = true;
+          dmSend.disabled = true;
+          dmHint.style.display = '';
+          profileBadge.style.display = 'none';
+        }
+      }
+
+      // Community chat
+      function setupCommunityListener() {
+        if (communityUnsub) communityUnsub();
+        communityMessagesEl.innerHTML = '';
+        const qy = query(collection(db, 'messages'), orderBy('createdAt', 'asc'), limit(200));
+        communityUnsub = onSnapshot(qy, (snap) => {
+          communityMessagesEl.setAttribute('aria-busy', 'true');
+          communityMessagesEl.innerHTML = '';
+          snap.forEach((docSnap) => {
+            const m = docSnap.data();
+            const isMe = currentUser && m.uid === currentUser.uid;
+            const who = m.displayName || 'Anonymous';
+            
+            const nameEl = el('span', { 
+              class: 'clickable-name',
+              onclick: () => {
+                if (m.uid && m.uid !== currentUser?.uid) {
+                  showUserProfile(m.uid, who);
+                }
+              }
+            }, [document.createTextNode(who)]);
+            
+            const item = el('div', { class: 'msg' + (isMe ? ' me' : '') }, [
+              el('div', { class: 'text' }, [document.createTextNode(m.text || '')]),
+              el('div', { class: 'meta' }, [nameEl, document.createTextNode(' • ' + (formatTime(m.createdAt) || ''))]),
+            ]);
+            communityMessagesEl.appendChild(item);
+          });
+          communityMessagesEl.setAttribute('aria-busy', 'false');
+          communityMessagesEl.scrollTop = communityMessagesEl.scrollHeight;
+        }, (err) => {
+          console.error(err);
+        });
+      }
+
+      communityForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const text = communityInput.value.trim();
+        if (!currentUser) {
+          openAuthBtn.click();
+          return;
+        }
+        if (!text) return;
+        if (text.length > 1000) return;
+        const myProfile = currentProfile || await loadMyProfile(currentUser.uid);
+        try {
+          await addDoc(collection(db, 'messages'), {
+            text,
+            uid: currentUser.uid,
+            userId: currentUser.uid,
+            displayName: displayNameFromProfile(myProfile, currentUser.email),
+            createdAt: serverTimestamp(),
+          });
+          communityInput.value = '';
+        } catch (e) {
+          alert('Failed to send message.');
+        }
+      });
+
+      // Users list for DMs
+      async function refreshUsersList() {
+        try {
+          const qy = query(collection(db, 'profiles'), limit(100));
+          const snap = await getDocs(qy);
+          allProfiles = [];
+          snap.forEach((docSnap) => {
+            const p = { id: docSnap.id, ...docSnap.data() };
+            allProfiles.push(p);
+          });
+          renderUsersList();
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      function renderUsersList() {
+        const queryStr = (searchUsers.value || '').toLowerCase();
+        usersList.innerHTML = '';
+        const filtered = allProfiles.filter((p) => {
+          if (currentUser && p.id === currentUser.uid) return false;
+          const hay = [p.name, p.college, p.semester, p.instagram, p.github, p.linkedin]
+            .filter(Boolean).join(' ').toLowerCase();
+          return hay.includes(queryStr);
+        });
+        communityCount.textContent = filtered.length + ' online';
+        for (const p of filtered) {
+          const right = el('div', { class: 'user-actions' }, [
+            el('button', { class: 'btn-ghost', onclick: () => showUserProfile(p.id, p.name) }, [document.createTextNode('View')]),
+            el('button', { class: 'btn-ghost', onclick: () => openDmWith(p) }, [document.createTextNode('Message')]),
+          ]);
+          const left = el('div', {}, [
+            el('div', { class: 'title' }, [document.createTextNode(p.name || 'Unknown')]),
+            el('div', { class: 'sub' }, [document.createTextNode((p.college || '') + (p.semester ? ' · Sem ' + p.semester : ''))])
+          ]);
+          const row = el('div', { class: 'list-item' }, [left, right]);
+          usersList.appendChild(row);
+        }
+      }
+
+      searchUsers.addEventListener('input', renderUsersList);
+
+      async function ensureThread(peerUid) {
+        if (!currentUser) return null;
+        const id = threadIdFor(currentUser.uid, peerUid);
+        const ref = doc(db, 'dmThreads', id);
+        const snap = await getDoc(ref);
+        if (!snap.exists()) {
+          await setDoc(ref, { users: [currentUser.uid, peerUid], createdAt: serverTimestamp() }, { merge: true });
+        }
+        return ref;
+      }
+
+      function clearDm() {
+        if (dmUnsub) dmUnsub();
+        dmMessagesEl.innerHTML = '';
+        dmHeader.innerHTML = '';
+        dmHeader.append(el('strong', {}, [document.createTextNode('No conversation')]));
+        dmHeader.append(el('span', { class: 'pill' }, [document.createTextNode('Select a person')]));
+        selectedPeer = null;
+      }
+
+      async function openDmWith(peerProfile) {
+        if (!currentUser) {
+          openAuthBtn.click();
+          return;
+        }
+        
+        selectedPeer = peerProfile;
+        dmHeader.innerHTML = '';
+        dmHeader.append(el('strong', {}, [document.createTextNode(peerProfile.name || 'Unknown')]));
+        dmHeader.append(el('span', { class: 'pill' }, [document.createTextNode(peerProfile.college || '')]));
+        
+        if (dmUnsub) dmUnsub();
+        
+        try {
+          const ref = await ensureThread(peerProfile.id);
+          const msgsRef = collection(ref, 'messages');
+          dmUnsub = onSnapshot(query(msgsRef, orderBy('createdAt', 'asc'), limit(500)), (snap) => {
+            dmMessagesEl.innerHTML = '';
+            snap.forEach((d) => {
+              const m = d.data();
+              const isMe = currentUser && m.senderUid === currentUser.uid;
+              const who = isMe ? 'You' : (peerProfile.name || 'Them');
+              const item = el('div', { class: 'msg' + (isMe ? ' me' : '') }, [
+                el('div', { class: 'text' }, [document.createTextNode(m.text || '')]),
+                el('div', { class: 'meta' }, [document.createTextNode(who + ' • ' + (formatTime(m.createdAt) || ''))]),
+              ]);
+              dmMessagesEl.appendChild(item);
+            });
+            dmMessagesEl.scrollTop = dmMessagesEl.scrollHeight;
+            
+            const threadId = threadIdFor(currentUser.uid, peerProfile.id);
+            if (unreadMessages.has(threadId)) {
+              unreadMessages.delete(threadId);
+              updateNotificationBadge();
+              renderNotificationList();
+            }
+          });
+        } catch (error) {
+          console.error('Error opening DM:', error);
+          alert('Failed to open conversation. Please try again.');
+        }
+      }
+
+      dmForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!currentUser) { 
+          openAuthBtn.click(); 
+          return; 
+        }
+        if (!selectedPeer) return;
+        const text = dmInput.value.trim();
+        if (!text) return;
+        try {
+          const ref = await ensureThread(selectedPeer.id);
+          await addDoc(collection(ref, 'messages'), {
+            text,
+            senderUid: currentUser.uid,
+            createdAt: serverTimestamp(),
+          });
+          dmInput.value = '';
+        } catch (e) {
+          console.error('DM send error:', e);
+          alert('Failed to send message: ' + (e.message || 'Unknown error'));
+        }
+      });
+
+      function loadRecentConversations() {
+        // This function is called but not needed for basic functionality
+        // Can be implemented later if needed
+      }
+
+      profileClose.addEventListener('click', () => {
+        profileModal.close();
+      });
+    </script>
+  </body>
+</html>
