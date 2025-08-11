@@ -79,7 +79,6 @@ onAuthStateChanged(auth, user => {
         assignmentLogoutBtnEl.classList.add('hidden');
         showUploadFormBtnEl.classList.add('hidden');
     }
-    // Re-apply filters to update the voted status on cards
     applyCurrentFilters();
 });
 
@@ -142,14 +141,13 @@ async function renderAssignments(assignmentsToRender) {
     }
 
     const uploaderNamePromises = assignmentsToRender.map(assignment =>
-        fetchUploaderNameFromUsersCollection(assignment.uploaderId, assignment.uploaderEmail || 'Anonymous')
+        fetchUploaderName(assignment.uploaderId, assignment.uploaderEmail || 'Anonymous')
     );
     const uploaderNames = await Promise.all(uploaderNamePromises);
 
     assignmentsToRender.forEach((assignment, index) => {
         const card = document.createElement('div');
         card.classList.add('assignment-card');
-
         const uploadDate = assignment.uploadDate?.toDate ? assignment.uploadDate.toDate().toLocaleDateString() : 'N/A';
         const uploaderName = uploaderNames[index];
         const userHasVoted = auth.currentUser && Array.isArray(assignment.votedBy) && assignment.votedBy.includes(auth.currentUser.uid);
@@ -177,7 +175,6 @@ async function renderAssignments(assignmentsToRender) {
             openUploaderProfileModal(assignment.uploaderId);
         });
         card.querySelector('.vote-btn')?.addEventListener('click', (event) => handleVote(assignment.id, event.currentTarget));
-
         assignmentsGridEl.appendChild(card);
     });
 }
@@ -189,11 +186,9 @@ async function handleFormSubmit(event) {
         showError(uploadFormErrorEl, "You must be logged in.");
         return;
     }
-
     const submitButton = uploadAssignmentFormEl.querySelector('button[type="submit"]');
     submitButton.disabled = true;
     submitButton.textContent = 'Submitting...';
-
     const newAssignmentForDb = {
         uploaderId: user.uid,
         uploaderEmail: user.email,
@@ -207,13 +202,12 @@ async function handleFormSubmit(event) {
         votes: 0,
         votedBy: []
     };
-
     try {
         await addDoc(collection(db, "assignments"), newAssignmentForDb);
         uploadModalEl.classList.remove('active');
         document.body.style.overflow = '';
         alert('Assignment uploaded successfully!');
-        fetchAssignments(); // Refresh the list
+        fetchAssignments();
     } catch (error) {
         showError(uploadFormErrorEl, `Upload Error: ${error.message}`);
     } finally {
@@ -228,28 +222,21 @@ async function handleVote(assignmentId, voteButtonElement) {
         openAssignmentAuthModal('login');
         return;
     }
-
     const assignmentRef = doc(db, "assignments", assignmentId);
     voteButtonElement.disabled = true;
-
     try {
         const docSnap = await getFirestoreDoc(assignmentRef);
         if (!docSnap.exists()) return;
-
         const assignmentData = docSnap.data();
         const hasVoted = (assignmentData.votedBy || []).includes(user.uid);
-
         const updatePayload = hasVoted
             ? { votes: increment(-1), votedBy: arrayRemove(user.uid) }
             : { votes: increment(1), votedBy: arrayUnion(user.uid) };
-
         await updateDoc(assignmentRef, updatePayload);
-
         const voteCountSpan = voteButtonElement.parentElement.querySelector('.vote-count');
         const newVoteCount = (assignmentData.votes || 0) + (hasVoted ? -1 : 1);
         voteCountSpan.textContent = newVoteCount;
         voteButtonElement.classList.toggle('voted', !hasVoted);
-
     } catch (error) {
         console.error("Vote error:", error);
     } finally {
@@ -279,20 +266,17 @@ function applyCurrentFilters() {
     const selectedSubject = filterSubjectSelectEl.value;
     const assignmentNumFilter = filterAssignmentNumberInputEl.value.toLowerCase().trim();
     const sortByValue = sortBySelectEl.value;
-
     let filtered = allAssignments.filter(a =>
         (searchTerm ? [a.assignmentTitle, a.subject, ...(a.keywords || [])].join(' ').toLowerCase().includes(searchTerm) : true) &&
         (selectedSemester ? a.semester === selectedSemester : true) &&
         (selectedSubject ? a.subject === selectedSubject : true) &&
         (assignmentNumFilter ? String(a.assignmentNumber || '').toLowerCase().includes(assignmentNumFilter) : true)
     );
-
     filtered.sort((a, b) => {
         if (sortByValue === 'votes_desc') return (b.votes || 0) - (a.votes || 0);
         if (sortByValue === 'uploadDate_asc') return (a.uploadDate?.toMillis() || 0) - (b.uploadDate?.toMillis() || 0);
-        return (b.uploadDate?.toMillis() || 0) - (a.uploadDate?.toMillis() || 0); // Default: Newest first
+        return (b.uploadDate?.toMillis() || 0) - (a.uploadDate?.toMillis() || 0);
     });
-
     renderAssignments(filtered);
 }
 
@@ -317,14 +301,14 @@ function showUploadModal() {
 }
 
 // --- PROFILE MODAL FUNCTIONS ---
-async function fetchUploaderNameFromUsersCollection(uploaderId, fallbackName = 'Anonymous') {
+async function fetchUploaderName(uploaderId, fallbackName = 'Anonymous') {
     if (userNamesCache[uploaderId]) return userNamesCache[uploaderId];
     if (!uploaderId) return fallbackName;
     try {
-        const userDocRef = doc(db, 'users', uploaderId);
+        const userDocRef = doc(db, 'profiles', uploaderId);
         const docSnap = await getFirestoreDoc(userDocRef);
-        if (docSnap.exists()) {
-            const displayName = docSnap.data().name || docSnap.data().email || fallbackName;
+        if (docSnap.exists() && docSnap.data().name) {
+            const displayName = docSnap.data().name;
             userNamesCache[uploaderId] = displayName;
             return displayName;
         }
@@ -336,32 +320,60 @@ async function fetchUploaderNameFromUsersCollection(uploaderId, fallbackName = '
 
 async function openUploaderProfileModal(uploaderId) {
     if (!uploaderId) return;
+    const modalContent = uploaderProfileModalEl.querySelector('.modal-content');
+    modalContent.innerHTML = '<div class="loader-container"><div class="loader"></div></div>';
     uploaderProfileModalEl.classList.add('active');
     document.body.style.overflow = 'hidden';
 
-    // Simple loading state for profile modal (assumes you have these IDs in your HTML)
-    document.getElementById('modalUploaderProfileName').textContent = 'Loading...';
-    // The following lines assume you have elements with these IDs in your profile modal.
-    // If not, you should add them or remove these lines.
-    // document.getElementById('modalUploaderProfileCollege').textContent = 'College: Loading...';
-    // document.getElementById('modalUploaderProfileSemester').textContent = 'Semester: Loading...';
-    // document.getElementById('modalUploaderProfileBio').textContent = 'Loading bio...';
-    // document.getElementById('modalUploaderProfileEmail').textContent = 'Loading...';
-
     try {
-        const userDocRef = doc(db, 'users', uploaderId);
+        const userDocRef = doc(db, 'profiles', uploaderId);
         const docSnap = await getFirestoreDoc(userDocRef);
+
+        let profileHtml;
+
         if (docSnap.exists()) {
-            const data = docSnap.data();
-            document.getElementById('modalUploaderProfileAvatar').textContent = data.name?.charAt(0).toUpperCase() || '?';
-            document.getElementById('modalUploaderProfileName').textContent = data.name || 'N/A';
-            // You can populate other fields here if they exist in your 'users' collection
+            const p = docSnap.data();
+            const name = p.name || 'Unnamed';
+            const sub = [p.college, p.semester ? `Sem ${p.semester}` : ''].filter(Boolean).join(' · ');
+            const links = [
+                { name: 'Instagram', href: p.instagram },
+                { name: 'GitHub', href: p.github },
+                { name: 'LinkedIn', href: p.linkedin }
+            ].filter(l => l.href);
+
+            profileHtml = `
+                <button class="close-profile-popup">&times;</button>
+                <div class="profile-card">
+                    <div class="name">${name}</div>
+                    <div class="sub">${sub || 'No details provided.'}</div>
+                    ${links.length > 0 ? `
+                        <div class="links">
+                            ${links.map(l => `<a href="${l.href}" class="link" target="_blank" rel="noopener noreferrer">${l.name}</a>`).join('')}
+                        </div>
+                    ` : ''}
+                </div>`;
         } else {
-             document.getElementById('modalUploaderProfileName').textContent = 'Profile not found.';
+            profileHtml = `
+                <button class="close-profile-popup">&times;</button>
+                <div class="profile-card">
+                    <div class="name">Profile Not Found</div>
+                    <div class="sub">This user hasn't completed their profile yet.</div>
+                </div>`;
         }
+        modalContent.innerHTML = profileHtml;
     } catch (error) {
-        document.getElementById('modalUploaderProfileName').textContent = 'Error loading profile.';
+        console.error("Error loading profile:", error);
+        modalContent.innerHTML = `
+            <button class="close-profile-popup">&times;</button>
+            <div class="profile-card">
+                <div class="name">Error</div>
+                <div class="sub">Could not load the user profile.</div>
+            </div>`;
     }
+    modalContent.querySelector('.close-profile-popup')?.addEventListener('click', () => {
+        uploaderProfileModalEl.classList.remove('active');
+        document.body.style.overflow = '';
+    });
 }
 
 // --- EVENT LISTENERS ---
@@ -378,7 +390,6 @@ applyFiltersBtnEl.addEventListener('click', applyCurrentFilters);
 resetFiltersBtnEl.addEventListener('click', resetAllFilters);
 sortBySelectEl.addEventListener('change', applyCurrentFilters);
 
-// Global event listener to close modals with the Escape key
 document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
         document.querySelectorAll('.modal.active').forEach(modal => {
