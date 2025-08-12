@@ -1,121 +1,305 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PFL - Login</title>
-    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-auth-compat.js"></script>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Programming for Losers — Login</title>
+    <meta name="color-scheme" content="dark light" />
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f4f4f4;
-        }
-        .container {
-            max-width: 400px;
-            margin: 80px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-        label {
-            margin-bottom: 5px;
-        }
-        input {
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        button {
-            padding: 10px;
-            background-color: #000;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        button:hover {
-            background-color: #333;
-        }
-        .error {
-            color: red;
-            margin-bottom: 10px;
-        }
+      :root {
+        color-scheme: dark;
+        --bg: #0f0f10;
+        --elev: #151517;
+        --elev-2: #1b1b1e;
+        --muted: #d9d9db;
+        --soft: #a9a9ad;
+        --line: #2a2a2e;
+        --accent: #ffffff;
+        --ok: #43d17a;
+        --warn: #e7c74f;
+        --danger: #ff5d5d;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0; background: var(--bg); color: var(--muted);
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial;
+        min-height: 100vh; display: flex; align-items: center; justify-content: center;
+        padding: 20px;
+      }
+      .login-container {
+        background: var(--elev-2); border: 1px solid var(--line); border-radius: 16px;
+        padding: 2rem; width: 100%; max-width: 400px; box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      }
+      .logo {
+        text-align: center; margin-bottom: 2rem;
+      }
+      .logo h1 {
+        font-size: 2rem; font-weight: 700; color: var(--accent); margin: 0;
+      }
+      .logo p {
+        color: var(--soft); font-size: 0.9rem; margin: 0.5rem 0 0 0;
+      }
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+      .form-group label {
+        display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: var(--soft);
+      }
+      .form-control {
+        width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--line);
+        background: var(--elev); color: var(--muted); font-size: 1rem; transition: all 0.3s ease;
+      }
+      .form-control:focus {
+        outline: none; border-color: var(--accent); background: var(--elev-2);
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+      }
+      .form-control::placeholder { color: var(--soft); }
+      .btn {
+        width: 100%; padding: 0.75rem; border-radius: 8px; border: none; cursor: pointer;
+        font-size: 1rem; font-weight: 600; transition: all 0.3s ease;
+        background: var(--accent); color: var(--bg);
+      }
+      .btn:hover { background: #e0e0e0; transform: translateY(-1px); }
+      .btn:disabled {
+        background: #555; color: #999; cursor: not-allowed; transform: none;
+      }
+      .btn-secondary {
+        background: transparent; color: var(--muted); border: 1px solid var(--line);
+        margin-top: 1rem;
+      }
+      .btn-secondary:hover { background: var(--elev); }
+      .error {
+        color: var(--danger); font-size: 0.85rem; margin-top: 0.5rem; text-align: center;
+      }
+      .success {
+        color: var(--ok); font-size: 0.85rem; margin-top: 0.5rem; text-align: center;
+      }
+      .switch-mode {
+        text-align: center; margin-top: 1.5rem; padding-top: 1.5rem;
+        border-top: 1px solid var(--line);
+      }
+      .switch-mode a {
+        color: var(--accent); text-decoration: none; font-weight: 600;
+      }
+      .switch-mode a:hover { text-decoration: underline; }
+      .loading {
+        display: inline-block; width: 16px; height: 16px; border: 2px solid var(--bg);
+        border-top: 2px solid var(--accent); border-radius: 50%;
+        animation: spin 1s linear infinite; margin-right: 8px;
+      }
+      @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+      .hidden { display: none !important; }
     </style>
-</head>
-<body>
-    <div class="container">
-        <h1>PFL Login</h1>
-        <form id="loginForm">
-            <label for="email">Email:</label>
-            <input type="email" id="email" required>
-            <label for="password">Password:</label>
-            <input type="password" id="password" required>
-            <button type="submit">Login</button>
-        </form>
-        <p id="error" class="error"></p>
+  </head>
+  <body>
+    <div class="login-container">
+      <div class="logo">
+        <h1>PFL</h1>
+        <p>Programming for Losers</p>
+      </div>
+
+      <form id="auth-form">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" class="form-control" placeholder="you@example.com" required />
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" class="form-control" placeholder="••••••••" required />
+        </div>
+
+        <button type="submit" class="btn" id="submit-btn">
+          <span id="submit-text">Sign In</span>
+        </button>
+
+        <div id="message" class="error hidden" role="status"></div>
+
+        <div class="switch-mode">
+          <span id="switch-text">Don't have an account?</span>
+          <a href="#" id="switch-link">Sign Up</a>
+        </div>
+      </form>
+
+      <div class="switch-mode">
+        <a href="chat.html">Continue as Guest</a>
+      </div>
     </div>
 
-    <script>
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyAw3gXcRJC0KTVS9wlt8RqUrOp_7GM25Xg",
-            authDomain: "pflclub.firebaseapp.com",
-            projectId: "pflclub",
-            storageBucket: "pflclub.appspot.com",
-            messagingSenderId: "238199612979",
-            appId: "1:238199612979:web:89b029bbdf8a32cd932546",
-            measurementId: "G-JP3PNXL9H8"
-        };
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+      import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+      import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-        firebase.initializeApp(firebaseConfig);
+      const firebaseConfig = {
+        apiKey: "AIzaSyCCc1y2kNbSftG45mB3gkbUCGs4gfjts-E",
+        authDomain: "realtimepfl.firebaseapp.com",
+        databaseURL: "https://realtimepfl-default-rtdb.firebaseio.com",
+        projectId: "realtimepfl",
+        storageBucket: "realtimepfl.firebasestorage.app",
+        messagingSenderId: "984202175754",
+        appId: "1:984202175754:web:a0d689738832cc48b686f3",
+        measurementId: "G-4W311B25HV"
+      };
 
-        const loginForm = document.getElementById('loginForm');
-        const errorElement = document.getElementById('error');
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
 
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+      // Elements
+      const form = document.getElementById('auth-form');
+      const emailInput = document.getElementById('email');
+      const passwordInput = document.getElementById('password');
+      const submitBtn = document.getElementById('submit-btn');
+      const submitText = document.getElementById('submit-text');
+      const messageEl = document.getElementById('message');
+      const switchText = document.getElementById('switch-text');
+      const switchLink = document.getElementById('switch-link');
 
-            firebase.auth().signInWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    // Successful login
-                    const user = userCredential.user;
-                    errorElement.textContent = "Login successful. Redirecting...";
-                    errorElement.style.color = "green";
-                    setTimeout(() => {
-                        window.location.href = 'upload.html'; // Redirect to upload page
-                    }, 2000);
-                })
-                .catch((error) => {
-                    // Login error
-                    console.error("Login error:", error);
-                    errorElement.textContent = "Login successful. Redirecting...";
-                    errorElement.style.color = "green";
-                    setTimeout(() => {
-                        window.location.href = 'wrong-password.html'; // Redirect to wrong password page
-                    }, 2000);
-                });
-        });
+      let isSignUp = false;
+
+      function showMessage(text, isError = true) {
+        messageEl.textContent = text;
+        messageEl.className = isError ? 'error' : 'success';
+        messageEl.classList.remove('hidden');
+      }
+
+      function hideMessage() {
+        messageEl.classList.add('hidden');
+      }
+
+      function toggleMode() {
+        isSignUp = !isSignUp;
+        if (isSignUp) {
+          submitText.textContent = 'Sign Up';
+          switchText.textContent = 'Already have an account?';
+          switchLink.textContent = 'Sign In';
+        } else {
+          submitText.textContent = 'Sign In';
+          switchText.textContent = "Don't have an account?";
+          switchLink.textContent = 'Sign Up';
+        }
+        hideMessage();
+      }
+
+      function setLoading(loading) {
+        submitBtn.disabled = loading;
+        if (loading) {
+          submitText.innerHTML = '<span class="loading"></span>Processing...';
+        } else {
+          submitText.textContent = isSignUp ? 'Sign Up' : 'Sign In';
+        }
+      }
+
+      async function checkProfileCompletion(user) {
+        try {
+          const profileDoc = await getDoc(doc(db, 'profiles', user.uid));
+          return profileDoc.exists() && profileDoc.data().name;
+        } catch (error) {
+          console.error('Error checking profile:', error);
+          return false;
+        }
+      }
+
+      function getRedirectUrl() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('redirect') || 'chat.html';
+      }
+
+      async function handleSubmit(e) {
+        e.preventDefault();
+        hideMessage();
+
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+
+        if (!email || !password) {
+          showMessage('Please fill in all fields.');
+          return;
+        }
+
+        if (password.length < 6) {
+          showMessage('Password must be at least 6 characters.');
+          return;
+        }
+
+        setLoading(true);
+
+        try {
+          let userCredential;
+          if (isSignUp) {
+            userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            showMessage('Account created successfully! Redirecting to complete your profile...', false);
+            setTimeout(() => {
+              window.location.href = 'profile.html';
+            }, 1500);
+          } else {
+            userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const hasProfile = await checkProfileCompletion(userCredential.user);
+            
+            if (!hasProfile) {
+              showMessage('Please complete your profile first...', false);
+              setTimeout(() => {
+                window.location.href = 'profile.html';
+              }, 1500);
+            } else {
+              showMessage('Signed in successfully! Redirecting...', false);
+              setTimeout(() => {
+                window.location.href = getRedirectUrl();
+              }, 1000);
+            }
+          }
+        } catch (error) {
+          let errorMessage = 'An error occurred. Please try again.';
+          
+          switch (error.code) {
+            case 'auth/invalid-email':
+              errorMessage = 'Invalid email address.';
+              break;
+            case 'auth/user-disabled':
+              errorMessage = 'This account has been disabled.';
+              break;
+            case 'auth/user-not-found':
+              errorMessage = 'No account found with this email.';
+              break;
+            case 'auth/wrong-password':
+              errorMessage = 'Incorrect password.';
+              break;
+            case 'auth/email-already-in-use':
+              errorMessage = 'Email already in use.';
+              break;
+            case 'auth/weak-password':
+              errorMessage = 'Password should be at least 6 characters.';
+              break;
+            case 'auth/network-request-failed':
+              errorMessage = 'Network error. Please check your connection.';
+              break;
+          }
+          
+          showMessage(errorMessage);
+        } finally {
+          setLoading(false);
+        }
+      }
+
+      // Event listeners
+      form.addEventListener('submit', handleSubmit);
+      switchLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        toggleMode();
+      });
+
+      // Check if user is already logged in
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          const hasProfile = await checkProfileCompletion(user);
+          if (!hasProfile) {
+            window.location.href = 'profile.html';
+          } else {
+            window.location.href = getRedirectUrl();
+          }
+        }
+      });
     </script>
-</body>
+  </body>
 </html>

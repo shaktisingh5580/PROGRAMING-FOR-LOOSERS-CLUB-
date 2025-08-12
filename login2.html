@@ -3,79 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - PFL Articles</title>
+    <title>PFL - Login</title>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-auth-compat.js"></script>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
             color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
             background-color: #f4f4f4;
         }
-        .login-container {
-            background-color: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
+        .container {
+            max-width: 400px;
+            margin: 80px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         h1 {
             text-align: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 20px;
         }
-        .form-group {
-            margin-bottom: 1rem;
+        form {
+            display: flex;
+            flex-direction: column;
         }
         label {
-            display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 5px;
         }
         input {
-            width: 100%;
-            padding: 0.5rem;
+            padding: 10px;
+            margin-bottom: 15px;
             border: 1px solid #ddd;
             border-radius: 4px;
         }
         button {
-            width: 100%;
-            padding: 0.75rem;
-            background-color: #0066cc;
-            color: white;
+            padding: 10px;
+            background-color: #000;
+            color: #fff;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
         button:hover {
-            background-color: #0052a3;
+            background-color: #333;
+        }
+        .error {
+            color: red;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <h1>Login</h1>
+    <div class="container">
+        <h1>PFL Login</h1>
         <form id="loginForm">
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" id="email" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" required>
-            </div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" required>
             <button type="submit">Login</button>
         </form>
+        <p id="error" class="error"></p>
     </div>
 
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
-
-        // Your web app's Firebase configuration
+    <script>
+        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyAw3gXcRJC0KTVS9wlt8RqUrOp_7GM25Xg",
             authDomain: "pflclub.firebaseapp.com",
@@ -86,27 +86,34 @@
             measurementId: "G-JP3PNXL9H8"
         };
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
+        firebase.initializeApp(firebaseConfig);
 
-        document.getElementById('loginForm').addEventListener('submit', (e) => {
+        const loginForm = document.getElementById('loginForm');
+        const errorElement = document.getElementById('error');
+
+        loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
-            signInWithEmailAndPassword(auth, email, password)
+            firebase.auth().signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
-                    // Signed in 
+                    // Successful login
                     const user = userCredential.user;
-                    console.log("User signed in:", user);
-                    window.location.href = 'submit-article.html';
+                    errorElement.textContent = "Login successful. Redirecting...";
+                    errorElement.style.color = "green";
+                    setTimeout(() => {
+                        window.location.href = 'upload.html'; // Redirect to upload page
+                    }, 2000);
                 })
                 .catch((error) => {
-                    const errorCode = error.code;
-                    const errorMessage = error.message;
-                    console.error("Error signing in:", errorMessage);
-                    alert("Error signing in: " + errorMessage);
+                    // Login error
+                    console.error("Login error:", error);
+                    errorElement.textContent = "Login successful. Redirecting...";
+                    errorElement.style.color = "green";
+                    setTimeout(() => {
+                        window.location.href = 'wrong-password.html'; // Redirect to wrong password page
+                    }, 2000);
                 });
         });
     </script>

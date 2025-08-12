@@ -184,61 +184,6 @@
     .vote-count { font-size: 0.8rem; font-weight: bold; color: #e0e0e0; min-width: 1.5ch; text-align: center; }
     @media (min-width: 768px) { .vote-count { font-size: 0.9rem; } }
 
-    /* Action Bar */
-    .action-bar { text-align: center; margin-bottom: 1rem; }
-    @media (min-width: 768px) { .action-bar { text-align: right; margin-bottom: 2rem; } }
-    .action-bar .btn { padding: 0.6rem 1.2rem; font-size: 0.85rem; width: 100%; max-width: 300px; }
-    @media (min-width: 768px) { .action-bar .btn { padding: 0.8rem 1.8rem; font-size: 1rem; width: auto; } }
-    #showUploadFormBtn::before { content: '➕ '; }
-
-    /* Generic Modals */
-    .modal {
-      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background-color: rgba(0, 0, 0, 0.85); z-index: 2000; align-items: flex-start; justify-content: center; opacity: 0; transition: opacity 0.3s ease; padding: 1rem; overflow-y: auto;
-    }
-    @media (min-width: 768px) { .modal { align-items: center; } }
-    .modal.active { display: flex; opacity: 1; }
-    .modal-content {
-      background-color: #1a1a1a; border-radius: 8px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; padding: 1rem; position: relative; box-shadow: 0 8px 30px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); margin-top: 2rem;
-    }
-    @media (min-width: 600px) { .modal-content { max-width: 650px; padding: 2rem 2.5rem; border-radius: 12px; margin-top: 0; } }
-    #uploadModal .modal-content h3 { margin-bottom: 1rem; font-size: 1.3rem; text-align: center; color: #a0cfff; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.15); }
-    @media (min-width: 768px) { #uploadModal .modal-content h3 { margin-bottom: 2rem; font-size: 1.7rem; padding-bottom: 1rem; } }
-    .modal-content h3 { margin-bottom: 1rem; font-size: 1.2rem; text-align: center; }
-    @media (min-width: 768px) { .modal-content h3 { margin-bottom: 1.8rem; font-size: 1.6rem; } }
-
-    /* Form elements */
-    .form-group { margin-bottom: 0.75rem; position: relative; }
-    @media (min-width: 768px) { .form-group { margin-bottom: 1.25rem; } }
-    .form-group label { display: block; margin-bottom: 0.3rem; font-size: 0.85rem; font-weight: 600; opacity: 0.85; }
-    @media (min-width: 768px) { .form-group label { margin-bottom: 0.5rem; font-size: 0.95rem; } }
-    .form-control {
-      width: 100%; padding: 0.6rem; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.2); background-color: rgba(255, 255, 255, 0.05); color: #fff; font-size: 0.85rem; transition: all 0.3s ease; min-height: 40px;
-    }
-    @media (min-width: 768px) { .form-control { padding: 0.85rem; font-size: 1rem; border-radius: 6px; } }
-    .form-control:focus { outline: none; border-color: #a0cfff; background-color: rgba(255, 255, 255, 0.08); box-shadow: 0 0 0 3px rgba(160, 207, 255, 0.25); }
-
-    .field-error { color: #ff6b6b; font-size: 0.75rem; margin-top: 6px; display: none; }
-    .has-error .field-error { display: block; }
-
-    .form-row { display: flex; flex-direction: column; gap: 0; margin-bottom: 0; }
-    .form-row .form-group { margin-bottom: 0.75rem; }
-    @media (min-width: 550px) {
-      .form-row { flex-direction: row; gap: 1rem; margin-bottom: 1.25rem; }
-      .form-row .form-group { margin-bottom: 0; flex: 1; }
-    }
-
-    .modal-buttons { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1.5rem; }
-    .modal-buttons .btn { width: 100%; }
-    @media (min-width: 768px) {
-      .modal-buttons { flex-direction: row; justify-content: flex-end; gap: 1rem; margin-top: 2.5rem; }
-      .modal-buttons .btn { width: auto; }
-    }
-
-    .error-message { color: #ff6b6b; font-size: 0.8rem; margin-top: 0.5rem; text-align: left; }
-    @media (min-width: 768px) { .error-message { font-size: 0.9rem; margin-top: 0.75rem; } }
-    .hidden { display: none !important; }
-
     /* No Assignments Message */
     .no-assignments-message {
       text-align: center; padding: 1.5rem 1rem; opacity: 0.7; font-size: 0.9rem; color: #aaa;
@@ -267,76 +212,246 @@
     /* High contrast */
     @media (prefers-contrast: high) { .assignment-card { border: 2px solid #fff; } .btn { border: 2px solid #000; } }
 
-    /* Profile dialog (profile card) */
-    :root {
-      color-scheme: dark; --bg: #0f0f10; --elev: #151517; --elev-2: #1b1b1e; --muted: #d9d9db; --soft: #a9a9ad; --line: #2a2a2e; --accent: #ffffff;
-    }
-    dialog { border: 1px solid var(--line); border-radius: 16px; background: var(--elev-2); color: var(--muted); padding: 0; max-width: 480px; width: calc(100% - 24px); }
-    dialog::backdrop { background: #0008; }
-    .modal-header { padding: 16px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
-    .modal-body { padding: 16px; display: grid; gap: 12px; }
-    .profile-info { display: grid; gap: 12px; }
-    .profile-field { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); }
-    .profile-field:last-child { border-bottom: none; }
-    .profile-field .label { color: var(--soft); font-size: 13px; }
-    .profile-field .value { color: var(--muted); font-weight: 500; }
-    .profile-avatar { width: 60px; height: 60px; border-radius: 50%; background: var(--elev); border: 2px solid var(--line); display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700; color: var(--accent); margin: 0 auto 16px; }
-    .profile-links { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
-    .profile-link { padding: 4px 8px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); text-decoration: none; font-size: 12px; }
-    .profile-link:hover { background: var(--elev); text-decoration: none; }
-    .btn-ghost { background: transparent; border: 1px solid var(--line); color: var(--muted); border-radius: 10px; padding: 10px 12px; cursor: pointer; }
-    .btn-ghost:hover { background: var(--elev); }
-    .btn-primary { background: var(--muted); color: #0b0b0c; border: 1px solid var(--muted); border-radius: 10px; padding: 10px 12px; cursor: pointer; }
-    .row { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
-
-    /* Global Toasts and Banner */
-    .toast-container {
-      position: fixed; bottom: 16px; right: 16px; display: grid; gap: 8px; z-index: 3000; max-width: calc(100% - 32px);
-    }
-    .toast {
-      background: #1f1f1f; color: #eaeaea; border: 1px solid #3a3a3a; border-radius: 10px; padding: 10px 12px; display: flex; align-items: start; gap: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-    }
-    .toast--error { border-color: #7a2e2e; background: #2a1818; color: #ffd6d6; }
-    .toast--success { border-color: #2e7a3b; background: #162a1c; color: #d6ffe1; }
-    .toast--info { border-color: #2e517a; background: #16202a; color: #d6e8ff; }
-    .toast button {
-      margin-left: auto; background: transparent; border: none; color: inherit; cursor: pointer; font-weight: bold; font-size: 14px;
-    }
-
-    .offline-banner {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 2001; background: #3a2a00; color: #ffefc7; text-align: center; padding: 8px 12px; border-bottom: 1px solid #6b4f00;
-    }
-
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    /* Modal styles */
+    dialog {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px; 
+      background: rgba(22, 22, 22, 0.95);
+      backdrop-filter: blur(10px);
+      color: #e0e0e0;
+      padding: 0; 
+      max-width: 500px; 
+      width: calc(100% - 24px);
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    }
+    dialog::backdrop { 
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(4px);
+    }
+    .modal-header { 
+      padding: 20px 24px; 
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      font-weight: 600;
+      font-size: 1.1rem;
+      background: rgba(30, 30, 30, 0.8);
+      border-radius: 16px 16px 0 0;
+    }
+    .modal-body { 
+      padding: 24px; 
+      display: grid; 
+      gap: 18px; 
+    }
+    .modal-footer {
+      padding: 20px 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      background: rgba(15, 15, 15, 0.8);
+      border-radius: 0 0 16px 16px;
+    }
+    .field { 
+      display: grid; 
+      gap: 8px; 
+    }
+    .field label { 
+      color: #b0b0b0; 
+      font-size: 14px; 
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .field input, .field select {
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(30, 30, 30, 0.9);
+      color: #e0e0e0;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+    .field input:focus, .field select:focus {
+      outline: none;
+      border-color: #a0cfff;
+      background: rgba(40, 40, 40, 0.95);
+      box-shadow: 0 0 0 3px rgba(160, 207, 255, 0.25);
+      transform: translateY(-1px);
+    }
+    .field input::placeholder {
+      color: rgba(255, 255, 255, 0.4);
+    }
+    .field small {
+      color: #999;
+      font-size: 12px;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    /* Enhanced button styles for modal */
+    .modal-footer .btn {
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      min-width: 100px;
+    }
+    .modal-footer .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Success/Error message styling */
+    .error {
+      color: #ff6b6b;
+      background: rgba(255, 107, 107, 0.1);
+      border: 1px solid rgba(255, 107, 107, 0.3);
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .success {
+      color: #51cf66;
+      background: rgba(81, 207, 102, 0.1);
+      border: 1px solid rgba(81, 207, 102, 0.3);
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    /* Profile modal styles */
+    .profile-info {
+      display: grid;
+      gap: 12px;
+    }
+    .profile-field {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .profile-field:last-child {
+      border-bottom: none;
+    }
+    .profile-field .label {
+      color: #999;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .profile-field .value {
+      color: #e0e0e0;
+      font-weight: 600;
+    }
+    .profile-avatar {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(160, 207, 255, 0.2), rgba(160, 207, 255, 0.1));
+      border: 2px solid rgba(160, 207, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 700;
+      color: #a0cfff;
+      margin: 0 auto 20px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+    .profile-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+      justify-content: center;
+    }
+    .profile-link {
+      padding: 8px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      color: #e0e0e0;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      background: rgba(30, 30, 30, 0.6);
+    }
+    .profile-link:hover {
+      background: rgba(160, 207, 255, 0.1);
+      border-color: rgba(160, 207, 255, 0.3);
+      color: #a0cfff;
+      text-decoration: none;
+      transform: translateY(-2px);
+    }
+
+    /* Loading state for submit button */
+    .btn.loading {
+      position: relative;
+      color: transparent;
+    }
+    .btn.loading::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 16px;
+      height: 16px;
+      border: 2px solid transparent;
+      border-top: 2px solid currentColor;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      color: #000;
+    }
+
+    /* Responsive modal */
+    @media (max-width: 768px) {
+      dialog {
+        width: calc(100% - 16px);
+        max-height: 95vh;
+      }
+      .modal-header, .modal-body, .modal-footer {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+      .modal-footer {
+        flex-direction: column;
+      }
+      .modal-footer .btn {
+        width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
-  <div id="offlineBanner" class="offline-banner hidden" role="status" aria-live="polite">
-    You are offline. Some actions may fail. We’ll retry when you’re back online.
-  </div>
-
   <header>
     <nav aria-label="Main">
       <div class="logo" aria-label="PFL Logo">PFL</div>
       <div class="header-nav-links" role="navigation" aria-label="Primary">
         <a href="index.html">Home</a>
         <a href="chat.html">Chat</a>
-        <a href="courses.html">Courses</a>
+        <a href="profile.html">Profile</a>
+        <button id="uploadBtn" class="btn" type="button" style="display:none">Upload Assignment</button>
       </div>
       <div class="user-auth-info">
         <span id="assignmentUserEmail">Not logged in</span>
         <button id="assignmentLogoutBtn" class="btn btn-secondary hidden" type="button">Logout</button>
-        <button id="assignmentLoginBtn" class="btn" type="button">Login</button>
+        <a href="login.html" id="assignmentLoginLink" class="btn" style="display:none">Login</a>
       </div>
     </nav>
   </header>
 
   <main class="container">
     <h1>Assignments Hub</h1>
-
-    <div class="action-bar">
-      <button id="showUploadFormBtn" class="btn hidden" type="button">Upload New Assignment</button>
-    </div>
 
     <div class="filters-bar" role="region" aria-label="Assignment filters">
       <input type="text" id="searchTerm" placeholder="Search assignments..." class="form-control" aria-label="Search assignments" />
@@ -359,31 +474,28 @@
     </div>
 
     <div id="assignmentsGrid" class="assignments-grid" aria-live="polite" aria-busy="false">
-       Loader or assignments will be injected here 
+      <!-- Assignments will be injected here -->
     </div>
-  </main>
 
-   Upload Assignment Modal 
-  <div id="uploadModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="uploadModalTitle">
-    <div class="modal-content">
-      <h3 id="uploadModalTitle">Upload New Assignment</h3>
-      <form id="uploadAssignmentForm" novalidate>
-        <div class="form-group" id="fg-assignmentTitle">
-          <label for="assignmentTitle">Assignment Title *</label>
-          <input type="text" id="assignmentTitle" name="assignmentTitle" class="form-control" required aria-describedby="assignmentTitleHelp" />
-          <div class="field-error" id="assignmentTitleHelp">Title is required and must be at least 3 characters.</div>
+    <!-- Upload Assignment Modal -->
+    <dialog id="uploadModal">
+      <form method="dialog" id="uploadForm">
+        <div class="modal-header">
+          <strong>Upload Assignment</strong>
+          <button class="btn btn-secondary" value="cancel" aria-label="Close">Close</button>
         </div>
-
-        <div class="form-group" id="fg-subject">
-          <label for="subject">Subject *</label>
-          <input type="text" id="subject" name="subject" class="form-control" required aria-describedby="subjectHelp" />
-          <div class="field-error" id="subjectHelp">Subject is required.</div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group" id="fg-semester">
+        <div class="modal-body">
+          <div class="field">
+            <label for="assignmentTitle">Assignment Title *</label>
+            <input type="text" id="assignmentTitle" class="form-control" placeholder="e.g., Data Structures Lab 1" required maxlength="100" />
+          </div>
+          <div class="field">
+            <label for="subject">Subject *</label>
+            <input type="text" id="subject" class="form-control" placeholder="e.g., Computer Science" required maxlength="50" />
+          </div>
+          <div class="field">
             <label for="semester">Semester *</label>
-            <select id="semester" name="semester" class="form-control" required aria-describedby="semesterHelp">
+            <select id="semester" class="form-control" required>
               <option value="">Select Semester</option>
               <option value="1">1st Semester</option>
               <option value="2">2nd Semester</option>
@@ -394,130 +506,57 @@
               <option value="7">7th Semester</option>
               <option value="8">8th Semester</option>
             </select>
-            <div class="field-error" id="semesterHelp">Please select a semester.</div>
           </div>
-          <div class="form-group" id="fg-assignmentNumber">
+          <div class="field">
             <label for="assignmentNumber">Assignment Number</label>
-            <input type="text" id="assignmentNumber" name="assignmentNumber" class="form-control" placeholder="e.g., 1, Lab 2, Project" />
+            <input type="text" id="assignmentNumber" class="form-control" placeholder="e.g., 1, 2, Lab-1" maxlength="20" />
           </div>
+          <div class="field">
+            <label for="driveLink">Google Drive Link *</label>
+            <input type="url" id="driveLink" class="form-control" placeholder="https://drive.google.com/..." required />
+            <small style="color: var(--soft); font-size: 0.8rem;">Make sure the link is publicly accessible</small>
+          </div>
+          <div class="field">
+            <label for="keywords">Keywords (comma-separated)</label>
+            <input type="text" id="keywords" class="form-control" placeholder="e.g., arrays, sorting, algorithms" maxlength="200" />
+            <small style="color: var(--soft); font-size: 0.8rem;">Help others find your assignment</small>
+          </div>
+          <div id="uploadMessage" class="error" style="display: none; margin-top: 10px;"></div>
         </div>
-
-        <div class="form-group" id="fg-keywords">
-          <label for="keywords">Keywords (comma-separated)</label>
-          <input type="text" id="keywords" name="keywords" class="form-control" placeholder="e.g., programming, arrays, c++" />
-        </div>
-
-        <div class="form-group" id="fg-driveLink">
-          <label for="driveLink">Google Drive Link (View Access) *</label>
-          <input type="url" id="driveLink" name="driveLink" class="form-control" placeholder="https://drive.google.com/..." required aria-describedby="driveLinkHelp" />
-          <div class="field-error" id="driveLinkHelp">Provide a valid Google Drive link (file or folder) with view access.</div>
-        </div>
-
-        <p id="uploadFormError" class="error-message hidden" aria-live="assertive"></p>
-
-        <div class="modal-buttons">
-          <button type="button" id="closeUploadModalBtn" class="btn btn-secondary">Cancel</button>
-          <button type="submit" class="btn">Upload Assignment</button>
+        <div class="modal-footer">
+          <button type="submit" class="btn" id="submitUpload">Upload Assignment</button>
+          <button type="button" class="btn btn-secondary" id="cancelUpload">Cancel</button>
         </div>
       </form>
-    </div>
-  </div>
+    </dialog>
 
-   Authentication Modal 
-  <div id="assignmentAuthModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="assignmentAuthTitle">
-    <div class="modal-content">
-      <h3 id="assignmentAuthTitle">Login</h3>
-      <form id="assignmentAuthForm" novalidate>
-        <div class="form-group">
-          <label for="authEmail">Email Address *</label>
-          <input type="email" id="authEmail" name="authEmail" class="form-control" required />
+    <!-- Profile Modal -->
+    <dialog id="profile-modal">
+      <form method="dialog">
+        <div class="modal-header">
+          <strong id="profile-modal-title">User Profile</strong>
+          <button class="btn btn-secondary" value="cancel" aria-label="Close">Close</button>
         </div>
-        <div class="form-group">
-          <label for="authPassword">Password *</label>
-          <input type="password" id="authPassword" name="authPassword" class="form-control" required />
+        <div class="modal-body" id="profile-modal-body">
+          <div class="profile-avatar" id="profile-avatar"></div>
+          <div class="profile-info" id="profile-info"></div>
         </div>
-        <p id="assignmentAuthError" class="error-message hidden" aria-live="assertive"></p>
-        <div class="modal-buttons">
-          <button type="button" id="closeAssignmentAuthModalBtn" class="btn btn-secondary">Cancel</button>
-          <button type="submit" id="assignmentAuthSubmitBtn" class="btn">Login</button>
-        </div>
-        <p style="text-align: center; margin-top: 1.5rem; opacity: 0.8;">
-          <a href="#" id="assignmentSwitchToSignupLink">Need an account? Sign Up</a><br />
-          <a href="#" id="assignmentSwitchToLoginLink" class="hidden" style="margin-top: 0.5rem; display: inline-block;">Have an account? Login</a>
-        </p>
       </form>
-    </div>
-  </div>
+    </dialog>
+  </main>
 
-   Profile Modal (dialog) 
-  <dialog id="profile-modal" aria-labelledby="profile-title">
-    <div class="modal-header">
-      <strong id="profile-title">User Profile</strong>
-      <button class="btn-ghost" type="button" id="profile-close" aria-label="Close">Close</button>
-    </div>
-    <div class="modal-body">
-      <div class="profile-avatar" id="profile-avatar" aria-label="Profile avatar"></div>
-      <div class="profile-info" id="profile-info"></div>
-      <div class="row" style="margin-top: 16px;">
-        <button class="btn-primary" id="profile-message" type="button">Send Message</button>
-      </div>
-    </div>
-  </dialog>
-
-   Toast container 
-  <div id="toastContainer" class="toast-container" aria-live="assertive" aria-atomic="true"></div>
-
-   Main JavaScript 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+    import { auth, db, initAuth, signOutUser, redirectToLogin, requireAuth } from './js/auth.js';
     import {
-      getAuth,
-      onAuthStateChanged,
-      signOut,
-      signInWithEmailAndPassword,
-      createUserWithEmailAndPassword
-    } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-    import {
-      getFirestore,
-      collection,
-      addDoc,
-      getDocs,
-      query,
-      orderBy,
-      serverTimestamp,
-      doc,
-      getDoc as getFirestoreDoc,
-      updateDoc,
-      increment,
-      arrayUnion,
-      arrayRemove
-    } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+      collection, addDoc, getDocs, query, orderBy, serverTimestamp,
+      doc, getDoc as getFirestoreDoc, updateDoc, increment, arrayUnion, arrayRemove
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    // Firebase Configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyCCc1y2kNbSftG45mB3gkbUCGs4gfjts-E",
-      authDomain: "realtimepfl.firebaseapp.com",
-      databaseURL: "https://realtimepfl-default-rtdb.firebaseio.com",
-      projectId: "realtimepfl",
-      storageBucket: "realtimepfl.firebasestorage.app",
-      messagingSenderId: "984202175754",
-      appId: "1:984202175754:web:a0d689738832cc48b686f3",
-      measurementId: "G-4W311B25HV"
-    };
-
-    // Initialize Firebase services
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    // --- DOM Elements ---
+    // DOM elements
+    const assignmentUserEmailEl = document.getElementById('assignmentUserEmail');
+    const assignmentLogoutBtnEl = document.getElementById('assignmentLogoutBtn');
+    const assignmentLoginLinkEl = document.getElementById('assignmentLoginLink');
     const assignmentsGridEl = document.getElementById('assignmentsGrid');
-    const showUploadFormBtnEl = document.getElementById('showUploadFormBtn');
-    const uploadModalEl = document.getElementById('uploadModal');
-    const closeUploadModalBtnEl = document.getElementById('closeUploadModalBtn');
-    const uploadAssignmentFormEl = document.getElementById('uploadAssignmentForm');
-    const uploadFormErrorEl = document.getElementById('uploadFormError');
-
     const searchTermInputEl = document.getElementById('searchTerm');
     const filterSemesterSelectEl = document.getElementById('filterSemester');
     const filterSubjectSelectEl = document.getElementById('filterSubject');
@@ -526,87 +565,117 @@
     const applyFiltersBtnEl = document.getElementById('applyFiltersBtn');
     const resetFiltersBtnEl = document.getElementById('resetFiltersBtn');
 
-    const assignmentUserEmailEl = document.getElementById('assignmentUserEmail');
-    const assignmentLogoutBtnEl = document.getElementById('assignmentLogoutBtn');
-    const assignmentLoginBtnEl = document.getElementById('assignmentLoginBtn');
-    const assignmentAuthModalEl = document.getElementById('assignmentAuthModal');
-    const assignmentAuthTitleEl = document.getElementById('assignmentAuthTitle');
-    const assignmentAuthFormEl = document.getElementById('assignmentAuthForm');
-    const assignmentAuthErrorEl = document.getElementById('assignmentAuthError');
-    const assignmentAuthSubmitBtnEl = document.getElementById('assignmentAuthSubmitBtn');
-    const closeAssignmentAuthModalBtnEl = document.getElementById('closeAssignmentAuthModalBtn');
-    const assignmentSwitchToSignupLinkEl = document.getElementById('assignmentSwitchToSignupLink');
-    const assignmentSwitchToLoginLinkEl = document.getElementById('assignmentSwitchToLoginLink');
-
-    // Profile modal elements
-    const profileModal = document.getElementById('profile-modal');
-    const profileTitle = document.getElementById('profile-title');
-    const profileAvatar = document.getElementById('profile-avatar');
-    const profileInfo = document.getElementById('profile-info');
-    const profileMessage = document.getElementById('profile-message');
-    const profileClose = document.getElementById('profile-close');
-
-    const offlineBannerEl = document.getElementById('offlineBanner');
-    const toastContainer = document.getElementById('toastContainer');
-
-    // --- Global State ---
+    // Global State
     let allAssignments = [];
     let userNamesCache = {};
-    let currentAssignmentAuthMode = 'login';
+    let currentUser = null;
+    let currentProfile = null;
 
-    // --- Utility: UI helpers ---
-    function showError(element, message) {
-      if (element) {
-        element.textContent = message;
-        element.classList.remove('hidden');
+    const profileCache = new Map();
+
+    // Profile Modal functionality
+    async function loadProfile(uid) {
+      if (profileCache.has(uid)) {
+        return profileCache.get(uid);
       }
-    }
-    function clearError(element) {
-      if (element) {
-        element.textContent = '';
-        element.classList.add('hidden');
-      }
-    }
-    function showToast(message, variant = 'info', duration = 4500) {
-      const toast = document.createElement('div');
-      toast.className = `toast toast--${variant}`;
-      const msg = document.createElement('div');
-      msg.textContent = message;
-      const closeBtn = document.createElement('button');
-      closeBtn.type = 'button';
-      closeBtn.setAttribute('aria-label', 'Dismiss notification');
-      closeBtn.textContent = '×';
-      closeBtn.onclick = () => toast.remove();
-      toast.append(msg, closeBtn);
-      toastContainer.appendChild(toast);
-      const timer = setTimeout(() => toast.remove(), duration);
-      toast.addEventListener('mouseenter', () => clearTimeout(timer), { once: true });
-    }
-    function setFieldError(groupId, hasError) {
-      const group = document.getElementById(groupId);
-      if (!group) return;
-      group.classList.toggle('has-error', !!hasError);
-    }
-    function isValidDriveLink(url) {
-      if (!url) return false;
       try {
-        const u = new URL(url);
-        if (u.hostname !== 'drive.google.com') return false;
-        return /\/(file|drive|folder)\//.test(u.pathname);
-      } catch { return false; }
+        const profileRef = doc(db, 'profiles', uid);
+        const profileSnap = await getFirestoreDoc(profileRef);
+        if (profileSnap.exists()) {
+          const profileData = { id: profileSnap.id, ...profileSnap.data() };
+          profileCache.set(uid, profileData);
+          return profileData;
+        } else {
+          console.error('Profile not found');
+          return null;
+        }
+      } catch (error) {
+        console.error('Error loading profile:', error);
+        return null;
+      }
     }
-    function mapFirebaseAuthError(code, fallbackMessage) {
-      const map = {
-        'auth/invalid-email': 'Invalid email address.',
-        'auth/user-disabled': 'This account has been disabled.',
-        'auth/user-not-found': 'No account found with this email.',
-        'auth/wrong-password': 'Incorrect password.',
-        'auth/email-already-in-use': 'Email already in use.',
-        'auth/weak-password': 'Password should be at least 6 characters.',
-        'auth/network-request-failed': 'Network error. Please check your connection.'
-      };
-      return map[code] || fallbackMessage || 'Something went wrong. Please try again.';
+
+    const profileModal = document.getElementById('profile-modal');
+    const profileModalTitle = document.getElementById('profile-modal-title');
+    const profileAvatar = document.getElementById('profile-avatar');
+    const profileInfo = document.getElementById('profile-info');
+
+    async function openProfileModal(uid) {
+      try {
+        const profile = await loadProfile(uid);
+        if (!profile) {
+          alert('Could not load profile.');
+          return;
+        }
+
+        profileModalTitle.textContent = profile.name || 'User Profile';
+        profileAvatar.textContent = profile.name ? profile.name[0].toUpperCase() : '?';
+
+        profileInfo.innerHTML = '';
+        
+        // Create profile fields
+        const fields = [
+          { label: 'Name', value: profile.name || 'N/A' },
+          { label: 'College', value: profile.college || 'N/A' },
+          { label: 'Semester', value: profile.semester ? getOrdinalSuffix(profile.semester) : 'N/A' }
+        ];
+
+        fields.forEach(field => {
+          const fieldEl = document.createElement('div');
+          fieldEl.className = 'profile-field';
+          fieldEl.innerHTML = `
+            <span class="label">${field.label}</span>
+            <span class="value">${field.value}</span>
+          `;
+          profileInfo.appendChild(fieldEl);
+        });
+
+        // Add social links
+        const links = document.createElement('div');
+        links.className = 'profile-links';
+        
+        if (profile.instagram) {
+          const instagramLink = document.createElement('a');
+          instagramLink.className = 'profile-link';
+          instagramLink.href = `https://instagram.com/${profile.instagram}`;
+          instagramLink.target = '_blank';
+          instagramLink.rel = 'noopener noreferrer';
+          instagramLink.textContent = 'Instagram';
+          links.appendChild(instagramLink);
+        }
+        
+        if (profile.github) {
+          const githubLink = document.createElement('a');
+          githubLink.className = 'profile-link';
+          githubLink.href = profile.github;
+          githubLink.target = '_blank';
+          githubLink.rel = 'noopener noreferrer';
+          githubLink.textContent = 'GitHub';
+          links.appendChild(githubLink);
+        }
+        
+        if (profile.linkedin) {
+          const linkedinLink = document.createElement('a');
+          linkedinLink.className = 'profile-link';
+          linkedinLink.href = profile.linkedin;
+          linkedinLink.target = '_blank';
+          linkedinLink.rel = 'noopener noreferrer';
+          linkedinLink.textContent = 'LinkedIn';
+          links.appendChild(linkedinLink);
+        }
+
+        if (links.children.length > 0) {
+          profileInfo.appendChild(links);
+        }
+
+        profileModal.showModal();
+      } catch (error) {
+        console.error('Error opening profile modal:', error);
+        alert('Failed to open profile.');
+      }
     }
+
+    // Utility functions
     function getOrdinalSuffix(nStr) {
       const n = parseInt(nStr);
       if (isNaN(n)) return typeof nStr === 'string' ? nStr : '';
@@ -614,96 +683,140 @@
       const v = n % 100;
       return n + (s[(v - 20) % 10] || s[v] || s[0]);
     }
-    function el(tag, attrs = {}, children = []) {
-      const e = document.createElement(tag);
-      for (const [k, v] of Object.entries(attrs)) {
-        if (k === 'class') e.className = v;
-        else if (k.startsWith('on') && typeof v === 'function') e.addEventListener(k.slice(2), v);
-        else if (v !== null && v !== undefined) e.setAttribute(k, v);
-      }
-      for (const c of children) e.append(c);
-      return e;
-    }
 
-    // Offline/online banner
-    function updateOnlineStatus() {
-      const online = navigator.onLine;
-      offlineBannerEl.classList.toggle('hidden', online);
-    }
-    window.addEventListener('online', () => { updateOnlineStatus(); showToast('Back online.', 'success', 2500); });
-    window.addEventListener('offline', () => { updateOnlineStatus(); showToast('You are offline. Some actions may fail.', 'info', 4000); });
-    updateOnlineStatus();
-
-    // --- AUTHENTICATION & UI ---
-    onAuthStateChanged(auth, user => {
-      if (user) {
-        assignmentUserEmailEl.textContent = user.email;
-        assignmentLoginBtnEl.classList.add('hidden');
+    function updateAuthUI() {
+      if (currentUser) {
+        assignmentUserEmailEl.textContent = currentProfile?.name || currentUser.email;
+        assignmentLoginLinkEl.style.display = 'none';
         assignmentLogoutBtnEl.classList.remove('hidden');
-        showUploadFormBtnEl.classList.remove('hidden');
-        if (assignmentAuthModalEl.classList.contains('active')) {
-          assignmentAuthModalEl.classList.remove('active');
-          document.body.style.overflow = '';
-        }
+        uploadBtn.style.display = ''; // Show upload button
       } else {
         assignmentUserEmailEl.textContent = 'Not logged in';
-        assignmentLoginBtnEl.classList.remove('hidden');
+        assignmentLoginLinkEl.style.display = '';
         assignmentLogoutBtnEl.classList.add('hidden');
-        showUploadFormBtnEl.classList.add('hidden');
+        uploadBtn.style.display = 'none'; // Hide upload button
       }
-      applyCurrentFilters();
-    });
+    }
 
-    // --- AUTH & MODAL FUNCTIONS ---
-    async function handleAssignmentAuthFormSubmit(e) {
+    // Upload functionality
+    const uploadBtn = document.getElementById('uploadBtn');
+    const uploadModal = document.getElementById('uploadModal');
+    const uploadForm = document.getElementById('uploadForm');
+    const submitUpload = document.getElementById('submitUpload');
+    const cancelUpload = document.getElementById('cancelUpload');
+    const uploadMessage = document.getElementById('uploadMessage');
+
+    // Form elements
+    const assignmentTitleEl = document.getElementById('assignmentTitle');
+    const subjectEl = document.getElementById('subject');
+    const semesterEl = document.getElementById('semester');
+    const assignmentNumberEl = document.getElementById('assignmentNumber');
+    const driveLinkEl = document.getElementById('driveLink');
+    const keywordsEl = document.getElementById('keywords');
+
+    function showUploadMessage(text, isError = true) {
+      uploadMessage.textContent = text;
+      uploadMessage.className = isError ? 'error' : 'success';
+      uploadMessage.style.display = 'block';
+    }
+
+    function hideUploadMessage() {
+      uploadMessage.style.display = 'none';
+    }
+
+    function resetUploadForm() {
+      uploadForm.reset();
+      hideUploadMessage();
+    }
+
+    async function handleUploadSubmit(e) {
       e.preventDefault();
-      clearError(assignmentAuthErrorEl);
+      hideUploadMessage();
 
-      const email = assignmentAuthFormEl.authEmail.value.trim();
-      const password = assignmentAuthFormEl.authPassword.value;
-
-      if (!email || !password) {
-        showError(assignmentAuthErrorEl, 'Please enter both email and password.');
+      if (!currentUser) {
+        showUploadMessage('Please sign in to upload assignments.');
         return;
       }
 
-      assignmentAuthSubmitBtnEl.disabled = true;
-      const originalSubmitText = assignmentAuthSubmitBtnEl.textContent;
-      assignmentAuthSubmitBtnEl.textContent = currentAssignmentAuthMode === 'login' ? 'Logging in...' : 'Signing up...';
+      const title = assignmentTitleEl.value.trim();
+      const subject = subjectEl.value.trim();
+      const semester = semesterEl.value;
+      const assignmentNumber = assignmentNumberEl.value.trim();
+      const driveLink = driveLinkEl.value.trim();
+      const keywords = keywordsEl.value.trim();
+
+      // Validation
+      if (!title || !subject || !semester || !driveLink) {
+        showUploadMessage('Please fill in all required fields.');
+        return;
+      }
+
+      if (!driveLink.match(/^https?:\/\/.+/)) {
+        showUploadMessage('Please enter a valid URL for the Google Drive link.');
+        return;
+      }
+
+      // Parse keywords
+      const keywordArray = keywords ? keywords.split(',').map(k => k.trim()).filter(k => k.length > 0) : [];
+
+      // Replace the existing loading logic in handleUploadSubmit function
+      submitUpload.disabled = true;
+      submitUpload.classList.add('loading');
+      submitUpload.textContent = 'Uploading...';
 
       try {
-        if (currentAssignmentAuthMode === 'login') {
-          await signInWithEmailAndPassword(auth, email, password);
-          showToast('Logged in successfully.', 'success');
-        } else {
-          await createUserWithEmailAndPassword(auth, email, password);
-          showToast('Account created successfully.', 'success');
-        }
+        const assignmentData = {
+          assignmentTitle: title,
+          subject: subject,
+          semester: semester,
+          assignmentNumber: assignmentNumber || '',
+          driveLink: driveLink,
+          keywords: keywordArray,
+          uploaderId: currentUser.uid,
+          uploaderEmail: currentUser.email,
+          uploadDate: serverTimestamp(),
+          votes: 0,
+          votedBy: []
+        };
+
+        await addDoc(collection(db, 'assignments'), assignmentData);
+        
+        showUploadMessage('Assignment uploaded successfully!', false);
+        resetUploadForm();
+        
+        // Refresh assignments list
+        setTimeout(() => {
+          uploadModal.close();
+          fetchAssignments();
+        }, 1500);
+
       } catch (error) {
-        const friendly = mapFirebaseAuthError(error.code, error.message);
-        showError(assignmentAuthErrorEl, friendly);
-        showToast(friendly, 'error');
+        console.error('Error uploading assignment:', error);
+        showUploadMessage('Failed to upload assignment. Please try again.');
       } finally {
-        assignmentAuthSubmitBtnEl.disabled = false;
-        assignmentAuthSubmitBtnEl.textContent = originalSubmitText;
+        // And in the finally block:
+        submitUpload.disabled = false;
+        submitUpload.classList.remove('loading');
+        submitUpload.textContent = 'Upload Assignment';
       }
     }
 
-    function openAssignmentAuthModal(mode = 'login') {
-      currentAssignmentAuthMode = mode;
-      assignmentAuthFormEl.reset();
-      clearError(assignmentAuthErrorEl);
+    // Event listeners for upload functionality
+    uploadBtn.addEventListener('click', () => {
+      if (!currentUser) {
+        redirectToLogin();
+        return;
+      }
+      resetUploadForm();
+      uploadModal.showModal();
+    });
 
-      assignmentAuthTitleEl.textContent = mode === 'login' ? 'Login' : 'Sign Up';
-      assignmentAuthSubmitBtnEl.textContent = mode === 'login' ? 'Login' : 'Sign Up';
-      assignmentSwitchToSignupLinkEl.classList.toggle('hidden', mode === 'signup');
-      assignmentSwitchToLoginLinkEl.classList.toggle('hidden', mode === 'login');
+    uploadForm.addEventListener('submit', handleUploadSubmit);
+    cancelUpload.addEventListener('click', () => {
+      uploadModal.close();
+    });
 
-      assignmentAuthModalEl.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    }
-
-    // --- ASSIGNMENT FUNCTIONS ---
+    // Assignment functions
     async function fetchAssignments() {
       assignmentsGridEl.setAttribute('aria-busy', 'true');
       assignmentsGridEl.innerHTML = '<div class="loader-container"><div class="loader" role="progressbar" aria-label="Loading assignments"></div></div>';
@@ -723,7 +836,6 @@
             </div>
           </div>`;
         document.getElementById('retryFetchBtn')?.addEventListener('click', fetchAssignments);
-        showToast('Failed to load assignments. Please try again.', 'error');
       } finally {
         assignmentsGridEl.setAttribute('aria-busy', 'false');
       }
@@ -743,7 +855,6 @@
       try {
         uploaderNames = await Promise.all(uploaderNamePromises);
       } catch {
-        // If any fail, fallback gracefully
         uploaderNames = assignmentsToRender.map(a => a.uploaderEmail || 'Anonymous');
       }
 
@@ -753,12 +864,12 @@
 
         const uploadDate = assignment.uploadDate?.toDate ? assignment.uploadDate.toDate().toLocaleDateString() : 'N/A';
         const uploaderName = uploaderNames[index] || 'Unknown';
-        const userHasVoted = auth.currentUser && Array.isArray(assignment.votedBy) && assignment.votedBy.includes(auth.currentUser?.uid);
+        const userHasVoted = currentUser && Array.isArray(assignment.votedBy) && assignment.votedBy.includes(currentUser?.uid);
 
         card.innerHTML = `
           <div>
             <h3>${assignment.assignmentTitle || 'Untitled'}</h3>
-            <p><strong>Uploader:</strong> <a href="#" class="uploader-name-link" data-uploader-id="${assignment.uploaderId || ''}">${uploaderName}</a></p>
+            <p><strong>Uploader:</strong> <span class="uploader-name-link" onclick="openProfileModal('${assignment.uploaderId}')" style="cursor: pointer;">${uploaderName}</span></p>
             <p><strong>Subject:</strong> ${assignment.subject || 'N/A'}</p>
             <p><strong>Semester:</strong> ${getOrdinalSuffix(assignment.semester)}</p>
             ${assignment.assignmentNumber ? `<p><strong>Assignment No.:</strong> ${assignment.assignmentNumber}</p>` : ''}
@@ -774,102 +885,17 @@
           </div>
         `;
 
-        card.querySelector('.uploader-name-link')?.addEventListener('click', (e) => {
-          e.preventDefault();
-          if (!assignment.uploaderId) {
-            showToast('No profile available for this uploader.', 'info');
-            return;
-          }
-          openUploaderProfileModal(assignment.uploaderId, uploaderName);
-        });
-
         card.querySelector('.vote-btn')?.addEventListener('click', (event) => handleVote(assignment.id, event.currentTarget));
-
         assignmentsGridEl.appendChild(card);
       });
     }
 
-    function validateAssignmentForm() {
-      // Clear previous
-      ['fg-assignmentTitle','fg-subject','fg-semester','fg-driveLink'].forEach(id => setFieldError(id, false));
-      clearError(uploadFormErrorEl);
-
-      const title = uploadAssignmentFormEl.assignmentTitle.value.trim();
-      const subject = uploadAssignmentFormEl.subject.value.trim();
-      const semester = uploadAssignmentFormEl.semester.value.trim();
-      const driveLink = uploadAssignmentFormEl.driveLink.value.trim();
-
-      let hasAnyError = false;
-      if (!title || title.length < 3) { setFieldError('fg-assignmentTitle', true); hasAnyError = true; }
-      if (!subject) { setFieldError('fg-subject', true); hasAnyError = true; }
-      if (!semester) { setFieldError('fg-semester', true); hasAnyError = true; }
-      if (!isValidDriveLink(driveLink)) { setFieldError('fg-driveLink', true); hasAnyError = true; }
-
-      if (hasAnyError) {
-        showError(uploadFormErrorEl, 'Please correct the highlighted fields.');
-        showToast('Please correct the highlighted fields.', 'error');
-        return false;
-      }
-      return true;
-    }
-
-    async function handleFormSubmit(event) {
-      event.preventDefault();
-      const user = auth.currentUser;
-      if (!user) {
-        showError(uploadFormErrorEl, "You must be logged in.");
-        showToast('Please log in to upload an assignment.', 'info');
-        return;
-      }
-
-      if (!validateAssignmentForm()) return;
-
-      const submitButton = uploadAssignmentFormEl.querySelector('button[type="submit"]');
-      submitButton.disabled = true;
-      submitButton.textContent = 'Submitting...';
-
-      const newAssignmentForDb = {
-        uploaderId: user.uid,
-        uploaderEmail: user.email,
-        assignmentTitle: uploadAssignmentFormEl.assignmentTitle.value.trim(),
-        subject: uploadAssignmentFormEl.subject.value.trim(),
-        semester: uploadAssignmentFormEl.semester.value,
-        assignmentNumber: uploadAssignmentFormEl.assignmentNumber.value.trim(),
-        keywords: uploadAssignmentFormEl.keywords.value.split(',').map(k => k.trim().toLowerCase()).filter(Boolean),
-        driveLink: uploadAssignmentFormEl.driveLink.value.trim(),
-        uploadDate: serverTimestamp(),
-        votes: 0,
-        votedBy: []
-      };
-
-      try {
-        await addDoc(collection(db, "assignments"), newAssignmentForDb);
-        uploadModalEl.classList.remove('active');
-        document.body.style.overflow = '';
-        showToast('Assignment uploaded successfully!', 'success');
-        fetchAssignments();
-      } catch (error) {
-        const msg = error?.code === 'permission-denied'
-          ? 'You do not have permission to upload.'
-          : (error?.message || 'Upload failed. Please try again.');
-        showError(uploadFormErrorEl, msg);
-        showToast(msg, 'error');
-      } finally {
-        submitButton.disabled = false;
-        submitButton.textContent = 'Upload Assignment';
-      }
-    }
-
     async function handleVote(assignmentId, voteButtonElement) {
-      const user = auth.currentUser;
-      if (!user) {
-        openAssignmentAuthModal('login');
+      if (!currentUser) {
+        redirectToLogin();
         return;
       }
-      if (!assignmentId) {
-        showToast('Cannot vote on this item.', 'error');
-        return;
-      }
+      if (!assignmentId) return;
 
       const parent = voteButtonElement.closest('.vote-section');
       const voteCountSpan = parent?.querySelector('.vote-count');
@@ -890,10 +916,10 @@
           throw new Error('This assignment no longer exists.');
         }
         const assignmentData = docSnap.data();
-        const hasVoted = (assignmentData.votedBy || []).includes(user.uid);
+        const hasVoted = (assignmentData.votedBy || []).includes(currentUser.uid);
         const updatePayload = hasVoted
-          ? { votes: increment(-1), votedBy: arrayRemove(user.uid) }
-          : { votes: increment(1), votedBy: arrayUnion(user.uid) };
+          ? { votes: increment(-1), votedBy: arrayRemove(currentUser.uid) }
+          : { votes: increment(1), votedBy: arrayUnion(currentUser.uid) };
         await updateDoc(assignmentRef, updatePayload);
       } catch (error) {
         // Revert UI on failure
@@ -901,14 +927,12 @@
         if (voteCountSpan) {
           voteCountSpan.textContent = String(originalCount);
         }
-        const msg = error?.message || 'Could not register your vote. Please try again.';
-        showToast(msg, 'error');
       } finally {
         voteButtonElement.disabled = false;
       }
     }
 
-    // --- FILTERING AND SORTING ---
+    // Filtering and sorting
     function populateAllFilters() {
       const semesters = [...new Set(allAssignments.map(a => a.semester).filter(Boolean))].sort((a, b) => a - b);
       const subjects = [...new Set(allAssignments.map(a => a.subject).filter(Boolean))].sort();
@@ -945,10 +969,7 @@
         return (b.uploadDate?.toMillis?.() || 0) - (a.uploadDate?.toMillis?.() || 0);
       });
 
-      renderAssignments(filtered).catch(err => {
-        console.error('Render error:', err);
-        showToast('Failed to render assignments.', 'error');
-      });
+      renderAssignments(filtered);
     }
 
     function resetAllFilters() {
@@ -960,20 +981,6 @@
       applyCurrentFilters();
     }
 
-    function showUploadModal() {
-      if (!auth.currentUser) {
-        openAssignmentAuthModal('login');
-        return;
-      }
-      uploadAssignmentFormEl.reset();
-      // clear field errors
-      ['fg-assignmentTitle','fg-subject','fg-semester','fg-driveLink'].forEach(id => setFieldError(id, false));
-      clearError(uploadFormErrorEl);
-      uploadModalEl.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    }
-
-    // --- PROFILE FUNCTIONS ---
     async function fetchUploaderName(uploaderId, fallbackName = 'Anonymous') {
       if (userNamesCache[uploaderId]) return userNamesCache[uploaderId];
       if (!uploaderId) return fallbackName;
@@ -992,139 +999,26 @@
       }
     }
 
-    function showUserProfile(profileData, displayName = null) {
-      const nameForDisplay = profileData?.name || displayName || 'Unknown';
-      profileTitle.textContent = `${nameForDisplay}'s Profile`;
-      profileAvatar.textContent = (nameForDisplay || 'U').charAt(0).toUpperCase();
-
-      profileInfo.innerHTML = '';
-      if (!profileData) {
-        const notFoundEl = el('div', { class: 'profile-field' }, [
-          el('span', { class: 'label' }, [document.createTextNode('Info')]),
-          el('span', { class: 'value' }, [document.createTextNode('Profile not found')])
-        ]);
-        profileInfo.appendChild(notFoundEl);
-      } else {
-        const fields = [
-          { label: 'Name', value: profileData.name || nameForDisplay || 'Not provided' },
-          { label: 'College', value: profileData.college || 'Not provided' },
-          { label: 'Semester', value: profileData.semester ? `Semester ${profileData.semester}` : 'Not provided' }
-        ];
-        fields.forEach(field => {
-          const fieldEl = el('div', { class: 'profile-field' }, [
-            el('span', { class: 'label' }, [document.createTextNode(field.label)]),
-            el('span', { class: 'value' }, [document.createTextNode(field.value)])
-          ]);
-          profileInfo.appendChild(fieldEl);
-        });
-
-        const links = [];
-        if (profileData.instagram) links.push({ name: 'Instagram', url: profileData.instagram });
-        if (profileData.github) links.push({ name: 'GitHub', url: profileData.github });
-        if (profileData.linkedin) links.push({ name: 'LinkedIn', url: profileData.linkedin });
-        if (links.length > 0) {
-          const linksContainer = el('div', { class: 'profile-links' });
-          links.forEach(link => {
-            const linkEl = el('a', { class: 'profile-link', href: link.url, target: '_blank', rel: 'noopener noreferrer' }, [document.createTextNode(link.name)]);
-            linksContainer.appendChild(linkEl);
-          });
-          profileInfo.appendChild(linksContainer);
-        }
-      }
-
-      profileMessage.onclick = () => {
-        alert(`Send message to ${nameForDisplay}`);
-        profileModal.close();
-      };
-
-      if (typeof profileModal.showModal === 'function') {
-        profileModal.showModal();
-      } else {
-        alert(`${nameForDisplay}\nOpen this page in a modern browser to view the full profile modal.`);
-      }
-    }
-
-    async function openUploaderProfileModal(uploaderId, fallbackDisplayName = 'User') {
-      if (!uploaderId) {
-        showUserProfile(null, fallbackDisplayName);
-        return;
-      }
-      try {
-        const userDocRef = doc(db, 'profiles', uploaderId);
-        const docSnap = await getFirestoreDoc(userDocRef);
-        if (docSnap.exists()) {
-          const p = docSnap.data();
-          showUserProfile(p, fallbackDisplayName);
-        } else {
-          showUserProfile(null, fallbackDisplayName);
-        }
-      } catch (error) {
-        console.error("Error loading profile:", error);
-        showToast('Could not load the user profile.', 'error');
-        showUserProfile(null, fallbackDisplayName);
-      }
-    }
-
-    // --- EVENT LISTENERS ---
-    assignmentLoginBtnEl.addEventListener('click', () => openAssignmentAuthModal('login'));
-    assignmentLogoutBtnEl.addEventListener('click', async () => {
-      try {
-        await signOut(auth);
-        showToast('Logged out.', 'success', 2500);
-      } catch (e) {
-        showToast('Failed to log out. Please try again.', 'error');
-      }
-    });
-
-    assignmentAuthFormEl.addEventListener('submit', handleAssignmentAuthFormSubmit);
-    assignmentSwitchToSignupLinkEl.addEventListener('click', (e) => { e.preventDefault(); openAssignmentAuthModal('signup'); });
-    assignmentSwitchToLoginLinkEl.addEventListener('click', (e) => { e.preventDefault(); openAssignmentAuthModal('login'); });
-
-    closeAssignmentAuthModalBtnEl.addEventListener('click', () => {
-      assignmentAuthModalEl.classList.remove('active');
-      document.body.style.overflow = '';
-    });
-
-    showUploadFormBtnEl.addEventListener('click', showUploadModal);
-    uploadAssignmentFormEl.addEventListener('submit', handleFormSubmit);
-    closeUploadModalBtnEl.addEventListener('click', () => {
-      uploadModalEl.classList.remove('active');
-      document.body.style.overflow = '';
-    });
-
+    // Event listeners
+    assignmentLogoutBtnEl.addEventListener('click', signOutUser);
     applyFiltersBtnEl.addEventListener('click', applyCurrentFilters);
     resetFiltersBtnEl.addEventListener('click', resetAllFilters);
     sortBySelectEl.addEventListener('change', applyCurrentFilters);
 
-    // Profile modal events
-    profileClose.addEventListener('click', () => profileModal.close());
-    profileModal.addEventListener('cancel', (e) => { e.preventDefault(); profileModal.close(); });
-
-    // Global Escape to close open modals
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') {
-        document.querySelectorAll('.modal.active').forEach(modal => { modal.classList.remove('active'); });
-        if (typeof profileModal.open !== 'undefined' && profileModal.open) {
-          profileModal.close();
-        }
-        document.body.style.overflow = '';
+    // Initialize auth
+    initAuth({
+      onAuthStateChanged: (user, profile) => {
+        currentUser = user;
+        currentProfile = profile;
+        updateAuthUI();
+        applyCurrentFilters();
       }
     });
 
-    // Global error handlers
-    window.addEventListener('error', (event) => {
-      showToast('An unexpected error occurred. Please try again.', 'error');
-      console.error('Global error:', event.error || event.message);
-    });
-    window.addEventListener('unhandledrejection', (event) => {
-      showToast('A request failed unexpectedly. Please try again.', 'error');
-      console.error('Unhandled promise rejection:', event.reason);
-    });
+    // Initial load
+    fetchAssignments();
 
-    // Initial Load
-    document.addEventListener('DOMContentLoaded', () => {
-      fetchAssignments();
-    });
+    window.openProfileModal = openProfileModal;
   </script>
 </body>
 </html>

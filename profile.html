@@ -67,6 +67,13 @@
       @media (min-width: 800px) { .list { grid-template-columns: 1fr 1fr; } }
       .item { border: 1px solid var(--line); border-radius: 14px; padding: 12px; display: grid; gap: 8px; background: #121214; }
       .actions { display:flex; gap:8px; flex-wrap:wrap; }
+      .input-prefix { display: flex; align-items: center; }
+      .input-prefix span { 
+        background: var(--line); color: var(--soft); padding: 10px 12px; 
+        border: 1px solid var(--line); border-right: none; border-radius: 10px 0 0 10px;
+        font-size: 13px;
+      }
+      .input-prefix input { border-radius: 0 10px 10px 0; border-left: none; }
     </style>
   </head>
   <body>
@@ -74,7 +81,7 @@
       <div class="container row">
         <div style="font-weight:700">Programming for Losers</div>
         <div class="grow"></div>
-        <a class="pill" href="./chat.html">← Back to chat</a>
+        <button class="pill" onclick="goBack()" style="background: none; border: 1px solid var(--line); cursor: pointer;">← Back</button>
       </div>
     </header>
 
@@ -110,8 +117,11 @@
 
             <div class="row-inline">
               <div class="field">
-                <label for="instagram">Instagram URL</label>
-                <input id="instagram" placeholder="https://instagram.com/your_handle" />
+                <label for="instagram">Instagram Username</label>
+                <div class="input-prefix">
+                  <span>@</span>
+                  <input id="instagram" placeholder="your_username" />
+                </div>
               </div>
               <div class="field">
                 <label for="github">GitHub URL</label>
@@ -125,7 +135,7 @@
 
             <div class="row">
               <button class="btn-primary" id="save">Save profile</button>
-              <button id="sign-in" style="display:none">Sign in</button>
+              <a href="login.html" id="sign-in-link" class="pill" style="display:none">Sign in</a>
               <button id="sign-out" style="display:none">Sign out</button>
               <span id="msg" class="success" role="status"></span>
             </div>
@@ -156,28 +166,13 @@
     </main>
 
     <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-      import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-      import { getFirestore, doc, getDoc, setDoc, collection, getDocs, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-      const firebaseConfig = {
-        apiKey: "AIzaSyCCc1y2kNbSftG45mB3gkbUCGs4gfjts-E",
-        authDomain: "realtimepfl.firebaseapp.com",
-        databaseURL: "https://realtimepfl-default-rtdb.firebaseio.com",
-        projectId: "realtimepfl",
-        storageBucket: "realtimepfl.firebasestorage.app",
-        messagingSenderId: "984202175754",
-        appId: "1:984202175754:web:a0d689738832cc48b686f3",
-        measurementId: "G-4W311B25HV"
-      };
-      const app = initializeApp(firebaseConfig);
-      const auth = getAuth(app);
-      const db = getFirestore(app);
+      import { auth, db, initAuth, signOutUser, redirectToLogin } from './js/auth.js';
+      import { doc, getDoc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
       // Elements
       const pill = document.getElementById('auth-pill');
       const btnSave = document.getElementById('save');
-      const btnSignIn = document.getElementById('sign-in');
+      const btnSignIn = document.getElementById('sign-in-link');
       const btnSignOut = document.getElementById('sign-out');
       const msg = document.getElementById('msg');
 
@@ -217,6 +212,21 @@
         } catch { return false; }
       }
 
+      function generateInstagramUrl(username) {
+        if (!username) return null;
+        // Remove @ if user added it
+        const cleanUsername = username.replace(/^@/, '');
+        return `https://instagram.com/${cleanUsername}`;
+      }
+
+      function extractInstagramUsername(url) {
+        if (!url) return '';
+        if (url.startsWith('https://instagram.com/')) {
+          return url.replace('https://instagram.com/', '');
+        }
+        return url;
+      }
+
       function renderMyCard(p) {
         myCard.innerHTML = '';
         if (!me) {
@@ -226,7 +236,7 @@
         const name = (p && p.name) || 'Unnamed';
         const sub = [(p && p.college) || '', (p && p.semester) ? ('Sem ' + p.semester) : ''].filter(Boolean).join(' · ');
         const links = [];
-        if (p && p.instagram) links.push({ name: 'Instagram', href: p.instagram });
+        if (p && p.instagram) links.push({ name: 'Instagram', href: generateInstagramUrl(p.instagram) });
         if (p && p.github) links.push({ name: 'GitHub', href: p.github });
         if (p && p.linkedin) links.push({ name: 'LinkedIn', href: p.linkedin });
 
@@ -251,7 +261,7 @@
           nameEl.value = myProfile.name || '';
           semesterEl.value = myProfile.semester || '';
           collegeEl.value = myProfile.college || '';
-          instagramEl.value = myProfile.instagram || '';
+          instagramEl.value = extractInstagramUsername(myProfile.instagram) || '';
           githubEl.value = myProfile.github || '';
           linkedinEl.value = myProfile.linkedin || '';
         }
@@ -270,7 +280,7 @@
           const sub = document.createElement('div'); sub.className = 'sub';
           sub.textContent = [(p.college || ''), (p.semester ? ('Sem ' + p.semester) : '')].filter(Boolean).join(' · ');
           const linksDiv = document.createElement('div'); linksDiv.className = 'links';
-          if (p.instagram) { const a = document.createElement('a'); a.className='link'; a.href=p.instagram; a.textContent='Instagram'; a.target='_blank'; a.rel='noopener'; linksDiv.appendChild(a); }
+          if (p.instagram) { const a = document.createElement('a'); a.className='link'; a.href=generateInstagramUrl(p.instagram); a.textContent='Instagram'; a.target='_blank'; a.rel='noopener'; linksDiv.appendChild(a); }
           if (p.github) { const a = document.createElement('a'); a.className='link'; a.href=p.github; a.textContent='GitHub'; a.target='_blank'; a.rel='noopener'; linksDiv.appendChild(a); }
           if (p.linkedin) { const a = document.createElement('a'); a.className='link'; a.href=p.linkedin; a.textContent='LinkedIn'; a.target='_blank'; a.rel='noopener'; linksDiv.appendChild(a); }
           const actions = document.createElement('div'); actions.className = 'actions';
@@ -297,13 +307,13 @@
         if (!name || !semester || !college) {
           msg.textContent = 'Name, semester, and college are required.'; msg.className='error'; return;
         }
-        if (!isValidUrl(instagram) || !isValidUrl(github) || !isValidUrl(linkedin)) {
-          msg.textContent = 'Please enter valid URLs (https://...) for links.'; msg.className='error'; return;
+        if (!isValidUrl(github) || !isValidUrl(linkedin)) {
+          msg.textContent = 'Please enter valid URLs (https://...) for GitHub and LinkedIn.'; msg.className='error'; return;
         }
         try {
           await setDoc(doc(db, 'profiles', me.uid), {
             name, semester, college,
-            instagram: instagram || null,
+            instagram: instagram || null, // Store just the username
             github: github || null,
             linkedin: linkedin || null,
             updatedAt: new Date().toISOString()
@@ -316,35 +326,31 @@
         }
       });
 
-      btnSignIn.addEventListener('click', async () => {
-        const email = prompt('Email:');
-        if (!email) return;
-        const password = prompt('Password (min 6 chars):') || '';
-        try {
-          await signInWithEmailAndPassword(auth, email, password);
-        } catch (e) {
-          if (confirm('No account? Create one now?')) {
-            try {
-              await createUserWithEmailAndPassword(auth, email, password);
-              alert('Account created. Fill your profile now.');
-            } catch (err) {
-              alert('Signup failed.');
-            }
-          }
+      initAuth({
+        onAuthStateChanged: async (user, profile) => {
+          me = user;
+          myProfile = profile;
+          setAuthUI();
+          await loadMyProfile();
+          await loadProfiles();
         }
       });
-      btnSignOut.addEventListener('click', async () => { await signOut(auth); });
 
-      onAuthStateChanged(auth, async (user) => {
-        me = user;
-        setAuthUI();
-        await loadMyProfile();
-        await loadProfiles();
-      });
+      btnSignOut.addEventListener('click', signOutUser);
 
       // Initial
       setAuthUI();
       loadProfiles();
+
+function goBack() {
+  // Check if there's history to go back to
+  if (window.history.length > 1) {
+    window.history.back();
+  } else {
+    // Fallback to chat if no history (e.g., direct link access)
+    window.location.href = './chat.html';
+  }
+}
     </script>
   </body>
 </html>
