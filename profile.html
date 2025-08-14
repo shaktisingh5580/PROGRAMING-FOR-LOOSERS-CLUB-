@@ -17,149 +17,794 @@
         --accent: #ffffff;
         --ok: #43d17a;
         --warn: #e7c74f;
+        --danger: #ff5d5d;
+        --primary: #4f46e5;
+        --primary-hover: #4338ca;
       }
-      * { box-sizing: border-box; }
+      
+      * { 
+        box-sizing: border-box; 
+        margin: 0; 
+        padding: 0; 
+      }
+      
       body {
-        margin: 0; background: var(--bg); color: var(--muted);
         font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial;
+        background: var(--bg);
+        color: var(--muted);
+        line-height: 1.6;
+        min-height: 100vh;
       }
-      a { color: var(--muted); text-decoration: none; }
-      a:hover { text-decoration: underline; }
+      
+      /* Header */
       header {
-        position: sticky; top: 0; z-index: 40;
-        background: linear-gradient(180deg, #0f0f10, #0f0f10f0 70%, transparent);
+        background: var(--elev-2);
         border-bottom: 1px solid var(--line);
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        backdrop-filter: blur(10px);
       }
-      .container { max-width: 1100px; margin: 0 auto; padding: 16px; }
-      .row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-      .grow { flex: 1; }
-      .pill { padding: 6px 10px; border: 1px solid var(--line); border-radius: 999px; color: var(--soft); font-size: 12px; }
-      button, input, select, textarea {
-        font: inherit; color: var(--muted); background: var(--elev); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; outline: none;
+      
+      .header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
       }
-      button { cursor: pointer; background: transparent; border-color: var(--muted); }
-      button:hover { background: var(--elev); }
-      .btn-primary { background: var(--muted); color: #0b0b0c; border-color: var(--muted); }
-      .grid { display: grid; gap: 16px; grid-template-columns: 1fr; }
-      @media (min-width: 1000px) { .grid { grid-template-columns: 1.1fr .9fr; } }
-      .card { background: var(--elev-2); border: 1px solid var(--line); border-radius: 16px; overflow: clip; }
-      .card-header { padding: 14px; border-bottom: 1px solid var(--line); font-weight: 600; display:flex; justify-content:space-between; }
-      .card-body { padding: 14px; display: grid; gap: 12px; }
-      .field { display: grid; gap: 6px; }
-      .field label { color: var(--soft); font-size: 13px; }
-      .row-inline { display: grid; gap: 10px; grid-template-columns: 1fr; }
-      @media (min-width:700px) { .row-inline { grid-template-columns: 1fr 1fr; } }
-      .hint { font-size: 13px; color: var(--soft); }
-      .error { color: #ff5d5d; font-size: 13px; }
-      .success { color: var(--ok); font-size: 13px; }
-
+      
+      .logo {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent);
+      }
+      
+      .nav-links {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      
+      .nav-links a {
+        color: var(--muted);
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.2s;
+        white-space: nowrap;
+        font-weight: 500;
+      }
+      
+      .nav-links a:hover {
+        background: var(--elev);
+        color: var(--accent);
+      }
+      
+      .nav-links a.active {
+        background: var(--primary);
+        color: white;
+      }
+      
+      /* Mobile Navigation */
+      @media (max-width: 768px) {
+        .header-content {
+          flex-direction: column;
+          gap: 0.5rem;
+          padding: 0 0.5rem;
+        }
+        
+        .nav-links {
+          order: -1;
+          width: 100%;
+          justify-content: center;
+          gap: 0.5rem;
+        }
+        
+        .nav-links a {
+          padding: 0.4rem 0.8rem;
+          font-size: 0.9rem;
+        }
+        
+        .logo {
+          font-size: 1.2rem;
+        }
+      }
+      
+      /* Main Container */
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+      }
+      
+      @media (max-width: 768px) {
+        .container {
+          padding: 1rem 0.5rem;
+        }
+      }
+      
+      /* Grid Layout */
+      .profile-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      
+      @media (min-width: 1024px) {
+        .profile-grid {
+          grid-template-columns: 1fr 400px;
+          gap: 3rem;
+        }
+      }
+      
+      /* Cards */
+      .card {
+        background: var(--elev-2);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+      }
+      
+      .card:hover {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+        transform: translateY(-2px);
+      }
+      
+      .card-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--line);
+        background: var(--elev);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      
+      .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      
+      .card-body {
+        padding: 1.5rem;
+      }
+      
+      @media (max-width: 768px) {
+        .card-header,
+        .card-body {
+          padding: 1rem;
+        }
+      }
+      
+      /* Form Elements */
+      .form-section {
+        margin-bottom: 2rem;
+      }
+      
+      .form-section:last-child {
+        margin-bottom: 0;
+      }
+      
+      .section-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--accent);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      
+      .form-grid {
+        display: grid;
+        gap: 1rem;
+      }
+      
+      @media (min-width: 768px) {
+        .form-grid.two-cols {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      
+      .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      
+      .form-field label {
+        font-weight: 500;
+        color: var(--soft);
+        font-size: 0.9rem;
+      }
+      
+      .form-field input,
+      .form-field select {
+        padding: 0.75rem;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--elev);
+        color: var(--muted);
+        font-size: 1rem;
+        transition: all 0.2s;
+        outline: none;
+      }
+      
+      .form-field input:focus,
+      .form-field select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        background: var(--bg);
+      }
+      
+      .form-field input::placeholder {
+        color: var(--soft);
+      }
+      
+      .input-group {
+        display: flex;
+        align-items: stretch;
+      }
+      
+      .input-prefix {
+        background: var(--line);
+        color: var(--soft);
+        padding: 0.75rem;
+        border: 1px solid var(--line);
+        border-right: none;
+        border-radius: 8px 0 0 8px;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+      }
+      
+      .input-group input {
+        border-radius: 0 8px 8px 0;
+        border-left: none;
+        flex: 1;
+      }
+      
+      .form-hint {
+        font-size: 0.8rem;
+        color: var(--soft);
+        margin-top: 0.25rem;
+      }
+      
+      /* Buttons */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+      
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+      }
+      
+      .btn-primary:hover {
+        background: var(--primary-hover);
+        transform: translateY(-1px);
+      }
+      
+      .btn-outline {
+        background: transparent;
+        color: var(--muted);
+        border: 1px solid var(--line);
+      }
+      
+      .btn-outline:hover {
+        background: var(--elev);
+        border-color: var(--primary);
+        color: var(--accent);
+      }
+      
+      .btn-danger {
+        background: var(--danger);
+        color: white;
+      }
+      
+      .btn-danger:hover {
+        background: #dc2626;
+      }
+      
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+      
+      .btn-group {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      
+      @media (max-width: 768px) {
+        .btn-group {
+          flex-direction: column;
+          width: 100%;
+        }
+        
+        .btn {
+          width: 100%;
+        }
+      }
+      
+      /* Status Messages */
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+      }
+      
+      .status-pill.guest {
+        background: rgba(169, 169, 173, 0.1);
+        color: var(--soft);
+      }
+      
+      .status-pill.signed-in {
+        background: rgba(67, 209, 122, 0.1);
+        color: var(--ok);
+      }
+      
+      .message {
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-top: 1rem;
+      }
+      
+      .message.success {
+        background: rgba(67, 209, 122, 0.1);
+        color: var(--ok);
+        border: 1px solid rgba(67, 209, 122, 0.2);
+      }
+      
+      .message.error {
+        background: rgba(255, 93, 93, 0.1);
+        color: var(--danger);
+        border: 1px solid rgba(255, 93, 93, 0.2);
+      }
+      
+      /* Profile Cards */
       .profile-card {
-        border: 1px solid var(--line); border-radius: 16px; padding: 16px; background: #121214;
-        display: grid; gap: 8px;
+        background: var(--elev);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
       }
-      .name { font-weight: 700; font-size: 18px; }
-      .sub { color: var(--soft); font-size: 13px; }
-      .links { display: flex; gap: 8px; flex-wrap: wrap; }
-      .link {
-        padding: 6px 10px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted);
+      
+      .profile-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+        color: white;
+        font-size: 2rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
       }
-      .list { display: grid; gap: 12px; grid-template-columns: 1fr; }
-      @media (min-width: 800px) { .list { grid-template-columns: 1fr 1fr; } }
-      .item { border: 1px solid var(--line); border-radius: 14px; padding: 12px; display: grid; gap: 8px; background: #121214; }
-      .actions { display:flex; gap:8px; flex-wrap:wrap; }
-      .input-prefix { display: flex; align-items: center; }
-      .input-prefix span { 
-        background: var(--line); color: var(--soft); padding: 10px 12px; 
-        border: 1px solid var(--line); border-right: none; border-radius: 10px 0 0 10px;
-        font-size: 13px;
+      
+      .profile-name {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--accent);
+        margin-bottom: 0.5rem;
       }
-      .input-prefix input { border-radius: 0 10px 10px 0; border-left: none; }
+      
+      .profile-info {
+        color: var(--soft);
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+      }
+      
+      .profile-links {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      
+      .profile-link {
+        padding: 0.5rem 1rem;
+        background: var(--elev-2);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 0.8rem;
+        font-weight: 500;
+        transition: all 0.2s;
+      }
+      
+      .profile-link:hover {
+        background: var(--primary);
+        color: white;
+        transform: translateY(-1px);
+      }
+      
+      /* Community Profiles */
+      .profiles-grid {
+        display: grid;
+        gap: 1rem;
+      }
+      
+      @media (min-width: 768px) {
+        .profiles-grid {
+          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        }
+      }
+      
+      .profile-item {
+        background: var(--elev);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 1rem;
+        transition: all 0.2s;
+      }
+      
+      .profile-item:hover {
+        background: var(--elev-2);
+        transform: translateY(-2px);
+      }
+      
+      .profile-item-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+      }
+      
+      .profile-item-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+        color: white;
+        font-size: 1rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .profile-item-name {
+        font-weight: 600;
+        color: var(--accent);
+      }
+      
+      .profile-item-info {
+        font-size: 0.8rem;
+        color: var(--soft);
+        margin-bottom: 0.75rem;
+      }
+      
+      .profile-item-links {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+      
+      .profile-item-link {
+        padding: 0.25rem 0.5rem;
+        background: var(--elev-2);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        color: var(--soft);
+        text-decoration: none;
+        font-size: 0.7rem;
+        transition: all 0.2s;
+      }
+      
+      .profile-item-link:hover {
+        background: var(--primary);
+        color: white;
+      }
+      
+      /* Loading States */
+      .loading {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--line);
+        border-top: 2px solid var(--primary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      /* Icons */
+      .icon {
+        width: 1.2em;
+        height: 1.2em;
+        display: inline-block;
+      }
+      
+      /* Responsive Utilities */
+      .mobile-only {
+        display: block;
+      }
+      
+      .desktop-only {
+        display: none;
+      }
+      
+      @media (min-width: 768px) {
+        .mobile-only {
+          display: none;
+        }
+        
+        .desktop-only {
+          display: block;
+        }
+      }
+      
+      /* Accessibility */
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+      
+      /* Focus styles */
+      .btn:focus-visible,
+      input:focus-visible,
+      select:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+      }
     </style>
   </head>
   <body>
     <header>
-      <div class="container row">
-        <div style="font-weight:700">Programming for Losers</div>
-        <div class="grow"></div>
-        <button class="pill" onclick="goBack()" style="background: none; border: 1px solid var(--line); cursor: pointer;">← Back</button>
+      <div class="header-content">
+        <div class="logo">PFL</div>
+        <nav class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="chat.html">Chat</a>
+          <a href="assignment.html">Assignments</a>
+          <a href="profile.html" class="active">Profile</a>
+          <a href="pyqs.html">PYQ's</a>
+        </nav>
+        <div class="status-pill" id="auth-status">
+          <span class="loading"></span>
+          <span>Loading...</span>
+        </div>
       </div>
     </header>
 
-    <main class="container" style="padding:16px">
-      <div class="grid">
-        <section class="card">
-          <div class="card-header">
-            <span>Complete your profile</span>
-            <span class="pill" id="auth-pill">Guest</span>
-          </div>
-          <div class="card-body">
-            <div class="hint">No profile photos. Keep it simple — just your basic info and links.</div>
-
-            <div class="field">
-              <label for="name">Full name</label>
-              <input id="name" placeholder="Ada Lovelace" maxlength="80" />
+    <main class="container">
+      <div class="profile-grid">
+        <!-- Profile Form Section -->
+        <section>
+          <div class="card">
+            <div class="card-header">
+              <h1 class="card-title">
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+                Complete Your Profile
+              </h1>
+              <button class="btn btn-outline desktop-only" onclick="goBack()">
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Back
+              </button>
             </div>
-
-            <div class="row-inline">
-              <div class="field">
-                <label for="semester">Semester</label>
-                <select id="semester">
-                  <option value="">Select</option>
-                  <option>1</option><option>2</option><option>3</option><option>4</option>
-                  <option>5</option><option>6</option><option>7</option><option>8</option>
-                </select>
-              </div>
-              <div class="field">
-                <label for="college">College</label>
-                <input id="college" placeholder="Your College" maxlength="120" />
-              </div>
-            </div>
-
-            <div class="row-inline">
-              <div class="field">
-                <label for="instagram">Instagram Username</label>
-                <div class="input-prefix">
-                  <span>@</span>
-                  <input id="instagram" placeholder="your_username" />
+            <div class="card-body">
+              <form id="profile-form">
+                <!-- Basic Information -->
+                <div class="form-section">
+                  <h2 class="section-title">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Basic Information
+                  </h2>
+                  <div class="form-grid">
+                    <div class="form-field">
+                      <label for="name">Full Name *</label>
+                      <input 
+                        type="text" 
+                        id="name" 
+                        placeholder="Enter your full name" 
+                        maxlength="80" 
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div class="form-grid two-cols">
+                    <div class="form-field">
+                      <label for="semester">Semester *</label>
+                      <select id="semester" required>
+                        <option value="">Select Semester</option>
+                        <option value="1">1st Semester</option>
+                        <option value="2">2nd Semester</option>
+                        <option value="3">3rd Semester</option>
+                        <option value="4">4th Semester</option>
+                        <option value="5">5th Semester</option>
+                        <option value="6">6th Semester</option>
+                        <option value="7">7th Semester</option>
+                        <option value="8">8th Semester</option>
+                      </select>
+                    </div>
+                    <div class="form-field">
+                      <label for="college">College *</label>
+                      <input 
+                        type="text" 
+                        id="college" 
+                        placeholder="Your college name" 
+                        maxlength="120" 
+                        required
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div class="field">
-                <label for="github">GitHub URL</label>
-                <input id="github" placeholder="https://github.com/your_handle" />
-              </div>
-            </div>
-            <div class="field">
-              <label for="linkedin">LinkedIn URL</label>
-              <input id="linkedin" placeholder="https://linkedin.com/in/your_handle" />
-            </div>
 
-            <div class="row">
-              <button class="btn-primary" id="save">Save profile</button>
-              <a href="login.html" id="sign-in-link" class="pill" style="display:none">Sign in</a>
-              <button id="sign-out" style="display:none">Sign out</button>
-              <span id="msg" class="success" role="status"></span>
+                <!-- Social Links -->
+                <div class="form-section">
+                  <h2 class="section-title">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.102m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                    </svg>
+                    Social Links
+                  </h2>
+                  <div class="form-grid">
+                    <div class="form-field">
+                      <label for="instagram">Instagram</label>
+                      <div class="input-group">
+                        <span class="input-prefix">@</span>
+                        <input 
+                          type="text" 
+                          id="instagram" 
+                          placeholder="username or full URL"
+                        />
+                      </div>
+                      <div class="form-hint">
+                        Enter either your username (e.g., "john_doe") or full URL (e.g., "https://instagram.com/john_doe")
+                      </div>
+                    </div>
+                    <div class="form-field">
+                      <label for="github">GitHub</label>
+                      <input 
+                        type="url" 
+                        id="github" 
+                        placeholder="https://github.com/yourusername"
+                      />
+                    </div>
+                    <div class="form-field">
+                      <label for="linkedin">LinkedIn</label>
+                      <input 
+                        type="url" 
+                        id="linkedin" 
+                        placeholder="https://linkedin.com/in/yourprofile"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="btn-group">
+                  <button type="submit" class="btn btn-primary" id="save-btn">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Save Profile
+                  </button>
+                  <a href="login.html" class="btn btn-outline" id="sign-in-link" style="display:none">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                    </svg>
+                    Sign In
+                  </a>
+                  <button type="button" class="btn btn-danger" id="sign-out-btn" style="display:none">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    </svg>
+                    Sign Out
+                  </button>
+                  <button type="button" class="btn btn-outline mobile-only" onclick="goBack()">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Back
+                  </button>
+                </div>
+
+                <div id="message" class="message" style="display:none"></div>
+              </form>
             </div>
           </div>
         </section>
 
-        <aside class="card">
-          <div class="card-header">
-            <span>My profile card</span>
-            <a class="pill" href="./chat.html">Open chat</a>
-          </div>
-          <div class="card-body">
-            <div id="my-card" class="profile-card">
-              <div class="name">Not signed in</div>
-              <div class="sub">Sign in to create your card</div>
+        <!-- Sidebar -->
+        <aside>
+          <!-- My Profile Card -->
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-4 0V5a2 2 0 014 0v1"></path>
+                </svg>
+                My Profile Card
+              </h2>
+              <a href="chat.html" class="btn btn-outline">
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                </svg>
+                Open Chat
+              </a>
+            </div>
+            <div class="card-body">
+              <div id="my-profile-card" class="profile-card">
+                <div class="profile-avatar">?</div>
+                <div class="profile-name">Not signed in</div>
+                <div class="profile-info">Sign in to create your profile</div>
+              </div>
             </div>
           </div>
 
-          <div class="card-header">
-            <span>Community profiles</span>
-            <span class="pill" id="profiles-count">0</span>
-          </div>
-          <div class="card-body">
-            <div class="list" id="profiles-list"></div>
+          <!-- Community Profiles -->
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                </svg>
+                Community
+              </h2>
+              <span class="status-pill" id="profiles-count">0 members</span>
+            </div>
+            <div class="card-body">
+              <div id="profiles-list" class="profiles-grid">
+                <div class="profile-item">
+                  <div class="loading"></div>
+                  <div style="text-align: center; color: var(--soft); margin-top: 0.5rem;">Loading profiles...</div>
+                </div>
+              </div>
+            </div>
           </div>
         </aside>
       </div>
@@ -170,11 +815,12 @@
       import { doc, getDoc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
       // Elements
-      const pill = document.getElementById('auth-pill');
-      const btnSave = document.getElementById('save');
-      const btnSignIn = document.getElementById('sign-in-link');
-      const btnSignOut = document.getElementById('sign-out');
-      const msg = document.getElementById('msg');
+      const authStatus = document.getElementById('auth-status');
+      const saveBtn = document.getElementById('save-btn');
+      const signInLink = document.getElementById('sign-in-link');
+      const signOutBtn = document.getElementById('sign-out-btn');
+      const message = document.getElementById('message');
+      const profileForm = document.getElementById('profile-form');
 
       const nameEl = document.getElementById('name');
       const semesterEl = document.getElementById('semester');
@@ -183,24 +829,53 @@
       const githubEl = document.getElementById('github');
       const linkedinEl = document.getElementById('linkedin');
 
-      const myCard = document.getElementById('my-card');
+      const myProfileCard = document.getElementById('my-profile-card');
       const profilesCount = document.getElementById('profiles-count');
       const profilesList = document.getElementById('profiles-list');
 
-      let me = null;
-      let myProfile = null;
+      let currentUser = null;
+      let currentProfile = null;
+
+      // Utility functions
+      function showMessage(text, type = 'success') {
+        message.textContent = text;
+        message.className = `message ${type}`;
+        message.style.display = 'block';
+        
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+          message.style.display = 'none';
+        }, 5000);
+      }
+
+      function hideMessage() {
+        message.style.display = 'none';
+      }
 
       function setAuthUI() {
-        if (me) {
-          pill.textContent = me.email || 'Signed in';
-          btnSignIn.style.display = 'none';
-          btnSignOut.style.display = '';
-          btnSave.disabled = false;
+        if (currentUser) {
+          const displayName = currentProfile?.name || currentUser.email;
+          authStatus.innerHTML = `
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span>${displayName}</span>
+          `;
+          authStatus.className = 'status-pill signed-in';
+          signInLink.style.display = 'none';
+          signOutBtn.style.display = 'inline-flex';
+          saveBtn.disabled = false;
         } else {
-          pill.textContent = 'Guest';
-          btnSignIn.style.display = '';
-          btnSignOut.style.display = 'none';
-          btnSave.disabled = true;
+          authStatus.innerHTML = `
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            </svg>
+            <span>Guest</span>
+          `;
+          authStatus.className = 'status-pill guest';
+          signInLink.style.display = 'inline-flex';
+          signOutBtn.style.display = 'none';
+          saveBtn.disabled = true;
         }
       }
 
@@ -209,148 +884,243 @@
         try {
           const u = new URL(str);
           return u.protocol === 'http:' || u.protocol === 'https:';
-        } catch { return false; }
+        } catch { 
+          return false; 
+        }
+      }
+
+      function processInstagramInput(input) {
+        if (!input) return null;
+        
+        // If it's a full URL
+        if (input.startsWith('https://instagram.com/') || input.startsWith('http://instagram.com/') || 
+            input.startsWith('https://www.instagram.com/') || input.startsWith('http://www.instagram.com/')) {
+          // Extract username from URL
+          const match = input.match(/instagram\.com\/([^\/\?]+)/);
+          return match ? match[1] : input;
+        }
+        
+        // Remove @ if user added it
+        return input.replace(/^@/, '');
       }
 
       function generateInstagramUrl(username) {
         if (!username) return null;
-        // Remove @ if user added it
-        const cleanUsername = username.replace(/^@/, '');
-        return `https://instagram.com/${cleanUsername}`;
+        return `https://instagram.com/${username}`;
       }
 
-      function extractInstagramUsername(url) {
-        if (!url) return '';
-        if (url.startsWith('https://instagram.com/')) {
-          return url.replace('https://instagram.com/', '');
-        }
-        return url;
-      }
-
-      function renderMyCard(p) {
-        myCard.innerHTML = '';
-        if (!me) {
-          myCard.innerHTML = '<div class="name">Not signed in</div><div class="sub">Sign in to create your card</div>';
+      function renderMyProfileCard(profile) {
+        if (!currentUser) {
+          myProfileCard.innerHTML = `
+            <div class="profile-avatar">?</div>
+            <div class="profile-name">Not signed in</div>
+            <div class="profile-info">Sign in to create your profile</div>
+          `;
           return;
         }
-        const name = (p && p.name) || 'Unnamed';
-        const sub = [(p && p.college) || '', (p && p.semester) ? ('Sem ' + p.semester) : ''].filter(Boolean).join(' · ');
-        const links = [];
-        if (p && p.instagram) links.push({ name: 'Instagram', href: generateInstagramUrl(p.instagram) });
-        if (p && p.github) links.push({ name: 'GitHub', href: p.github });
-        if (p && p.linkedin) links.push({ name: 'LinkedIn', href: p.linkedin });
 
-        const card = document.createElement('div'); card.className = 'profile-card';
-        const nameDiv = document.createElement('div'); nameDiv.className = 'name'; nameDiv.textContent = name;
-        const subDiv = document.createElement('div'); subDiv.className = 'sub'; subDiv.textContent = sub || 'Add your details';
-        const linksDiv = document.createElement('div'); linksDiv.className = 'links';
-        for (const l of links) {
-          const a = document.createElement('a'); a.className = 'link'; a.href = l.href; a.target = '_blank'; a.rel = 'noopener noreferrer';
-          a.textContent = l.name;
-          linksDiv.appendChild(a);
+        const name = profile?.name || 'Unnamed';
+        const avatar = name.charAt(0).toUpperCase();
+        const info = [
+          profile?.college || '',
+          profile?.semester ? `Sem ${profile.semester}` : ''
+        ].filter(Boolean).join(' • ') || 'Add your details';
+
+        const links = [];
+        if (profile?.instagram) {
+          links.push(`<a href="${generateInstagramUrl(profile.instagram)}" target="_blank" rel="noopener" class="profile-link">Instagram</a>`);
         }
-        card.append(nameDiv, subDiv, linksDiv);
-        myCard.appendChild(card);
+        if (profile?.github) {
+          links.push(`<a href="${profile.github}" target="_blank" rel="noopener" class="profile-link">GitHub</a>`);
+        }
+        if (profile?.linkedin) {
+          links.push(`<a href="${profile.linkedin}" target="_blank" rel="noopener" class="profile-link">LinkedIn</a>`);
+        }
+
+        myProfileCard.innerHTML = `
+          <div class="profile-avatar">${avatar}</div>
+          <div class="profile-name">${name}</div>
+          <div class="profile-info">${info}</div>
+          <div class="profile-links">${links.join('')}</div>
+        `;
       }
 
       async function loadMyProfile() {
-        if (!me) { myProfile = null; renderMyCard(null); return; }
-        const snap = await getDoc(doc(db, 'profiles', me.uid));
-        myProfile = snap.exists() ? snap.data() : null;
-        if (myProfile) {
-          nameEl.value = myProfile.name || '';
-          semesterEl.value = myProfile.semester || '';
-          collegeEl.value = myProfile.college || '';
-          instagramEl.value = extractInstagramUsername(myProfile.instagram) || '';
-          githubEl.value = myProfile.github || '';
-          linkedinEl.value = myProfile.linkedin || '';
+        if (!currentUser) {
+          currentProfile = null;
+          renderMyProfileCard(null);
+          return;
         }
-        renderMyCard(myProfile);
+
+        try {
+          const snap = await getDoc(doc(db, 'profiles', currentUser.uid));
+          currentProfile = snap.exists() ? snap.data() : null;
+          
+          if (currentProfile) {
+            nameEl.value = currentProfile.name || '';
+            semesterEl.value = currentProfile.semester || '';
+            collegeEl.value = currentProfile.college || '';
+            instagramEl.value = currentProfile.instagram || '';
+            githubEl.value = currentProfile.github || '';
+            linkedinEl.value = currentProfile.linkedin || '';
+          }
+          
+          renderMyProfileCard(currentProfile);
+        } catch (error) {
+          console.error('Error loading profile:', error);
+          showMessage('Failed to load profile data', 'error');
+        }
       }
 
-      async function loadProfiles() {
-        profilesList.innerHTML = '';
-        const snap = await getDocs(collection(db, 'profiles'));
-        let count = 0;
-        snap.forEach((docSnap) => {
-          const p = { id: docSnap.id, ...docSnap.data() };
-          count++;
-          const item = document.createElement('div'); item.className = 'item';
-          const title = document.createElement('div'); title.className = 'name'; title.textContent = p.name || 'Unnamed';
-          const sub = document.createElement('div'); sub.className = 'sub';
-          sub.textContent = [(p.college || ''), (p.semester ? ('Sem ' + p.semester) : '')].filter(Boolean).join(' · ');
-          const linksDiv = document.createElement('div'); linksDiv.className = 'links';
-          if (p.instagram) { const a = document.createElement('a'); a.className='link'; a.href=generateInstagramUrl(p.instagram); a.textContent='Instagram'; a.target='_blank'; a.rel='noopener'; linksDiv.appendChild(a); }
-          if (p.github) { const a = document.createElement('a'); a.className='link'; a.href=p.github; a.textContent='GitHub'; a.target='_blank'; a.rel='noopener'; linksDiv.appendChild(a); }
-          if (p.linkedin) { const a = document.createElement('a'); a.className='link'; a.href=p.linkedin; a.textContent='LinkedIn'; a.target='_blank'; a.rel='noopener'; linksDiv.appendChild(a); }
-          const actions = document.createElement('div'); actions.className = 'actions';
-          const msgBtn = document.createElement('a'); msgBtn.className = 'link'; msgBtn.textContent = 'Message';
-          msgBtn.href = './chat.html';
-          actions.appendChild(msgBtn);
+      async function loadCommunityProfiles() {
+        try {
+          const snap = await getDocs(collection(db, 'profiles'));
+          const profiles = [];
+          
+          snap.forEach((docSnap) => {
+            const profile = { id: docSnap.id, ...docSnap.data() };
+            profiles.push(profile);
+          });
 
-          item.append(title, sub, linksDiv, actions);
-          profilesList.appendChild(item);
-        });
-        profilesCount.textContent = count.toString();
+          profilesCount.textContent = `${profiles.length} member${profiles.length !== 1 ? 's' : ''}`;
+          
+          if (profiles.length === 0) {
+            profilesList.innerHTML = `
+              <div class="profile-item">
+                <div style="text-align: center; color: var(--soft);">No profiles yet</div>
+              </div>
+            `;
+            return;
+          }
+
+          profilesList.innerHTML = profiles.map(profile => {
+            const avatar = profile.name ? profile.name.charAt(0).toUpperCase() : '?';
+            const info = [
+              profile.college || '',
+              profile.semester ? `Sem ${profile.semester}` : ''
+            ].filter(Boolean).join(' • ') || 'No details';
+
+            const links = [];
+            if (profile.instagram) {
+              links.push(`<a href="${generateInstagramUrl(profile.instagram)}" target="_blank" rel="noopener" class="profile-item-link">IG</a>`);
+            }
+            if (profile.github) {
+              links.push(`<a href="${profile.github}" target="_blank" rel="noopener" class="profile-item-link">GitHub</a>`);
+            }
+            if (profile.linkedin) {
+              links.push(`<a href="${profile.linkedin}" target="_blank" rel="noopener" class="profile-item-link">LinkedIn</a>`);
+            }
+
+            return `
+              <div class="profile-item">
+                <div class="profile-item-header">
+                  <div class="profile-item-avatar">${avatar}</div>
+                  <div>
+                    <div class="profile-item-name">${profile.name || 'Unknown'}</div>
+                  </div>
+                </div>
+                <div class="profile-item-info">${info}</div>
+                <div class="profile-item-links">
+                  ${links.join('')}
+                  <a href="chat.html" class="profile-item-link">Message</a>
+                </div>
+              </div>
+            `;
+          }).join('');
+        } catch (error) {
+          console.error('Error loading community profiles:', error);
+          profilesList.innerHTML = `
+            <div class="profile-item">
+              <div style="text-align: center; color: var(--danger);">Failed to load profiles</div>
+            </div>
+          `;
+        }
       }
 
-      btnSave.addEventListener('click', async () => {
-        msg.textContent = '';
-        if (!me) { msg.textContent = 'Sign in to save.'; msg.className='error'; return; }
+      // Form submission
+      profileForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        hideMessage();
+
+        if (!currentUser) {
+          showMessage('Please sign in to save your profile', 'error');
+          return;
+        }
+
         const name = nameEl.value.trim();
         const semester = semesterEl.value;
         const college = collegeEl.value.trim();
-        const instagram = instagramEl.value.trim();
+        const instagram = processInstagramInput(instagramEl.value.trim());
         const github = githubEl.value.trim();
         const linkedin = linkedinEl.value.trim();
 
+        // Validation
         if (!name || !semester || !college) {
-          msg.textContent = 'Name, semester, and college are required.'; msg.className='error'; return;
+          showMessage('Please fill in all required fields (Name, Semester, College)', 'error');
+          return;
         }
+
         if (!isValidUrl(github) || !isValidUrl(linkedin)) {
-          msg.textContent = 'Please enter valid URLs (https://...) for GitHub and LinkedIn.'; msg.className='error'; return;
+          showMessage('Please enter valid URLs for GitHub and LinkedIn', 'error');
+          return;
         }
+
+        // Show loading state
+        const originalText = saveBtn.innerHTML;
+        saveBtn.innerHTML = '<span class="loading"></span> Saving...';
+        saveBtn.disabled = true;
+
         try {
-          await setDoc(doc(db, 'profiles', me.uid), {
-            name, semester, college,
-            instagram: instagram || null, // Store just the username
+          await setDoc(doc(db, 'profiles', currentUser.uid), {
+            name,
+            semester,
+            college,
+            instagram: instagram || null,
             github: github || null,
             linkedin: linkedin || null,
             updatedAt: new Date().toISOString()
           }, { merge: true });
-          msg.textContent = 'Profile saved.'; msg.className='success';
+
+          showMessage('Profile saved successfully!', 'success');
           await loadMyProfile();
-          await loadProfiles();
-        } catch (e) {
-          msg.textContent = 'Failed to save profile.'; msg.className='error';
+          await loadCommunityProfiles();
+        } catch (error) {
+          console.error('Error saving profile:', error);
+          showMessage('Failed to save profile. Please try again.', 'error');
+        } finally {
+          saveBtn.innerHTML = originalText;
+          saveBtn.disabled = false;
         }
       });
 
+      // Event listeners
+      signOutBtn.addEventListener('click', signOutUser);
+
+      // Initialize auth
       initAuth({
         onAuthStateChanged: async (user, profile) => {
-          me = user;
-          myProfile = profile;
+          currentUser = user;
+          currentProfile = profile;
           setAuthUI();
           await loadMyProfile();
-          await loadProfiles();
+          await loadCommunityProfiles();
         }
       });
 
-      btnSignOut.addEventListener('click', signOutUser);
+      // Back navigation
+      function goBack() {
+        if (window.history.length > 1) {
+          window.history.back();
+        } else {
+          window.location.href = './chat.html';
+        }
+      }
 
-      // Initial
-      setAuthUI();
-      loadProfiles();
+      // Make goBack global
+      window.goBack = goBack;
 
-function goBack() {
-  // Check if there's history to go back to
-  if (window.history.length > 1) {
-    window.history.back();
-  } else {
-    // Fallback to chat if no history (e.g., direct link access)
-    window.location.href = './chat.html';
-  }
-}
+      // Initial load
+      loadCommunityProfiles();
     </script>
   </body>
 </html>

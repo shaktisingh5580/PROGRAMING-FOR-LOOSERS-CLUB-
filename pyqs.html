@@ -11,10 +11,10 @@
       --card: #1a1a1a;
       --border: #2a2a2a;
       --text: #ffffff;
-      --text-muted: #888888;
+      --text-muted: #fdfdfe;
       --text-secondary: #cccccc;
-      --accent: #ffffff;
-      --hover: #333333;
+      --accent: #4338ca;
+      --hover: #4338ca;
       --shadow: 0 4px 12px rgba(0,0,0,0.3);
       --radius: 8px;
     }
@@ -89,7 +89,7 @@
 
     .nav-btn {
       padding: 8px 12px;
-      background: var(--bg);
+      background: var(--hover);
       color: var(--text);
       border: 1px solid var(--border);
       border-radius: var(--radius);
@@ -398,108 +398,133 @@
     .back-to-top.show {
       display: block;
     }
-
-    /* Modal Styles for PDF Preview */
+    
+    /* --- MODAL STYLES --- */
     .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.8);
+        display: none; 
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        align-items: center;
+        justify-content: center;
     }
 
     .modal-content {
-      background-color: #1a1a1a;
-      margin: 2% auto;
-      padding: 0;
-      border: 1px solid #333;
-      border-radius: 8px;
-      width: 90%;
-      max-width: 800px;
-      max-height: 90vh;
-      overflow: hidden;
+        background-color: #1a1a1a;
+        border: 1px solid #333;
+        border-radius: 8px;
+        width: 90%;
+        max-width: 800px;
+        height: 90vh;
+        overflow: hidden; 
+        display: flex;
+        flex-direction: column;
     }
 
     .modal-header {
-      background-color: #2a2a2a;
-      padding: 15px 20px;
-      border-bottom: 1px solid #333;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+        background-color: #2a2a2a;
+        padding: 15px 20px;
+        border-bottom: 1px solid #333;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-shrink: 0; 
     }
 
     .modal-header h3 {
-      margin: 0;
-      color: #fff;
-      font-size: 18px;
+        margin: 0;
+        color: #fff;
+        font-size: 18px;
     }
 
     .modal-close {
-      background: none;
-      border: none;
-      color: #fff;
-      font-size: 24px;
-      cursor: pointer;
-      padding: 0;
-      width: 30px;
-      height: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 24px;
+        cursor: pointer;
+        padding: 0;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .modal-close:hover {
-      background-color: #333;
-      border-radius: 4px;
+        background-color: #333;
+        border-radius: 4px;
     }
 
     .modal-body {
-      padding: 20px;
-      max-height: calc(90vh - 140px);
-      overflow-y: auto;
+        padding: 20px;
+        flex-grow: 1;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
     }
 
     .paper-details {
-      margin-bottom: 20px;
-      padding: 15px;
-      background-color: #2a2a2a;
-      border-radius: 6px;
-      border: 1px solid #333;
+        padding: 15px;
+        background-color: #2a2a2a;
+        border-radius: 6px;
+        border: 1px solid #333;
+        flex-shrink: 0;
     }
 
     .paper-details .detail-row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 8px;
-      padding: 4px 0;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        padding: 4px 0;
+    }
+    .paper-details .detail-row:last-child {
+        margin-bottom: 0;
     }
 
     .paper-details .detail-label {
-      font-weight: 600;
-      color: #ccc;
+        font-weight: 600;
+        color: #ccc;
     }
-
+    
     .paper-details .detail-value {
-      color: #fff;
+        color: #fff;
+        text-align: right;
     }
-
+    
     .pdf-preview {
-      border-radius: 6px;
-      overflow: hidden;
-      background-color: #f0f0f0;
+        border-radius: 6px;
+        overflow: hidden;
+        background-color: #333;
+        flex-grow: 1;
+        min-height: 200px;
+    }
+    
+    .pdf-preview iframe {
+        width: 100%;
+        height: 100%; 
+        border: none;
     }
 
     .modal-footer {
-      background-color: #2a2a2a;
-      padding: 15px 20px;
-      border-top: 1px solid #333;
-      display: flex;
-      gap: 10px;
-      justify-content: flex-end;
+        background-color: #2a2a2a;
+        padding: 15px 20px;
+        border-top: 1px solid #333;
+        display: flex;
+        flex-wrap: wrap; /* Allow buttons to wrap */
+        gap: 10px;
+        justify-content: flex-end;
+        flex-shrink: 0; 
+    }
+
+    /* --- NEW --- Hide fullscreen button by default */
+    #fullScreenBtn {
+      display: none;
     }
 
     /* Responsive */
@@ -530,7 +555,6 @@
         padding: 15px;
       }
 
-      /* Improved mobile filters */
       .filters-content {
         padding: 15px;
       }
@@ -573,24 +597,34 @@
         height: 45px;
       }
 
+      /* --- MOBILE MODAL STYLES --- */
       .modal-content {
         width: 95%;
-        margin: 5% auto;
-        max-height: 85vh;
+        height: 85vh;
       }
 
       .modal-body {
         padding: 15px;
-        max-height: calc(85vh - 120px);
       }
-
-      .pdf-preview iframe {
-        height: 300px;
-      }
-
+      
       .paper-details .detail-row {
         flex-direction: column;
         gap: 4px;
+        align-items: flex-start;
+      }
+      
+      .paper-details .detail-value {
+          text-align: left;
+      }
+
+      /* --- NEW --- Show fullscreen button on mobile */
+      #fullScreenBtn {
+        display: block;
+        flex-grow: 1; /* Make it take available space */
+      }
+
+      .modal-footer {
+        justify-content: space-between; /* Space out buttons */
       }
     }
   </style>
@@ -599,7 +633,6 @@
   <header class="header">
     <div class="header-inner">
       <div class="brand">
-        <div class="logo">PY</div>
         <div>
           <h1>Previous Year Papers</h1>
           <div class="subtitle">B.Tech Collection</div>
@@ -622,6 +655,7 @@
       <div class="nav-buttons">
         <a href="index.html" class="nav-btn">Home</a>
         <a href="chat.html" class="nav-btn">Chat</a>
+        <a href="assignment.html" class="nav-btn">Assignment</a>
         <button id="clearBtn" class="btn secondary">Clear</button>
       </div>
     </div>
@@ -716,10 +750,12 @@
       <div class="modal-body">
         <div id="paperDetails" class="paper-details"></div>
         <div class="pdf-preview">
-          <iframe id="pdfViewer" src="" width="100%" height="400px" style="border: 1px solid #333;"></iframe>
+          <iframe id="pdfViewer" src=""></iframe>
         </div>
       </div>
       <div class="modal-footer">
+        <!-- NEW: Fullscreen button for mobile -->
+        <button id="fullScreenBtn" class="btn">View Fullscreen</button>
         <a id="downloadLink" href="#" class="download-btn" download>Download PDF</a>
         <button class="btn secondary" onclick="closePdfModal()">Close</button>
       </div>
@@ -829,7 +865,7 @@
           tags: ["algorithms", "important", "with-solutions"],
           pages: 8,
           fileSizeMB: 2.1,
-          fileUrl: "#"
+          fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
         },
         {
           id: "2", 
@@ -841,7 +877,7 @@
           tags: ["theory", "moderate"],
           pages: 6,
           fileSizeMB: 1.8,
-          fileUrl: "#"
+          fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
         },
         {
           id: "3",
@@ -853,7 +889,7 @@
           tags: ["sql", "important", "hard"],
           pages: 10,
           fileSizeMB: 3.2,
-          fileUrl: "#"
+          fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
         }
       ];
     }
@@ -1074,24 +1110,33 @@
       
       document.getElementById('paperDetails').innerHTML = detailsHtml;
       
-      // Set PDF viewer source (for demo purposes, using a placeholder)
+      // Set PDF viewer source
       const pdfViewer = document.getElementById('pdfViewer');
       if (paper.fileUrl && paper.fileUrl !== '#') {
         pdfViewer.src = paper.fileUrl;
       } else {
-        // Placeholder PDF viewer
-        pdfViewer.src = 'data:text/html,<html><body style="margin:0;padding:20px;font-family:Arial;background:#f5f5f5;"><h3>PDF Preview</h3><p>This is a preview of: <strong>' + paper.title + '</strong></p><p>In a real implementation, this would show the actual PDF content.</p><p>File: ' + paper.fileSizeMB + ' MB, ' + paper.pages + ' pages</p></body></html>';
+        pdfViewer.src = 'data:text/html,<html><body style="margin:0;padding:20px;font-family:Arial;color:white;background:#444;"><h3>PDF Preview Not Available</h3><p>In a real implementation, the PDF would be displayed here.</p></body></html>';
       }
       
+      // Setup download and fullscreen links
       document.getElementById('downloadLink').href = paper.fileUrl;
-      document.getElementById('pdfModal').style.display = 'block';
+      
+      // --- NEW --- Add onclick for fullscreen button
+      const fullScreenBtn = document.getElementById('fullScreenBtn');
+      fullScreenBtn.onclick = () => {
+        if (paper.fileUrl && paper.fileUrl !== '#') {
+          window.open(paper.fileUrl, '_blank');
+        }
+      };
+      
+      document.getElementById('pdfModal').style.display = 'flex';
       document.body.style.overflow = 'hidden';
     }
 
     function closePdfModal() {
       document.getElementById('pdfModal').style.display = 'none';
       document.body.style.overflow = 'auto';
-      document.getElementById('pdfViewer').src = '';
+      document.getElementById('pdfViewer').src = 'about:blank'; // Clear iframe content
     }
 
     // Modal close on outside click
@@ -1106,7 +1151,7 @@
     document.addEventListener('keydown', function(event) {
       if (event.key === 'Escape') {
         const modal = document.getElementById('pdfModal');
-        if (modal.style.display === 'block') {
+        if (modal.style.display === 'flex') {
           closePdfModal();
         }
       }

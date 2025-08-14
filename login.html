@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Programming for Losers — Login</title>
+    <title>Programming for Losers — Sign In</title>
     <meta name="color-scheme" content="dark light" />
     <style>
       :root {
@@ -18,111 +18,581 @@
         --ok: #43d17a;
         --warn: #e7c74f;
         --danger: #ff5d5d;
+        --primary: #4f46e5;
+        --primary-hover: #4338ca;
       }
-      * { box-sizing: border-box; }
+      
+      * { 
+        box-sizing: border-box; 
+        margin: 0; 
+        padding: 0; 
+      }
+      
+      html, body {
+        height: 100%;
+        overflow-x: hidden;
+      }
+      
       body {
-        margin: 0; background: var(--bg); color: var(--muted);
         font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial;
-        min-height: 100vh; display: flex; align-items: center; justify-content: center;
-        padding: 20px;
+        background: var(--bg);
+        color: var(--muted);
+        line-height: 1.6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        position: relative;
       }
-      .login-container {
-        background: var(--elev-2); border: 1px solid var(--line); border-radius: 16px;
-        padding: 2rem; width: 100%; max-width: 400px; box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      
+      /* Animated Background */
+      .bg-animation {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        opacity: 0.1;
+        overflow: hidden;
       }
+      
+      .bg-animation::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+          45deg,
+          transparent,
+          rgba(79, 70, 229, 0.1),
+          transparent,
+          rgba(67, 209, 122, 0.1),
+          transparent
+        );
+        animation: rotate 20s linear infinite;
+      }
+      
+      @keyframes rotate {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      /* Floating particles */
+      .particle {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        animation: float 6s ease-in-out infinite;
+      }
+      
+      .particle:nth-child(1) {
+        width: 4px;
+        height: 4px;
+        top: 20%;
+        left: 20%;
+        animation-delay: 0s;
+      }
+      
+      .particle:nth-child(2) {
+        width: 6px;
+        height: 6px;
+        top: 60%;
+        left: 80%;
+        animation-delay: 2s;
+      }
+      
+      .particle:nth-child(3) {
+        width: 3px;
+        height: 3px;
+        top: 80%;
+        left: 30%;
+        animation-delay: 4s;
+      }
+      
+      @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-20px) rotate(180deg); }
+      }
+      
+      /* Main Container */
+      .auth-container {
+        background: rgba(27, 27, 30, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        padding: 2.5rem;
+        width: 100%;
+        max-width: 420px;
+        margin: 1rem;
+        box-shadow: 
+          0 20px 25px -5px rgba(0, 0, 0, 0.4),
+          0 10px 10px -5px rgba(0, 0, 0, 0.2);
+        position: relative;
+        z-index: 1;
+        animation: slideUp 0.6s ease-out;
+      }
+      
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      @media (max-width: 768px) {
+        .auth-container {
+          padding: 2rem 1.5rem;
+          margin: 0.5rem;
+          border-radius: 20px;
+        }
+      }
+      
+      /* Header */
+      .auth-header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+      
       .logo {
-        text-align: center; margin-bottom: 2rem;
+        font-size: 3rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--primary), var(--ok));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+        animation: glow 2s ease-in-out infinite alternate;
       }
-      .logo h1 {
-        font-size: 2rem; font-weight: 700; color: var(--accent); margin: 0;
+      
+      @keyframes glow {
+        from { filter: drop-shadow(0 0 5px rgba(79, 70, 229, 0.3)); }
+        to { filter: drop-shadow(0 0 20px rgba(79, 70, 229, 0.6)); }
       }
-      .logo p {
-        color: var(--soft); font-size: 0.9rem; margin: 0.5rem 0 0 0;
+      
+      .tagline {
+        color: var(--soft);
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
       }
+      
+      .welcome-text {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--accent);
+        margin-bottom: 0.5rem;
+      }
+      
+      .subtitle {
+        color: var(--soft);
+        font-size: 0.9rem;
+      }
+      
+      @media (max-width: 768px) {
+        .logo {
+          font-size: 2.5rem;
+        }
+        .welcome-text {
+          font-size: 1.3rem;
+        }
+      }
+      
+      /* Form Styles */
+      .auth-form {
+        margin-bottom: 1.5rem;
+      }
+      
       .form-group {
         margin-bottom: 1.5rem;
       }
+      
       .form-group label {
-        display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: var(--soft);
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--soft);
+        font-size: 0.9rem;
       }
+      
       .form-control {
-        width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--line);
-        background: var(--elev); color: var(--muted); font-size: 1rem; transition: all 0.3s ease;
+        width: 100%;
+        padding: 0.875rem 1rem;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--elev);
+        color: var(--muted);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        outline: none;
       }
+      
       .form-control:focus {
-        outline: none; border-color: var(--accent); background: var(--elev-2);
-        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        background: var(--bg);
+        transform: translateY(-1px);
       }
-      .form-control::placeholder { color: var(--soft); }
+      
+      .form-control::placeholder {
+        color: var(--soft);
+      }
+      
+      /* Buttons */
       .btn {
-        width: 100%; padding: 0.75rem; border-radius: 8px; border: none; cursor: pointer;
-        font-size: 1rem; font-weight: 600; transition: all 0.3s ease;
-        background: var(--accent); color: var(--bg);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        width: 100%;
+        padding: 0.875rem 1.5rem;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        position: relative;
+        overflow: hidden;
       }
-      .btn:hover { background: #e0e0e0; transform: translateY(-1px); }
+      
+      .btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: left 0.5s;
+      }
+      
+      .btn:hover::before {
+        left: 100%;
+      }
+      
+      .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+        color: white;
+        box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+      }
+      
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+      }
+      
+      .btn-outline {
+        background: transparent;
+        color: var(--muted);
+        border: 1px solid var(--line);
+      }
+      
+      .btn-outline:hover {
+        background: var(--elev);
+        border-color: var(--primary);
+        color: var(--accent);
+        transform: translateY(-1px);
+      }
+      
       .btn:disabled {
-        background: #555; color: #999; cursor: not-allowed; transform: none;
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
       }
-      .btn-secondary {
-        background: transparent; color: var(--muted); border: 1px solid var(--line);
-        margin-top: 1rem;
+      
+      .btn:disabled:hover {
+        transform: none;
+        box-shadow: none;
       }
-      .btn-secondary:hover { background: var(--elev); }
-      .error {
-        color: var(--danger); font-size: 0.85rem; margin-top: 0.5rem; text-align: center;
+      
+      /* Loading Spinner */
+      .spinner {
+        width: 18px;
+        height: 18px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top: 2px solid white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
       }
-      .success {
-        color: var(--ok); font-size: 0.85rem; margin-top: 0.5rem; text-align: center;
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
       }
-      .switch-mode {
-        text-align: center; margin-top: 1.5rem; padding-top: 1.5rem;
+      
+      /* Status Messages */
+      .status-message {
+        padding: 1rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        font-weight: 500;
+        text-align: center;
+        display: none;
+        animation: fadeIn 0.3s ease-out;
+      }
+      
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      
+      .status-success {
+        background: rgba(67, 209, 122, 0.1);
+        color: var(--ok);
+        border: 1px solid rgba(67, 209, 122, 0.2);
+      }
+      
+      .status-error {
+        background: rgba(255, 93, 93, 0.1);
+        color: var(--danger);
+        border: 1px solid rgba(255, 93, 93, 0.2);
+      }
+      
+      /* Divider */
+      .divider {
+        display: flex;
+        align-items: center;
+        margin: 1.5rem 0;
+        color: var(--soft);
+        font-size: 0.9rem;
+      }
+      
+      .divider::before,
+      .divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--line);
+      }
+      
+      .divider span {
+        padding: 0 1rem;
+      }
+      
+      /* Toggle Form */
+      .toggle-form {
+        text-align: center;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
         border-top: 1px solid var(--line);
       }
-      .switch-mode a {
-        color: var(--accent); text-decoration: none; font-weight: 600;
+      
+      .toggle-form a {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.2s;
       }
-      .switch-mode a:hover { text-decoration: underline; }
-      .loading {
-        display: inline-block; width: 16px; height: 16px; border: 2px solid var(--bg);
-        border-top: 2px solid var(--accent); border-radius: 50%;
-        animation: spin 1s linear infinite; margin-right: 8px;
+      
+      .toggle-form a:hover {
+        color: var(--primary-hover);
+        text-decoration: underline;
       }
-      @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-      .hidden { display: none !important; }
+      
+      /* Guest Access */
+      .guest-access {
+        text-align: center;
+        margin-top: 1rem;
+      }
+      
+      .guest-link {
+        color: var(--soft);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.2s;
+      }
+      
+      .guest-link:hover {
+        color: var(--accent);
+        text-decoration: underline;
+      }
+      
+      /* Icons */
+      .icon {
+        width: 1.2em;
+        height: 1.2em;
+        display: inline-block;
+      }
+      
+      /* Form Transitions */
+      .form-slide-enter {
+        animation: slideInRight 0.4s ease-out;
+      }
+      
+      .form-slide-exit {
+        animation: slideOutLeft 0.4s ease-out;
+      }
+      
+      @keyframes slideInRight {
+        from {
+          opacity: 0;
+          transform: translateX(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      
+      @keyframes slideOutLeft {
+        from {
+          opacity: 1;
+          transform: translateX(0);
+        }
+        to {
+          opacity: 0;
+          transform: translateX(-30px);
+        }
+      }
+      
+      /* Accessibility */
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+      
+      /* Focus styles */
+      .btn:focus-visible,
+      .form-control:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+      }
+      
+      /* Hidden utility */
+      .hidden {
+        display: none !important;
+      }
     </style>
   </head>
   <body>
-    <div class="login-container">
-      <div class="logo">
-        <h1>PFL</h1>
-        <p>Programming for Losers</p>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+    </div>
+
+    <div class="auth-container">
+      <div class="auth-header">
+        <div class="logo">PFL</div>
+        <div class="tagline">Programming for Losers</div>
+        <div class="welcome-text" id="form-title">Welcome Back</div>
+        <div class="subtitle" id="form-subtitle">Sign in to your account</div>
       </div>
 
-      <form id="auth-form">
-        <div class="form-group">
-          <label for="email">Email Address</label>
-          <input type="email" id="email" class="form-control" placeholder="you@example.com" required />
+      <div id="status-message" class="status-message"></div>
+
+      <!-- Sign In Form -->
+      <div id="signin-form" class="auth-form">
+        <form id="signin-form-element">
+          <div class="form-group">
+            <label for="signin-email">Email Address</label>
+            <input 
+              type="email" 
+              id="signin-email" 
+              class="form-control" 
+              placeholder="you@example.com" 
+              required 
+            />
+          </div>
+          
+          <div class="form-group">
+            <label for="signin-password">Password</label>
+            <input 
+              type="password" 
+              id="signin-password" 
+              class="form-control" 
+              placeholder="••••••••" 
+              required 
+            />
+          </div>
+
+          <button type="submit" class="btn btn-primary" id="signin-btn">
+            <span id="signin-spinner" class="spinner hidden"></span>
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="signin-icon">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+            </svg>
+            <span id="signin-text">Sign In</span>
+          </button>
+        </form>
+
+        <div class="toggle-form">
+          <p>Don't have an account? <a href="#" id="show-signup">Create one</a></p>
         </div>
-        
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" class="form-control" placeholder="••••••••" required />
+      </div>
+
+      <!-- Sign Up Form -->
+      <div id="signup-form" class="auth-form hidden">
+        <form id="signup-form-element">
+          <div class="form-group">
+            <label for="signup-email">Email Address</label>
+            <input 
+              type="email" 
+              id="signup-email" 
+              class="form-control" 
+              placeholder="you@example.com" 
+              required 
+            />
+          </div>
+          
+          <div class="form-group">
+            <label for="signup-password">Password</label>
+            <input 
+              type="password" 
+              id="signup-password" 
+              class="form-control" 
+              placeholder="Create a strong password" 
+              required 
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="signup-confirm-password">Confirm Password</label>
+            <input 
+              type="password" 
+              id="signup-confirm-password" 
+              class="form-control" 
+              placeholder="Confirm your password" 
+              required 
+            />
+          </div>
+
+          <button type="submit" class="btn btn-primary" id="signup-btn">
+            <span id="signup-spinner" class="spinner hidden"></span>
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="signup-icon">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+            </svg>
+            <span id="signup-text">Create Account</span>
+          </button>
+        </form>
+
+        <div class="toggle-form">
+          <p>Already have an account? <a href="#" id="show-signin">Sign in</a></p>
         </div>
+      </div>
 
-        <button type="submit" class="btn" id="submit-btn">
-          <span id="submit-text">Sign In</span>
-        </button>
-
-        <div id="message" class="error hidden" role="status"></div>
-
-        <div class="switch-mode">
-          <span id="switch-text">Don't have an account?</span>
-          <a href="#" id="switch-link">Sign Up</a>
-        </div>
-      </form>
-
-      <div class="switch-mode">
-        <a href="chat.html">Continue as Guest</a>
+      <div class="guest-access">
+        <a href="chat.html" class="guest-link">
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+          </svg>
+          Continue as Guest
+        </a>
       </div>
     </div>
 
@@ -146,48 +616,86 @@
       const auth = getAuth(app);
       const db = getFirestore(app);
 
-      // Elements
-      const form = document.getElementById('auth-form');
-      const emailInput = document.getElementById('email');
-      const passwordInput = document.getElementById('password');
-      const submitBtn = document.getElementById('submit-btn');
-      const submitText = document.getElementById('submit-text');
-      const messageEl = document.getElementById('message');
-      const switchText = document.getElementById('switch-text');
-      const switchLink = document.getElementById('switch-link');
+      // DOM Elements
+      const signinForm = document.getElementById('signin-form');
+      const signupForm = document.getElementById('signup-form');
+      const formTitle = document.getElementById('form-title');
+      const formSubtitle = document.getElementById('form-subtitle');
+      const statusMessage = document.getElementById('status-message');
+      
+      const showSignupBtn = document.getElementById('show-signup');
+      const showSigninBtn = document.getElementById('show-signin');
+      
+      const signinFormElement = document.getElementById('signin-form-element');
+      const signupFormElement = document.getElementById('signup-form-element');
+      
+      const signinBtn = document.getElementById('signin-btn');
+      const signupBtn = document.getElementById('signup-btn');
+      
+      const signinSpinner = document.getElementById('signin-spinner');
+      const signupSpinner = document.getElementById('signup-spinner');
+      
+      const signinText = document.getElementById('signin-text');
+      const signupText = document.getElementById('signup-text');
+      
+      const signinIcon = document.getElementById('signin-icon');
+      const signupIcon = document.getElementById('signup-icon');
 
-      let isSignUp = false;
+      let isSignupMode = false;
 
-      function showMessage(text, isError = true) {
-        messageEl.textContent = text;
-        messageEl.className = isError ? 'error' : 'success';
-        messageEl.classList.remove('hidden');
+      // Utility functions
+      function showMessage(text, type = 'success') {
+        statusMessage.textContent = text;
+        statusMessage.className = `status-message status-${type}`;
+        statusMessage.style.display = 'block';
+        
+        if (type === 'success') {
+          setTimeout(() => {
+            statusMessage.style.display = 'none';
+          }, 5000);
+        }
       }
 
       function hideMessage() {
-        messageEl.classList.add('hidden');
+        statusMessage.style.display = 'none';
       }
 
-      function toggleMode() {
-        isSignUp = !isSignUp;
-        if (isSignUp) {
-          submitText.textContent = 'Sign Up';
-          switchText.textContent = 'Already have an account?';
-          switchLink.textContent = 'Sign In';
-        } else {
-          submitText.textContent = 'Sign In';
-          switchText.textContent = "Don't have an account?";
-          switchLink.textContent = 'Sign Up';
-        }
-        hideMessage();
-      }
-
-      function setLoading(loading) {
-        submitBtn.disabled = loading;
+      function setLoadingState(isSignup, loading) {
+        const btn = isSignup ? signupBtn : signinBtn;
+        const spinner = isSignup ? signupSpinner : signinSpinner;
+        const text = isSignup ? signupText : signinText;
+        const icon = isSignup ? signupIcon : signinIcon;
+        
+        btn.disabled = loading;
+        
         if (loading) {
-          submitText.innerHTML = '<span class="loading"></span>Processing...';
+          spinner.classList.remove('hidden');
+          icon.classList.add('hidden');
+          text.textContent = isSignup ? 'Creating Account...' : 'Signing In...';
         } else {
-          submitText.textContent = isSignUp ? 'Sign Up' : 'Sign In';
+          spinner.classList.add('hidden');
+          icon.classList.remove('hidden');
+          text.textContent = isSignup ? 'Create Account' : 'Sign In';
+        }
+      }
+
+      function toggleForm() {
+        hideMessage();
+        
+        if (isSignupMode) {
+          // Switch to sign in
+          signupForm.classList.add('hidden');
+          signinForm.classList.remove('hidden');
+          formTitle.textContent = 'Welcome Back';
+          formSubtitle.textContent = 'Sign in to your account';
+          isSignupMode = false;
+        } else {
+          // Switch to sign up
+          signinForm.classList.add('hidden');
+          signupForm.classList.remove('hidden');
+          formTitle.textContent = 'Join PFL';
+          formSubtitle.textContent = 'Create your account';
+          isSignupMode = true;
         }
       }
 
@@ -206,48 +714,51 @@
         return urlParams.get('redirect') || 'chat.html';
       }
 
-      async function handleSubmit(e) {
+      // Event listeners
+      showSignupBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        toggleForm();
+      });
+
+      showSigninBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        toggleForm();
+      });
+
+      // Sign in form
+      signinFormElement.addEventListener('submit', async (e) => {
         e.preventDefault();
         hideMessage();
 
-        const email = emailInput.value.trim();
-        const password = passwordInput.value;
+        const email = document.getElementById('signin-email').value.trim();
+        const password = document.getElementById('signin-password').value;
 
         if (!email || !password) {
-          showMessage('Please fill in all fields.');
+          showMessage('Please fill in all fields.', 'error');
           return;
         }
 
         if (password.length < 6) {
-          showMessage('Password must be at least 6 characters.');
+          showMessage('Password must be at least 6 characters.', 'error');
           return;
         }
 
-        setLoading(true);
+        setLoadingState(false, true);
 
         try {
-          let userCredential;
-          if (isSignUp) {
-            userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            showMessage('Account created successfully! Redirecting to complete your profile...', false);
+          const userCredential = await signInWithEmailAndPassword(auth, email, password);
+          const hasProfile = await checkProfileCompletion(userCredential.user);
+          
+          if (!hasProfile) {
+            showMessage('Please complete your profile first...', 'success');
             setTimeout(() => {
               window.location.href = 'profile.html';
             }, 1500);
           } else {
-            userCredential = await signInWithEmailAndPassword(auth, email, password);
-            const hasProfile = await checkProfileCompletion(userCredential.user);
-            
-            if (!hasProfile) {
-              showMessage('Please complete your profile first...', false);
-              setTimeout(() => {
-                window.location.href = 'profile.html';
-              }, 1500);
-            } else {
-              showMessage('Signed in successfully! Redirecting...', false);
-              setTimeout(() => {
-                window.location.href = getRedirectUrl();
-              }, 1000);
-            }
+            showMessage('Signed in successfully! Redirecting...', 'success');
+            setTimeout(() => {
+              window.location.href = getRedirectUrl();
+            }, 1000);
           }
         } catch (error) {
           let errorMessage = 'An error occurred. Please try again.';
@@ -265,6 +776,56 @@
             case 'auth/wrong-password':
               errorMessage = 'Incorrect password.';
               break;
+            case 'auth/network-request-failed':
+              errorMessage = 'Network error. Please check your connection.';
+              break;
+          }
+          
+          showMessage(errorMessage, 'error');
+        } finally {
+          setLoadingState(false, false);
+        }
+      });
+
+      // Sign up form
+      signupFormElement.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        hideMessage();
+
+        const email = document.getElementById('signup-email').value.trim();
+        const password = document.getElementById('signup-password').value;
+        const confirmPassword = document.getElementById('signup-confirm-password').value;
+
+        if (!email || !password || !confirmPassword) {
+          showMessage('Please fill in all fields.', 'error');
+          return;
+        }
+
+        if (password !== confirmPassword) {
+          showMessage('Passwords do not match.', 'error');
+          return;
+        }
+
+        if (password.length < 6) {
+          showMessage('Password must be at least 6 characters.', 'error');
+          return;
+        }
+
+        setLoadingState(true, true);
+
+        try {
+          await createUserWithEmailAndPassword(auth, email, password);
+          showMessage('Account created successfully! Redirecting to complete your profile...', 'success');
+          setTimeout(() => {
+            window.location.href = 'profile.html';
+          }, 1500);
+        } catch (error) {
+          let errorMessage = 'An error occurred. Please try again.';
+          
+          switch (error.code) {
+            case 'auth/invalid-email':
+              errorMessage = 'Invalid email address.';
+              break;
             case 'auth/email-already-in-use':
               errorMessage = 'Email already in use.';
               break;
@@ -276,17 +837,10 @@
               break;
           }
           
-          showMessage(errorMessage);
+          showMessage(errorMessage, 'error');
         } finally {
-          setLoading(false);
+          setLoadingState(true, false);
         }
-      }
-
-      // Event listeners
-      form.addEventListener('submit', handleSubmit);
-      switchLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        toggleMode();
       });
 
       // Check if user is already logged in
@@ -300,6 +854,45 @@
           }
         }
       });
+
+      // Add some interactive particles on mouse move
+      document.addEventListener('mousemove', (e) => {
+        if (Math.random() > 0.98) {
+          const particle = document.createElement('div');
+          particle.style.position = 'fixed';
+          particle.style.left = e.clientX + 'px';
+          particle.style.top = e.clientY + 'px';
+          particle.style.width = '2px';
+          particle.style.height = '2px';
+          particle.style.background = 'rgba(79, 70, 229, 0.6)';
+          particle.style.borderRadius = '50%';
+          particle.style.pointerEvents = 'none';
+          particle.style.zIndex = '0';
+          particle.style.animation = 'fadeOut 1s ease-out forwards';
+          
+          document.body.appendChild(particle);
+          
+          setTimeout(() => {
+            particle.remove();
+          }, 1000);
+        }
+      });
+
+      // Add fadeOut animation
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes fadeOut {
+          from {
+            opacity: 1;
+            transform: scale(1);
+          }
+          to {
+            opacity: 0;
+            transform: scale(0);
+          }
+        }
+      `;
+      document.head.appendChild(style);
     </script>
   </body>
 </html>

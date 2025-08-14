@@ -2,548 +2,1192 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PFL - Assignments Hub</title>
   <link rel="icon" href="HummingBird (1).png" type="image/x-icon" />
   <link rel="manifest" href="manifest.json" />
   <style>
-    /* Mobile-First CSS Reset */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      color-scheme: dark;
+      --bg: #0f0f10;
+      --elev: #151517;
+      --elev-2: #1b1b1e;
+      --muted: #d9d9db;
+      --soft: #a9a9ad;
+      --line: #2a2a2e;
+      --accent: #ffffff;
+      --ok: #43d17a;
+      --warn: #e7c74f;
+      --danger: #ff5d5d;
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+    }
+    
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+    }
+    
     body {
-      font-family: 'Segoe UI', Arial, sans-serif;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial;
+      background: var(--bg);
+      color: var(--muted);
       line-height: 1.6;
-      color: #e0e0e0;
-      font-size: 14px; /* Mobile base font size */
-      background-color: #0c0c0c;
-      padding-top: 60px; /* Mobile header height */
+      min-height: 100vh;
     }
-    /* Desktop font size */
-    @media (min-width: 768px) {
-      body { font-size: 16px; padding-top: 80px; }
-    }
-    .container {
-      width: 95%; /* More space on mobile */
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 10px; /* Reduced mobile padding */
-      position: relative;
-      z-index: 1;
-    }
-    @media (min-width: 768px) {
-      .container { width: 90%; padding: 20px; }
-    }
+    
     /* Header */
     header {
-      background-color: rgba(10, 10, 10, 0.95);
-      padding: 0.5rem 0; /* Compact mobile header */
-      position: fixed;
-      width: 100%;
-      top: 0; left: 0;
-      z-index: 1000;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-    }
-    @media (min-width: 768px) { header { padding: 1.2rem 0; } }
-    nav {
-      display: flex; justify-content: space-between; align-items: center;
-      width: 95%; max-width: 1200px; margin: 0 auto; padding: 0 10px;
-    }
-    @media (min-width: 768px) { nav { width: 90%; padding: 0 20px; } }
-    .logo { font-size: 1.2rem; font-weight: bold; color: #fff; }
-    @media (min-width: 768px) { .logo { font-size: 1.7rem; } }
-
-    .header-nav-links { display: flex; gap: 8px; }
-    .header-nav-links a {
-      color: #ccc; text-decoration: none; font-size: 0.75rem;
-      transition: color 0.3s ease, text-shadow 0.3s ease; padding: 4px 6px;
-    }
-    .header-nav-links a:hover { color: #fff; text-shadow: 0 0 5px rgba(255,255,255,0.7); }
-    @media (min-width: 768px) {
-      .header-nav-links { gap: 25px; }
-      .header-nav-links a { font-size: 1rem; padding: 0; }
-    }
-
-    .user-auth-info { display: flex; align-items: center; color: #fff; gap: 6px; }
-    .user-auth-info span {
-      font-size: 0.7rem; opacity: 0.8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60px;
-    }
-    @media (min-width: 768px) {
-      .user-auth-info { gap: 15px; }
-      .user-auth-info span { font-size: 0.9rem; max-width: 150px; }
-    }
-
-    /* Buttons */
-    .btn, button[type='submit'], button[type='button'] {
-      display: inline-block; padding: 0.4rem 0.6rem; border-radius: 20px;
-      transition: all 0.3s ease; border: none; cursor: pointer;
-      font-size: 0.75rem; font-weight: bold; text-align: center;
-      background-color: #fff; color: #000; min-height: 32px;
-    }
-    @media (min-width: 768px) {
-      .btn, button[type='submit'], button[type='button'] {
-        padding: 0.7rem 1.5rem; font-size: 0.95rem; border-radius: 25px;
-      }
-    }
-    .btn:hover, button[type='submit']:hover, button[type='button']:hover {
-      background-color: #e0e0e0; transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
-    .btn-secondary { background-color: #333; color: #fff; border: 1px solid #555; }
-    .btn-secondary:hover { background-color: #444; border-color: #666; }
-    button:disabled { background-color: #555 !important; color: #999 !important; cursor: not-allowed; transform: none; box-shadow: none; }
-
-    /* Typography */
-    h1, h2, h3 { color: #fff; margin-bottom: 0.75rem; }
-    h1 { font-size: 1.5rem; margin-bottom: 1rem; text-align: center; }
-    @media (min-width: 768px) { h1 { font-size: 2.5rem; margin-bottom: 1.5rem; } }
-
-    /* Filters Bar */
-    .filters-bar {
-      background-color: rgba(20, 20, 20, 0.85);
-      padding: 0.75rem; border-radius: 8px; margin-bottom: 1rem;
-      display: flex; flex-direction: column; gap: 0.5rem;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.4);
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-    @media (min-width: 768px) {
-      .filters-bar {
-        padding: 1.5rem; margin-bottom: 2.5rem; display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 1.25rem; border-radius: 12px;
-      }
-    }
-    .filters-bar input[type='text'], .filters-bar select {
-      padding: 0.6rem; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.15);
-      background-color: rgba(30, 30, 30, 0.9); color: #fff; font-size: 0.8rem;
-      transition: all 0.3s ease; width: 100%; min-height: 40px;
-    }
-    @media (min-width: 768px) { .filters-bar input[type='text'], .filters-bar select { padding: 0.85rem; font-size: 1rem; border-radius: 6px; } }
-    .filters-bar input[type='text']::placeholder { color: rgba(255,255,255,0.5); }
-    .filters-bar input[type='text']:focus, .filters-bar select:focus {
-      outline: none; border-color: #a0cfff; background-color: rgba(40, 40, 40, 0.95); box-shadow: 0 0 0 3px rgba(160, 207, 255, 0.25);
-    }
-    .filters-bar .filter-buttons-container { display: flex; gap: 0.5rem; margin-top: 0.5rem; justify-content: stretch; flex-wrap: wrap; }
-    .filters-bar .filter-buttons-container .btn { flex: 1; min-width: 0; }
-    @media (min-width: 768px) {
-      .filters-bar .filter-buttons-container { grid-column: 1 / -1; margin-top: 1rem; gap: 1rem; justify-content: flex-start; }
-      .filters-bar .filter-buttons-container .btn { flex: none; }
-    }
-    #applyFiltersBtn::before { content: '🔍 '; }
-    #resetFiltersBtn::before { content: '↺ '; }
-
-    /* Grid */
-    .assignments-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
-    @media (min-width: 768px) { .assignments-grid { grid-template-columns: repeat(4, 1fr); gap: 1.5rem; } }
-    @media (min-width: 1200px) { .assignments-grid { gap: 2rem; } }
-
-    /* Cards */
-    .assignment-card {
-      background-color: rgba(22, 22, 22, 0.9);
-      padding: 0.75rem; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-      display: flex; flex-direction: column; justify-content: space-between;
-      border: 1px solid rgba(255, 255, 255, 0.08); transition: transform 0.3s ease, box-shadow 0.3s ease;
-      min-height: 280px;
-    }
-    @media (min-width: 768px) { .assignment-card { padding: 1.2rem; border-radius: 12px; min-height: 320px; } }
-    .assignment-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.4); }
-    .assignment-card h3 { font-size: 0.85rem; margin-bottom: 0.5rem; color: #a0cfff; word-break: break-word; line-height: 1.3; }
-    @media (min-width: 768px) { .assignment-card h3 { font-size: 1.1rem; margin-bottom: 0.75rem; } }
-    .assignment-card p { margin: 0.2rem 0; font-size: 0.7rem; opacity: 0.85; word-break: break-word; line-height: 1.4; }
-    @media (min-width: 768px) { .assignment-card p { font-size: 0.85rem; margin: 0.3rem 0; } }
-    .assignment-card p strong { opacity: 1; font-weight: 600; color: #f0f0f0; }
-    .assignment-card .keywords { margin-top: 0.5rem; }
-    .assignment-card .keywords span {
-      background-color: rgba(255, 255, 255, 0.1);
-      padding: 0.15rem 0.3rem; border-radius: 8px; font-size: 0.6rem; margin-right: 0.2rem; display: inline-block; margin-bottom: 0.2rem; border: 1px solid rgba(255,255,255,0.15);
-      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-    }
-    @media (min-width: 768px) {
-      .assignment-card .keywords { margin-top: 0.7rem; }
-      .assignment-card .keywords span { padding: 0.25rem 0.5rem; font-size: 0.7rem; margin-right: 0.3rem; margin-bottom: 0.3rem; }
-    }
-    .assignment-card .uploader-name-link { color: #82c0ff; text-decoration: none; font-weight: bold; cursor: pointer; transition: color 0.2s, text-decoration 0.2s; }
-    .assignment-card .uploader-name-link:hover { color: #baddff; text-decoration: underline; }
-
-    .card-footer { display: flex; flex-direction: column; align-items: stretch; gap: 0.4rem; margin-top: 0.6rem; padding-top: 0.4rem; border-top: 1px solid rgba(255, 255, 255, 0.1); }
-    @media (min-width: 768px) { .card-footer { flex-direction: column; gap: 0.6rem; padding-top: 0.6rem; } }
-    .assignment-card .view-button { padding: 0.4rem 0.8rem; font-size: 0.75rem; width: 100%; text-align: center; order: 2; }
-    @media (min-width: 768px) { .assignment-card .view-button { padding: 0.5rem 1rem; font-size: 0.8rem; order: 2; } }
-    .assignment-card .view-button::after { content: ' »'; }
-
-    .vote-section { display: flex; align-items: center; justify-content: center; gap: 0.4rem; order: 1; }
-    .vote-btn {
-      background: none; border: 1px solid #555; color: #ccc; padding: 0.3rem 0.5rem; font-size: 0.8rem; border-radius: 14px; cursor: pointer; line-height: 1; transition: all 0.2s ease; font-weight: bold; min-width: 30px; min-height: 28px;
-    }
-    @media (min-width: 768px) { .vote-btn { padding: 0.4rem 0.6rem; font-size: 0.85rem; border-radius: 16px; min-width: 32px; min-height: 30px; } }
-    .vote-btn:hover { background-color: rgba(255,255,255,0.1); color: #fff; border-color: #777; transform: scale(1.05); }
-    .vote-btn.voted { background-color: #a0cfff; color: #0c0c0c; border-color: #a0cfff; }
-    .vote-btn.voted:hover { background-color: #82c0ff; }
-    .vote-count { font-size: 0.8rem; font-weight: bold; color: #e0e0e0; min-width: 1.5ch; text-align: center; }
-    @media (min-width: 768px) { .vote-count { font-size: 0.9rem; } }
-
-    /* No Assignments Message */
-    .no-assignments-message {
-      text-align: center; padding: 1.5rem 1rem; opacity: 0.7; font-size: 0.9rem; color: #aaa;
-      border: 2px dashed rgba(255,255,255,0.15); border-radius: 8px; margin: 1rem auto; grid-column: 1 / -1;
-    }
-    @media (min-width: 768px) { .no-assignments-message { padding: 4rem 2rem; font-size: 1.25rem; margin: 2rem auto; border-radius: 10px; } }
-    .no-assignments-message::before { content: '📁'; font-size: 1.5rem; display: block; margin-bottom: 0.5rem; opacity: 0.5; }
-    @media (min-width: 768px) { .no-assignments-message::before { font-size: 2.5rem; margin-bottom: 1rem; } }
-
-    /* Loader */
-    .loader-container { display: flex; justify-content: center; align-items: center; padding: 2rem 0; grid-column: 1 / -1; }
-    @media (min-width: 768px) { .loader-container { padding: 4rem 0; } }
-    .loader { border: 4px solid rgba(255, 255, 255, 0.2); border-top: 4px solid #a0cfff; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
-    @media (min-width: 768px) { .loader { border-width: 6px; width: 60px; height: 60px; } }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-    /* Touch-friendly improvements */
-    @media (hover: none) and (pointer: coarse) {
-      .assignment-card:hover { transform: none; }
-      .btn:hover, button:hover { transform: none; }
-    }
-    /* Accessibility */
-    @media (prefers-reduced-motion: reduce) {
-      * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
-    }
-    /* High contrast */
-    @media (prefers-contrast: high) { .assignment-card { border: 2px solid #fff; } .btn { border: 2px solid #000; } }
-
-    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-
-    /* Modal styles */
-    dialog {
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px; 
-      background: rgba(22, 22, 22, 0.95);
+      background: var(--elev-2);
+      border-bottom: 1px solid var(--line);
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
       backdrop-filter: blur(10px);
-      color: #e0e0e0;
-      padding: 0; 
-      max-width: 500px; 
-      width: calc(100% - 24px);
-      max-height: 90vh;
-      overflow-y: auto;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
     }
-    dialog::backdrop { 
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(4px);
-    }
-    .modal-header { 
-      padding: 20px 24px; 
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      font-weight: 600;
-      font-size: 1.1rem;
-      background: rgba(30, 30, 30, 0.8);
-      border-radius: 16px 16px 0 0;
-    }
-    .modal-body { 
-      padding: 24px; 
-      display: grid; 
-      gap: 18px; 
-    }
-    .modal-footer {
-      padding: 20px 24px;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      display: flex;
-      gap: 12px;
-      justify-content: flex-end;
-      background: rgba(15, 15, 15, 0.8);
-      border-radius: 0 0 16px 16px;
-    }
-    .field { 
-      display: grid; 
-      gap: 8px; 
-    }
-    .field label { 
-      color: #b0b0b0; 
-      font-size: 14px; 
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-    .field input, .field select {
-      padding: 12px 16px;
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      background: rgba(30, 30, 30, 0.9);
-      color: #e0e0e0;
-      font-size: 14px;
-      transition: all 0.3s ease;
-      font-family: inherit;
-    }
-    .field input:focus, .field select:focus {
-      outline: none;
-      border-color: #a0cfff;
-      background: rgba(40, 40, 40, 0.95);
-      box-shadow: 0 0 0 3px rgba(160, 207, 255, 0.25);
-      transform: translateY(-1px);
-    }
-    .field input::placeholder {
-      color: rgba(255, 255, 255, 0.4);
-    }
-    .field small {
-      color: #999;
-      font-size: 12px;
-      margin-top: 4px;
-      line-height: 1.4;
-    }
-
-    /* Enhanced button styles for modal */
-    .modal-footer .btn {
-      padding: 10px 20px;
-      font-size: 14px;
-      font-weight: 600;
-      border-radius: 8px;
-      transition: all 0.3s ease;
-      min-width: 100px;
-    }
-    .modal-footer .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-    }
-
-    /* Success/Error message styling */
-    .error {
-      color: #ff6b6b;
-      background: rgba(255, 107, 107, 0.1);
-      border: 1px solid rgba(255, 107, 107, 0.3);
-      padding: 12px 16px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 500;
-    }
-    .success {
-      color: #51cf66;
-      background: rgba(81, 207, 102, 0.1);
-      border: 1px solid rgba(81, 207, 102, 0.3);
-      padding: 12px 16px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 500;
-    }
-
-    /* Profile modal styles */
-    .profile-info {
-      display: grid;
-      gap: 12px;
-    }
-    .profile-field {
+    
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      flex-wrap: wrap;
+      gap: 1rem;
     }
-    .profile-field:last-child {
-      border-bottom: none;
+    
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), var(--ok));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
-    .profile-field .label {
-      color: #999;
-      font-size: 13px;
+    
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: all 0.2s;
+      white-space: nowrap;
       font-weight: 500;
     }
-    .profile-field .value {
-      color: #e0e0e0;
+    
+    .nav-links a:hover {
+      background: var(--elev);
+      color: var(--accent);
+    }
+    
+    .nav-links a.active {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.9rem;
+    }
+    
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--ok));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+    
+    /* Mobile Navigation */
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 0 0.5rem;
+      }
+      
+      .nav-links {
+        order: -1;
+        width: 100%;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+      
+      .nav-links a {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.9rem;
+      }
+      
+      .logo {
+        font-size: 1.2rem;
+      }
+      
+      .user-info {
+        font-size: 0.8rem;
+        gap: 0.5rem;
+      }
+      
+      .user-avatar {
+        width: 28px;
+        height: 28px;
+      }
+    }
+    
+    /* Main Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem 0.5rem;
+      }
+    }
+    
+    /* Page Header */
+    .page-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .page-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--accent), var(--soft));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .page-subtitle {
+      color: var(--soft);
+      font-size: 1.1rem;
+    }
+    
+    @media (max-width: 768px) {
+      .page-title {
+        font-size: 2rem;
+      }
+      
+      .page-subtitle {
+        font-size: 1rem;
+      }
+    }
+    
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+      color: white;
+      box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+    }
+    
+    .btn-outline {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--line);
+    }
+    
+    .btn-outline:hover {
+      background: var(--elev);
+      border-color: var(--primary);
+      color: var(--accent);
+      transform: translateY(-1px);
+    }
+    
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background: #dc2626;
+      transform: translateY(-1px);
+    }
+    
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    @media (max-width: 768px) {
+      .btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+      }
+    }
+    
+    /* Mobile Filters Toggle */
+    .mobile-filters-toggle {
+      display: none;
+      background: var(--elev-2);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .mobile-filters-toggle:hover {
+      background: var(--elev);
+      border-color: var(--primary);
+    }
+    
+    .mobile-filters-toggle .toggle-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 500;
+      color: var(--accent);
+    }
+    
+    .mobile-filters-toggle .toggle-icon {
+      transition: transform 0.2s;
+    }
+    
+    .mobile-filters-toggle.collapsed .toggle-icon {
+      transform: rotate(180deg);
+    }
+    
+    @media (max-width: 768px) {
+      .mobile-filters-toggle {
+        display: block;
+      }
+    }
+    
+    /* Filters Section */
+    .filters-section {
+      background: var(--elev-2);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      transition: max-height 0.3s ease, opacity 0.3s ease;
+      overflow: hidden;
+    }
+    
+    .filters-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    
+    .filters-grid {
+      display: grid;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    @media (min-width: 768px) {
+      .filters-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      }
+    }
+    
+    .filter-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .filter-field label {
+      font-weight: 500;
+      color: var(--soft);
+      font-size: 0.9rem;
+    }
+    
+    .filter-field input,
+    .filter-field select {
+      padding: 0.75rem;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--elev);
+      color: var(--muted);
+      font-size: 1rem;
+      transition: all 0.2s;
+      outline: none;
+    }
+    
+    .filter-field input:focus,
+    .filter-field select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+      background: var(--bg);
+    }
+    
+    .filter-field input::placeholder {
+      color: var(--soft);
+    }
+    
+    .filter-actions {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    
+    @media (max-width: 768px) {
+      .filters-section {
+        padding: 1rem;
+        max-height: 0;
+        opacity: 0;
+        margin-bottom: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+      
+      .filters-section.expanded {
+        max-height: 1000px;
+        opacity: 1;
+        margin-bottom: 2rem;
+        padding: 1rem;
+      }
+      
+      .filter-actions {
+        flex-direction: column;
+      }
+      
+      .filter-actions .btn {
+        width: 100%;
+      }
+    }
+    
+    /* Upload Button */
+    .upload-section {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .upload-btn {
+      background: linear-gradient(135deg, var(--ok), #2dd4bf);
+      color: white;
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(67, 209, 122, 0.3);
+    }
+    
+    .upload-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(67, 209, 122, 0.4);
+    }
+    
+    /* Assignments Grid */
+    .assignments-grid {
+      display: grid;
+      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+
+    @media (max-width: 768px) {
+      .assignments-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .assignments-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+    }
+    
+    /* Assignment Cards */
+    .assignment-card {
+      background: var(--elev-2);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .assignment-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+      border-color: var(--primary);
+    }
+    
+    .card-header {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--accent);
+      line-height: 1.3;
+    }
+    
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      color: var(--soft);
+    }
+    
+    .uploader-link {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    
+    .uploader-link:hover {
+      color: var(--primary-hover);
+      text-decoration: underline;
+    }
+    
+    .card-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    
+    .card-info {
+      display: grid;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+    }
+    
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .info-label {
+      color: var(--soft);
+      font-weight: 500;
+    }
+    
+    .info-value {
+      color: var(--muted);
       font-weight: 600;
     }
+    
+    .keywords {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    
+    .keyword-tag {
+      background: rgba(79, 70, 229, 0.1);
+      color: var(--primary);
+      padding: 0.25rem 0.5rem;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      border: 1px solid rgba(79, 70, 229, 0.2);
+    }
+    
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line);
+    }
+    
+    .vote-section {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .vote-btn {
+      background: transparent;
+      border: 1px solid var(--line);
+      color: var(--soft);
+      padding: 0.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+    }
+    
+    .vote-btn:hover {
+      background: var(--elev);
+      border-color: var(--primary);
+      color: var(--primary);
+      transform: scale(1.1);
+    }
+    
+    .vote-btn.voted {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+    
+    .vote-count {
+      font-weight: 600;
+      color: var(--muted);
+      min-width: 2ch;
+      text-align: center;
+    }
+    
+    .view-btn {
+      background: var(--primary);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+    
+    .view-btn:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    /* Mobile assignment cards - smaller for 2x2 */
+    @media (max-width: 768px) {
+      .assignment-card {
+        padding: 0.75rem;
+        font-size: 0.85rem;
+      }
+      
+      .card-title {
+        font-size: 0.95rem;
+        line-height: 1.2;
+      }
+      
+      .card-meta {
+        font-size: 0.7rem;
+      }
+      
+      .info-item {
+        font-size: 0.8rem;
+      }
+      
+      .keyword-tag {
+        font-size: 0.65rem;
+        padding: 0.2rem 0.4rem;
+      }
+      
+      .card-footer {
+        padding-top: 0.75rem;
+        flex-direction: row;
+        gap: 0.5rem;
+      }
+      
+      .vote-btn {
+        width: 32px;
+        height: 32px;
+      }
+      
+      .view-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .assignment-card {
+        padding: 1rem;
+      }
+      
+      .card-footer {
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: stretch;
+      }
+      
+      .vote-section {
+        justify-content: center;
+      }
+      
+      .view-btn {
+        text-align: center;
+        padding: 0.75rem;
+      }
+    }
+    
+    /* Loading and Empty States */
+    .loading-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 4rem 0;
+      grid-column: 1 / -1;
+    }
+    
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid var(--line);
+      border-top: 4px solid var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      grid-column: 1 / -1;
+      color: var(--soft);
+    }
+    
+    .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+    
+    .empty-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--muted);
+    }
+    
+    .empty-description {
+      font-size: 0.9rem;
+    }
+    
+    /* Icons */
+    .icon {
+      width: 1.2em;
+      height: 1.2em;
+      display: inline-block;
+    }
+    
+    /* Modal Styles */
+    dialog {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--elev-2);
+      color: var(--muted);
+      padding: 0;
+      max-width: 500px;
+      width: calc(100% - 2rem);
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+    }
+    
+    dialog::backdrop {
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(4px);
+    }
+    
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      font-size: 1.1rem;
+      background: var(--elev);
+      border-radius: 16px 16px 0 0;
+    }
+    
+    .modal-body {
+      padding: 1.5rem;
+      display: grid;
+      gap: 1rem;
+    }
+    
+    .modal-footer {
+      padding: 1.5rem;
+      border-top: 1px solid var(--line);
+      display: flex;
+      gap: 0.75rem;
+      justify-content: flex-end;
+      background: var(--elev);
+      border-radius: 0 0 16px 16px;
+    }
+    
+    .form-field {
+      display: grid;
+      gap: 0.5rem;
+    }
+    
+    .form-field label {
+      color: var(--soft);
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    
+    .form-field input,
+    .form-field select,
+    .form-field textarea {
+      padding: 0.75rem;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--elev);
+      color: var(--muted);
+      font-size: 1rem;
+      transition: all 0.2s;
+      outline: none;
+      font-family: inherit;
+    }
+    
+    .form-field input:focus,
+    .form-field select:focus,
+    .form-field textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+      background: var(--bg);
+    }
+    
+    .form-field input::placeholder,
+    .form-field textarea::placeholder {
+      color: var(--soft);
+    }
+    
+    .form-hint {
+      font-size: 0.8rem;
+      color: var(--soft);
+      margin-top: 0.25rem;
+    }
+    
+    .message {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-top: 1rem;
+    }
+    
+    .message.success {
+      background: rgba(67, 209, 122, 0.1);
+      color: var(--ok);
+      border: 1px solid rgba(67, 209, 122, 0.2);
+    }
+    
+    .message.error {
+      background: rgba(255, 93, 93, 0.1);
+      color: var(--danger);
+      border: 1px solid rgba(255, 93, 93, 0.2);
+    }
+    
+    @media (max-width: 768px) {
+      dialog {
+        width: calc(100% - 1rem);
+        max-height: 95vh;
+      }
+      
+      .modal-header,
+      .modal-body,
+      .modal-footer {
+        padding: 1rem;
+      }
+      
+      .modal-footer {
+        flex-direction: column;
+      }
+      
+      .modal-footer .btn {
+        width: 100%;
+      }
+    }
+    
+    /* Profile Modal */
     .profile-avatar {
       width: 70px;
       height: 70px;
       border-radius: 50%;
-      background: linear-gradient(135deg, rgba(160, 207, 255, 0.2), rgba(160, 207, 255, 0.1));
-      border: 2px solid rgba(160, 207, 255, 0.3);
+      background: linear-gradient(135deg, var(--primary), var(--ok));
+      color: white;
+      font-size: 28px;
+      font-weight: 700;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
-      font-weight: 700;
-      color: #a0cfff;
-      margin: 0 auto 20px;
+      margin: 0 auto 1rem;
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
     }
+    
+    .profile-info {
+      display: grid;
+      gap: 0.75rem;
+    }
+    
+    .profile-field {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--line);
+    }
+    
+    .profile-field:last-child {
+      border-bottom: none;
+    }
+    
+    .profile-field .label {
+      color: var(--soft);
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    
+    .profile-field .value {
+      color: var(--muted);
+      font-weight: 600;
+    }
+    
     .profile-links {
       display: flex;
-      gap: 10px;
+      gap: 0.5rem;
       flex-wrap: wrap;
-      margin-top: 16px;
+      margin-top: 1rem;
       justify-content: center;
     }
+    
     .profile-link {
-      padding: 8px 16px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--line);
       border-radius: 20px;
-      color: #e0e0e0;
+      color: var(--muted);
       text-decoration: none;
-      font-size: 12px;
+      font-size: 0.8rem;
       font-weight: 500;
-      transition: all 0.3s ease;
-      background: rgba(30, 30, 30, 0.6);
+      transition: all 0.2s;
+      background: var(--elev);
     }
+    
     .profile-link:hover {
-      background: rgba(160, 207, 255, 0.1);
-      border-color: rgba(160, 207, 255, 0.3);
-      color: #a0cfff;
-      text-decoration: none;
-      transform: translateY(-2px);
+      background: var(--primary);
+      color: white;
+      transform: translateY(-1px);
     }
-
-    /* Loading state for submit button */
-    .btn.loading {
-      position: relative;
-      color: transparent;
+    
+    /* Accessibility */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
     }
-    .btn.loading::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 16px;
-      height: 16px;
-      border: 2px solid transparent;
-      border-top: 2px solid currentColor;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      color: #000;
+    
+    /* Focus styles */
+    .btn:focus-visible,
+    input:focus-visible,
+    select:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
     }
-
-    /* Responsive modal */
-    @media (max-width: 768px) {
-      dialog {
-        width: calc(100% - 16px);
-        max-height: 95vh;
-      }
-      .modal-header, .modal-body, .modal-footer {
-        padding-left: 16px;
-        padding-right: 16px;
-      }
-      .modal-footer {
-        flex-direction: column;
-      }
-      .modal-footer .btn {
-        width: 100%;
-      }
+    
+    /* Hidden utility */
+    .hidden {
+      display: none !important;
     }
   </style>
 </head>
 <body>
   <header>
-    <nav aria-label="Main">
-      <div class="logo" aria-label="PFL Logo">PFL</div>
-      <div class="header-nav-links" role="navigation" aria-label="Primary">
+    <div class="header-content">
+      <div class="logo">PFL</div>
+      <nav class="nav-links">
         <a href="index.html">Home</a>
         <a href="chat.html">Chat</a>
+        <a href="assignments.html" class="active">Assignments</a>
         <a href="profile.html">Profile</a>
-        <button id="uploadBtn" class="btn" type="button" style="display:none">Upload Assignment</button>
+        <a href="pyqs.html">PYQ's</a>
+      </nav>
+      <div class="user-info">
+        <div class="user-avatar" id="user-avatar">?</div>
+        <span id="user-name">Guest</span>
+        <button id="logout-btn" class="btn btn-outline hidden">Sign Out</button>
+        <a href="login.html" id="login-link" class="btn btn-primary" style="display:none">Sign In</a>
       </div>
-      <div class="user-auth-info">
-        <span id="assignmentUserEmail">Not logged in</span>
-        <button id="assignmentLogoutBtn" class="btn btn-secondary hidden" type="button">Logout</button>
-        <a href="login.html" id="assignmentLoginLink" class="btn" style="display:none">Login</a>
-      </div>
-    </nav>
+    </div>
   </header>
 
   <main class="container">
-    <h1>Assignments Hub</h1>
+    <div class="page-header">
+      <h1 class="page-title">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+        Assignments Hub
+      </h1>
+      <p class="page-subtitle">Share, discover, and vote on the best programming assignments</p>
+    </div>
 
-    <div class="filters-bar" role="region" aria-label="Assignment filters">
-      <input type="text" id="searchTerm" placeholder="Search assignments..." class="form-control" aria-label="Search assignments" />
-      <select id="filterSemester" class="form-control" aria-label="Filter by semester">
-        <option value="">All Semesters</option>
-      </select>
-      <select id="filterSubject" class="form-control" aria-label="Filter by subject">
-        <option value="">All Subjects</option>
-      </select>
-      <input type="text" id="filterAssignmentNumber" placeholder="Assignment No." class="form-control" aria-label="Filter by assignment number" />
-      <select id="sortBy" class="form-control" aria-label="Sort assignments">
-        <option value="uploadDate_desc">Newest First</option>
-        <option value="votes_desc">Most Voted</option>
-        <option value="uploadDate_asc">Oldest First</option>
-      </select>
-      <div class="filter-buttons-container">
-        <button id="applyFiltersBtn" class="btn" type="button">Apply Filters</button>
-        <button id="resetFiltersBtn" class="btn btn-secondary" type="button">Reset</button>
+    <!-- Upload Section -->
+    <div class="upload-section">
+      <button id="upload-btn" class="btn upload-btn">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+        </svg>
+        Upload Assignment
+      </button>
+    </div>
+
+    <!-- Mobile Filters Toggle -->
+    <div class="mobile-filters-toggle collapsed" id="mobile-filters-toggle">
+      <div class="toggle-content">
+        <span>
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.707A1 1 0 013 7V4z"></path>
+          </svg>
+          Filter & Search
+        </span>
+        <svg class="toggle-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
       </div>
     </div>
 
-    <div id="assignmentsGrid" class="assignments-grid" aria-live="polite" aria-busy="false">
-      <!-- Assignments will be injected here -->
+    <!-- Filters Section -->
+    <div class="filters-section" id="filters-section">
+      <div class="filters-header">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.707A1 1 0 013 7V4z"></path>
+        </svg>
+        Filter & Search
+      </div>
+      
+      <div class="filters-grid">
+        <div class="filter-field">
+          <label for="search-input">Search Assignments</label>
+          <input 
+            type="text" 
+            id="search-input" 
+            placeholder="Search by title, subject, or keywords..."
+          />
+        </div>
+        
+        <div class="filter-field">
+          <label for="semester-filter">Semester</label>
+          <select id="semester-filter">
+            <option value="">All Semesters</option>
+          </select>
+        </div>
+        
+        <div class="filter-field">
+          <label for="subject-filter">Subject</label>
+          <select id="subject-filter">
+            <option value="">All Subjects</option>
+          </select>
+        </div>
+        
+        <div class="filter-field">
+          <label for="assignment-number-filter">Assignment No.</label>
+          <input 
+            type="text" 
+            id="assignment-number-filter" 
+            placeholder="e.g., 1, Lab-2"
+          />
+        </div>
+        
+        <div class="filter-field">
+          <label for="sort-select">Sort By</label>
+          <select id="sort-select">
+            <option value="uploadDate_desc">Newest First</option>
+            <option value="votes_desc">Most Voted</option>
+            <option value="uploadDate_asc">Oldest First</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="filter-actions">
+        <button id="apply-filters-btn" class="btn btn-primary">
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+          Apply Filters
+        </button>
+        <button id="reset-filters-btn" class="btn btn-outline">
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+          </svg>
+          Reset
+        </button>
+      </div>
     </div>
 
-    <!-- Upload Assignment Modal -->
-    <dialog id="uploadModal">
-      <form method="dialog" id="uploadForm">
-        <div class="modal-header">
-          <strong>Upload Assignment</strong>
-          <button class="btn btn-secondary" value="cancel" aria-label="Close">Close</button>
-        </div>
-        <div class="modal-body">
-          <div class="field">
-            <label for="assignmentTitle">Assignment Title *</label>
-            <input type="text" id="assignmentTitle" class="form-control" placeholder="e.g., Data Structures Lab 1" required maxlength="100" />
-          </div>
-          <div class="field">
-            <label for="subject">Subject *</label>
-            <input type="text" id="subject" class="form-control" placeholder="e.g., Computer Science" required maxlength="50" />
-          </div>
-          <div class="field">
-            <label for="semester">Semester *</label>
-            <select id="semester" class="form-control" required>
-              <option value="">Select Semester</option>
-              <option value="1">1st Semester</option>
-              <option value="2">2nd Semester</option>
-              <option value="3">3rd Semester</option>
-              <option value="4">4th Semester</option>
-              <option value="5">5th Semester</option>
-              <option value="6">6th Semester</option>
-              <option value="7">7th Semester</option>
-              <option value="8">8th Semester</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="assignmentNumber">Assignment Number</label>
-            <input type="text" id="assignmentNumber" class="form-control" placeholder="e.g., 1, 2, Lab-1" maxlength="20" />
-          </div>
-          <div class="field">
-            <label for="driveLink">Google Drive Link *</label>
-            <input type="url" id="driveLink" class="form-control" placeholder="https://drive.google.com/..." required />
-            <small style="color: var(--soft); font-size: 0.8rem;">Make sure the link is publicly accessible</small>
-          </div>
-          <div class="field">
-            <label for="keywords">Keywords (comma-separated)</label>
-            <input type="text" id="keywords" class="form-control" placeholder="e.g., arrays, sorting, algorithms" maxlength="200" />
-            <small style="color: var(--soft); font-size: 0.8rem;">Help others find your assignment</small>
-          </div>
-          <div id="uploadMessage" class="error" style="display: none; margin-top: 10px;"></div>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn" id="submitUpload">Upload Assignment</button>
-          <button type="button" class="btn btn-secondary" id="cancelUpload">Cancel</button>
-        </div>
-      </form>
-    </dialog>
-
-    <!-- Profile Modal -->
-    <dialog id="profile-modal">
-      <form method="dialog">
-        <div class="modal-header">
-          <strong id="profile-modal-title">User Profile</strong>
-          <button class="btn btn-secondary" value="cancel" aria-label="Close">Close</button>
-        </div>
-        <div class="modal-body" id="profile-modal-body">
-          <div class="profile-avatar" id="profile-avatar"></div>
-          <div class="profile-info" id="profile-info"></div>
-        </div>
-      </form>
-    </dialog>
+    <!-- Assignments Grid -->
+    <div id="assignments-grid" class="assignments-grid">
+      <div class="loading-container">
+        <div class="loading-spinner"></div>
+      </div>
+    </div>
   </main>
+
+  <!-- Upload Modal -->
+  <dialog id="upload-modal">
+    <form method="dialog" id="upload-form">
+      <div class="modal-header">
+        <strong>
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+          </svg>
+          Upload Assignment
+        </strong>
+        <button class="btn btn-outline" value="cancel">Close</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-field">
+          <label for="assignment-title">Assignment Title *</label>
+          <input 
+            type="text" 
+            id="assignment-title" 
+            placeholder="e.g., Data Structures Lab 1" 
+            required 
+            maxlength="100" 
+          />
+        </div>
+        
+        <div class="form-field">
+          <label for="subject">Subject *</label>
+          <input 
+            type="text" 
+            id="subject" 
+            placeholder="e.g., Computer Science" 
+            required 
+            maxlength="50" 
+          />
+        </div>
+        
+        <div class="form-field">
+          <label for="semester">Semester *</label>
+          <select id="semester" required>
+            <option value="">Select Semester</option>
+            <option value="1">1st Semester</option>
+            <option value="2">2nd Semester</option>
+            <option value="3">3rd Semester</option>
+            <option value="4">4th Semester</option>
+            <option value="5">5th Semester</option>
+            <option value="6">6th Semester</option>
+            <option value="7">7th Semester</option>
+            <option value="8">8th Semester</option>
+          </select>
+        </div>
+        
+        <div class="form-field">
+          <label for="assignment-number">Assignment Number</label>
+          <input 
+            type="text" 
+            id="assignment-number" 
+            placeholder="e.g., 1, 2, Lab-1" 
+            maxlength="20" 
+          />
+        </div>
+        
+        <div class="form-field">
+          <label for="drive-link">Google Drive Link *</label>
+          <input 
+            type="url" 
+            id="drive-link" 
+            placeholder="https://drive.google.com/..." 
+            required 
+          />
+          <div class="form-hint">Make sure the link is publicly accessible</div>
+        </div>
+        
+        <div class="form-field">
+          <label for="keywords">Keywords (comma-separated)</label>
+          <input 
+            type="text" 
+            id="keywords" 
+            placeholder="e.g., arrays, sorting, algorithms" 
+            maxlength="200" 
+          />
+          <div class="form-hint">Help others find your assignment</div>
+        </div>
+        
+        <div id="upload-message" class="message" style="display: none;"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary" id="submit-upload">
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+          </svg>
+          Upload Assignment
+        </button>
+        <button type="button" class="btn btn-outline" id="cancel-upload">Cancel</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Profile Modal -->
+  <dialog id="profile-modal">
+    <form method="dialog">
+      <div class="modal-header">
+        <strong id="profile-modal-title">User Profile</strong>
+        <button class="btn btn-outline" value="cancel">Close</button>
+      </div>
+      <div class="modal-body">
+        <div class="profile-avatar" id="profile-avatar"></div>
+        <div class="profile-info" id="profile-info"></div>
+      </div>
+    </form>
+  </dialog>
 
   <script type="module">
     import { auth, db, initAuth, signOutUser, redirectToLogin, requireAuth } from './js/auth.js';
@@ -553,17 +1197,38 @@
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     // DOM elements
-    const assignmentUserEmailEl = document.getElementById('assignmentUserEmail');
-    const assignmentLogoutBtnEl = document.getElementById('assignmentLogoutBtn');
-    const assignmentLoginLinkEl = document.getElementById('assignmentLoginLink');
-    const assignmentsGridEl = document.getElementById('assignmentsGrid');
-    const searchTermInputEl = document.getElementById('searchTerm');
-    const filterSemesterSelectEl = document.getElementById('filterSemester');
-    const filterSubjectSelectEl = document.getElementById('filterSubject');
-    const filterAssignmentNumberInputEl = document.getElementById('filterAssignmentNumber');
-    const sortBySelectEl = document.getElementById('sortBy');
-    const applyFiltersBtnEl = document.getElementById('applyFiltersBtn');
-    const resetFiltersBtnEl = document.getElementById('resetFiltersBtn');
+    const userAvatar = document.getElementById('user-avatar');
+    const userName = document.getElementById('user-name');
+    const logoutBtn = document.getElementById('logout-btn');
+    const loginLink = document.getElementById('login-link');
+    const assignmentsGrid = document.getElementById('assignments-grid');
+    const searchInput = document.getElementById('search-input');
+    const semesterFilter = document.getElementById('semester-filter');
+    const subjectFilter = document.getElementById('subject-filter');
+    const assignmentNumberFilter = document.getElementById('assignment-number-filter');
+    const sortSelect = document.getElementById('sort-select');
+    const applyFiltersBtn = document.getElementById('apply-filters-btn');
+    const resetFiltersBtn = document.getElementById('reset-filters-btn');
+
+    // Mobile filters toggle
+    const mobileFiltersToggle = document.getElementById('mobile-filters-toggle');
+    const filtersSection = document.getElementById('filters-section');
+
+    // Upload elements
+    const uploadBtn = document.getElementById('upload-btn');
+    const uploadModal = document.getElementById('upload-modal');
+    const uploadForm = document.getElementById('upload-form');
+    const submitUpload = document.getElementById('submit-upload');
+    const cancelUpload = document.getElementById('cancel-upload');
+    const uploadMessage = document.getElementById('upload-message');
+
+    // Form elements
+    const assignmentTitleEl = document.getElementById('assignment-title');
+    const subjectEl = document.getElementById('subject');
+    const semesterEl = document.getElementById('semester');
+    const assignmentNumberEl = document.getElementById('assignment-number');
+    const driveLinkEl = document.getElementById('drive-link');
+    const keywordsEl = document.getElementById('keywords');
 
     // Global State
     let allAssignments = [];
@@ -572,6 +1237,27 @@
     let currentProfile = null;
 
     const profileCache = new Map();
+
+    // Mobile filters toggle functionality
+    function toggleMobileFilters() {
+      const isCollapsed = mobileFiltersToggle.classList.contains('collapsed');
+      
+      if (isCollapsed) {
+        mobileFiltersToggle.classList.remove('collapsed');
+        filtersSection.classList.add('expanded');
+      } else {
+        mobileFiltersToggle.classList.add('collapsed');
+        filtersSection.classList.remove('expanded');
+      }
+    }
+
+    // Initialize filters as collapsed on mobile
+    function initializeMobileFilters() {
+      if (window.innerWidth <= 768) {
+        mobileFiltersToggle.classList.add('collapsed');
+        filtersSection.classList.remove('expanded');
+      }
+    }
 
     // Profile Modal functionality
     async function loadProfile(uid) {
@@ -686,37 +1372,24 @@
 
     function updateAuthUI() {
       if (currentUser) {
-        assignmentUserEmailEl.textContent = currentProfile?.name || currentUser.email;
-        assignmentLoginLinkEl.style.display = 'none';
-        assignmentLogoutBtnEl.classList.remove('hidden');
-        uploadBtn.style.display = ''; // Show upload button
+        const displayName = currentProfile?.name || currentUser.email;
+        const avatar = currentProfile?.name ? currentProfile.name[0].toUpperCase() : currentUser.email[0].toUpperCase();
+        
+        userAvatar.textContent = avatar;
+        userName.textContent = displayName;
+        loginLink.style.display = 'none';
+        logoutBtn.classList.remove('hidden');
       } else {
-        assignmentUserEmailEl.textContent = 'Not logged in';
-        assignmentLoginLinkEl.style.display = '';
-        assignmentLogoutBtnEl.classList.add('hidden');
-        uploadBtn.style.display = 'none'; // Hide upload button
+        userAvatar.textContent = '?';
+        userName.textContent = 'Guest';
+        loginLink.style.display = 'inline-flex';
+        logoutBtn.classList.add('hidden');
       }
     }
 
-    // Upload functionality
-    const uploadBtn = document.getElementById('uploadBtn');
-    const uploadModal = document.getElementById('uploadModal');
-    const uploadForm = document.getElementById('uploadForm');
-    const submitUpload = document.getElementById('submitUpload');
-    const cancelUpload = document.getElementById('cancelUpload');
-    const uploadMessage = document.getElementById('uploadMessage');
-
-    // Form elements
-    const assignmentTitleEl = document.getElementById('assignmentTitle');
-    const subjectEl = document.getElementById('subject');
-    const semesterEl = document.getElementById('semester');
-    const assignmentNumberEl = document.getElementById('assignmentNumber');
-    const driveLinkEl = document.getElementById('driveLink');
-    const keywordsEl = document.getElementById('keywords');
-
     function showUploadMessage(text, isError = true) {
       uploadMessage.textContent = text;
-      uploadMessage.className = isError ? 'error' : 'success';
+      uploadMessage.className = `message ${isError ? 'error' : 'success'}`;
       uploadMessage.style.display = 'block';
     }
 
@@ -759,10 +1432,10 @@
       // Parse keywords
       const keywordArray = keywords ? keywords.split(',').map(k => k.trim()).filter(k => k.length > 0) : [];
 
-      // Replace the existing loading logic in handleUploadSubmit function
+      // Show loading state
+      const originalText = submitUpload.innerHTML;
+      submitUpload.innerHTML = '<div class="loading-spinner" style="width: 16px; height: 16px;"></div> Uploading...';
       submitUpload.disabled = true;
-      submitUpload.classList.add('loading');
-      submitUpload.textContent = 'Uploading...';
 
       try {
         const assignmentData = {
@@ -794,32 +1467,19 @@
         console.error('Error uploading assignment:', error);
         showUploadMessage('Failed to upload assignment. Please try again.');
       } finally {
-        // And in the finally block:
+        submitUpload.innerHTML = originalText;
         submitUpload.disabled = false;
-        submitUpload.classList.remove('loading');
-        submitUpload.textContent = 'Upload Assignment';
       }
     }
 
-    // Event listeners for upload functionality
-    uploadBtn.addEventListener('click', () => {
-      if (!currentUser) {
-        redirectToLogin();
-        return;
-      }
-      resetUploadForm();
-      uploadModal.showModal();
-    });
-
-    uploadForm.addEventListener('submit', handleUploadSubmit);
-    cancelUpload.addEventListener('click', () => {
-      uploadModal.close();
-    });
-
     // Assignment functions
     async function fetchAssignments() {
-      assignmentsGridEl.setAttribute('aria-busy', 'true');
-      assignmentsGridEl.innerHTML = '<div class="loader-container"><div class="loader" role="progressbar" aria-label="Loading assignments"></div></div>';
+      assignmentsGrid.innerHTML = `
+        <div class="loading-container">
+          <div class="loading-spinner"></div>
+        </div>
+      `;
+      
       try {
         const assignmentsQuery = query(collection(db, "assignments"), orderBy("uploadDate", "desc"));
         const snapshot = await getDocs(assignmentsQuery);
@@ -828,29 +1488,35 @@
         await renderAssignments(allAssignments);
       } catch (error) {
         console.error("Error fetching assignments:", error);
-        assignmentsGridEl.innerHTML = `
-          <div class="no-assignments-message">
-            Could not load assignments.
-            <div style="margin-top: 12px;">
-              <button id="retryFetchBtn" class="btn btn-secondary" type="button">Retry</button>
-            </div>
-          </div>`;
-        document.getElementById('retryFetchBtn')?.addEventListener('click', fetchAssignments);
-      } finally {
-        assignmentsGridEl.setAttribute('aria-busy', 'false');
+        assignmentsGrid.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">⚠️</div>
+            <div class="empty-title">Could not load assignments</div>
+            <div class="empty-description">Please check your connection and try again</div>
+            <button class="btn btn-primary" onclick="fetchAssignments()" style="margin-top: 1rem;">Retry</button>
+          </div>
+        `;
       }
     }
 
     async function renderAssignments(assignmentsToRender) {
-      assignmentsGridEl.innerHTML = '';
+      assignmentsGrid.innerHTML = '';
+      
       if (!assignmentsToRender || assignmentsToRender.length === 0) {
-        assignmentsGridEl.innerHTML = '<p class="no-assignments-message">No assignments found.</p>';
+        assignmentsGrid.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">📁</div>
+            <div class="empty-title">No assignments found</div>
+            <div class="empty-description">Try adjusting your filters or be the first to upload!</div>
+          </div>
+        `;
         return;
       }
 
       const uploaderNamePromises = assignmentsToRender.map(assignment =>
         fetchUploaderName(assignment.uploaderId, assignment.uploaderEmail || 'Anonymous')
       );
+      
       let uploaderNames = [];
       try {
         uploaderNames = await Promise.all(uploaderNamePromises);
@@ -867,26 +1533,60 @@
         const userHasVoted = currentUser && Array.isArray(assignment.votedBy) && assignment.votedBy.includes(currentUser?.uid);
 
         card.innerHTML = `
-          <div>
-            <h3>${assignment.assignmentTitle || 'Untitled'}</h3>
-            <p><strong>Uploader:</strong> <span class="uploader-name-link" onclick="openProfileModal('${assignment.uploaderId}')" style="cursor: pointer;">${uploaderName}</span></p>
-            <p><strong>Subject:</strong> ${assignment.subject || 'N/A'}</p>
-            <p><strong>Semester:</strong> ${getOrdinalSuffix(assignment.semester)}</p>
-            ${assignment.assignmentNumber ? `<p><strong>Assignment No.:</strong> ${assignment.assignmentNumber}</p>` : ''}
-            <p><strong>Uploaded:</strong> ${uploadDate}</p>
-            ${assignment.keywords?.length > 0 ? `<div class="keywords">${assignment.keywords.map(k => `<span>${k}</span>`).join('')}</div>` : ''}
+          <div class="card-header">
+            <div class="card-title">${assignment.assignmentTitle || 'Untitled'}</div>
+            <div class="card-meta">
+              <span class="uploader-link" onclick="openProfileModal('${assignment.uploaderId}')">${uploaderName}</span>
+              <span>•</span>
+              <span>${uploadDate}</span>
+            </div>
           </div>
+          
+          <div class="card-body">
+            <div class="card-info">
+              <div class="info-item">
+                <span class="info-label">Subject</span>
+                <span class="info-value">${assignment.subject || 'N/A'}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Semester</span>
+                <span class="info-value">${getOrdinalSuffix(assignment.semester)}</span>
+              </div>
+              ${assignment.assignmentNumber ? `
+                <div class="info-item">
+                  <span class="info-label">Assignment No.</span>
+                  <span class="info-value">${assignment.assignmentNumber}</span>
+                </div>
+              ` : ''}
+            </div>
+            
+            ${assignment.keywords?.length > 0 ? `
+              <div class="keywords">
+                ${assignment.keywords.map(k => `<span class="keyword-tag">${k}</span>`).join('')}
+              </div>
+            ` : ''}
+          </div>
+          
           <div class="card-footer">
-            <a href="${assignment.driveLink || '#'}" target="_blank" rel="noopener noreferrer" class="btn view-button">View Assignment</a>
-            <div class="vote-section" data-assignment-id="${assignment.id}">
-              <button class="vote-btn ${userHasVoted ? 'voted' : ''}" data-assignment-id="${assignment.id}" aria-label="Vote">▲</button>
+            <div class="vote-section">
+              <button class="vote-btn ${userHasVoted ? 'voted' : ''}" onclick="handleVote('${assignment.id}', this)">
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                </svg>
+              </button>
               <span class="vote-count">${assignment.votes || 0}</span>
             </div>
+            
+            <a href="${assignment.driveLink || '#'}" target="_blank" rel="noopener noreferrer" class="view-btn">
+              <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+              </svg>
+              View Assignment
+            </a>
           </div>
         `;
 
-        card.querySelector('.vote-btn')?.addEventListener('click', (event) => handleVote(assignment.id, event.currentTarget));
-        assignmentsGridEl.appendChild(card);
+        assignmentsGrid.appendChild(card);
       });
     }
 
@@ -897,8 +1597,8 @@
       }
       if (!assignmentId) return;
 
-      const parent = voteButtonElement.closest('.vote-section');
-      const voteCountSpan = parent?.querySelector('.vote-count');
+      const voteSection = voteButtonElement.closest('.vote-section');
+      const voteCountSpan = voteSection?.querySelector('.vote-count');
       const originalVoted = voteButtonElement.classList.contains('voted');
       const originalCount = parseInt(voteCountSpan?.textContent || '0', 10);
 
@@ -927,6 +1627,7 @@
         if (voteCountSpan) {
           voteCountSpan.textContent = String(originalCount);
         }
+        console.error('Vote error:', error);
       } finally {
         voteButtonElement.disabled = false;
       }
@@ -936,8 +1637,8 @@
     function populateAllFilters() {
       const semesters = [...new Set(allAssignments.map(a => a.semester).filter(Boolean))].sort((a, b) => a - b);
       const subjects = [...new Set(allAssignments.map(a => a.subject).filter(Boolean))].sort();
-      populateFilterDropdown(filterSemesterSelectEl, semesters, 'All Semesters');
-      populateFilterDropdown(filterSubjectSelectEl, subjects, 'All Subjects');
+      populateFilterDropdown(semesterFilter, semesters, 'All Semesters');
+      populateFilterDropdown(subjectFilter, subjects, 'All Subjects');
     }
 
     function populateFilterDropdown(selectElement, items, defaultOptionText) {
@@ -950,11 +1651,11 @@
     function applyCurrentFilters() {
       if (!allAssignments) return;
 
-      const searchTerm = searchTermInputEl.value.toLowerCase().trim();
-      const selectedSemester = filterSemesterSelectEl.value;
-      const selectedSubject = filterSubjectSelectEl.value;
-      const assignmentNumFilter = filterAssignmentNumberInputEl.value.toLowerCase().trim();
-      const sortByValue = sortBySelectEl.value;
+      const searchTerm = searchInput.value.toLowerCase().trim();
+      const selectedSemester = semesterFilter.value;
+      const selectedSubject = subjectFilter.value;
+      const assignmentNumFilter = assignmentNumberFilter.value.toLowerCase().trim();
+      const sortByValue = sortSelect.value;
 
       let filtered = allAssignments.filter(a =>
         (searchTerm ? [a.assignmentTitle, a.subject, ...(a.keywords || [])].join(' ').toLowerCase().includes(searchTerm) : true) &&
@@ -973,11 +1674,11 @@
     }
 
     function resetAllFilters() {
-      searchTermInputEl.value = '';
-      filterSemesterSelectEl.value = '';
-      filterSubjectSelectEl.value = '';
-      filterAssignmentNumberInputEl.value = '';
-      sortBySelectEl.value = 'uploadDate_desc';
+      searchInput.value = '';
+      semesterFilter.value = '';
+      subjectFilter.value = '';
+      assignmentNumberFilter.value = '';
+      sortSelect.value = 'uploadDate_desc';
       applyCurrentFilters();
     }
 
@@ -1000,10 +1701,28 @@
     }
 
     // Event listeners
-    assignmentLogoutBtnEl.addEventListener('click', signOutUser);
-    applyFiltersBtnEl.addEventListener('click', applyCurrentFilters);
-    resetFiltersBtnEl.addEventListener('click', resetAllFilters);
-    sortBySelectEl.addEventListener('change', applyCurrentFilters);
+    logoutBtn.addEventListener('click', signOutUser);
+    applyFiltersBtn.addEventListener('click', applyCurrentFilters);
+    resetFiltersBtn.addEventListener('click', resetAllFilters);
+    sortSelect.addEventListener('change', applyCurrentFilters);
+
+    // Mobile filters toggle
+    mobileFiltersToggle.addEventListener('click', toggleMobileFilters);
+
+    // Upload functionality - Show for all users, redirect to login if not authenticated
+    uploadBtn.addEventListener('click', () => {
+      if (!currentUser) {
+        redirectToLogin();
+        return;
+      }
+      resetUploadForm();
+      uploadModal.showModal();
+    });
+
+    uploadForm.addEventListener('submit', handleUploadSubmit);
+    cancelUpload.addEventListener('click', () => {
+      uploadModal.close();
+    });
 
     // Initialize auth
     initAuth({
@@ -1015,10 +1734,24 @@
       }
     });
 
-    // Initial load
+    // Make functions global
+    window.openProfileModal = openProfileModal;
+    window.handleVote = handleVote;
+    window.fetchAssignments = fetchAssignments;
+
+    // Initialize mobile filters and load assignments
+    initializeMobileFilters();
     fetchAssignments();
 
-    window.openProfileModal = openProfileModal;
+    // Handle window resize for mobile filters
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768) {
+        filtersSection.classList.remove('expanded');
+        mobileFiltersToggle.classList.add('collapsed');
+      } else {
+        initializeMobileFilters();
+      }
+    });
   </script>
 </body>
 </html>
