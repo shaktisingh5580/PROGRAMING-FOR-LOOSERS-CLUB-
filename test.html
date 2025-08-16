@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneSignal Test Page</title>
+    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .btn {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover { background: #0056b3; }
+        .btn:disabled { background: #6c757d; cursor: not-allowed; }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            border: 1px solid #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔔 OneSignal Setup Test</h1>
+        <p>Use this page to test your OneSignal configuration before implementing it in your main app.</p>
+        
+        <div id="status-container"></div>
+        
+        <h2>📋 Configuration</h2>
+        <div>
+            <label>App ID:</label>
+            <input type="text" id="app-id" placeholder="Enter your OneSignal App ID" style="width: 100%; padding: 8px; margin: 5px 0;">
+        </div>
+        <div>
+            <label>REST API Key:</label>
+            <input type="text" id="rest-key" placeholder="Enter your OneSignal REST API Key" style="width: 100%; padding: 8px; margin: 5px 0;">
+        </div>
+        <div>
+            <label>Site URL:</label>
+            <input type="text" id="site-url" placeholder="https://yourusername.github.io/repo-name/" style="width: 100%; padding: 8px; margin: 5px 0;">
+        </div>
+        
+        <h2>🧪 Tests</h2>
+        <button class="btn" onclick="testSDKLoaded()">1. Test SDK Loaded</button>
+        <button class="btn" onclick="initializeOneSignal()">2. Initialize OneSignal</button>
+        <button class="btn" onclick="requestPermission()">3. Request Permission</button>
+        <button class="btn" onclick="checkSubscription()">4. Check Subscription</button>
+        <button class="btn" onclick="sendTestNotification()">5. Send Test Notification</button>
+        <button class="btn" onclick="runAllTests()">🚀 Run All Tests</button>
+        
+        <h2>📊 Results</h2>
+        <div id="results"></div>
+        
+        <h2>📝 Setup Instructions</h2>
+        <div class="info">
+            <strong>Quick Setup Steps:</strong>
+            <ol>
+                <li>Create OneSignal account at <a href="https://onesignal.com" target="_blank">onesignal.com</a></li>
+                <li>Create new Web Push app</li>
+                <li>Get your App ID and REST API Key from Settings → Keys & IDs</li>
+                <li>Enter your keys above and run tests</li>
+                <li>Copy working configuration to your main app</li>
+            </ol>
+        </div>
+        
+        <h2>🔧 Code to Copy</h2>
+        <p>After successful testing, copy this code to your main application:</p>
+        <pre id="code-output">// Run tests first to generate your configuration code</pre>
+    </div>
+
+    <script>
+        let appId = '';
+        let restKey = '';
+        let siteUrl = '';
+        let oneSignalInitialized = false;
+
+        function log(message, type = 'info') {
+            const container = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.innerHTML = `${new Date().toLocaleTimeString()}: ${message}`;
+            container.appendChild(div);
+            console.log(message);
+        }
+
+        function updateConfig() {
+            appId = document.getElementById('app-id').value.trim();
+            restKey = document.getElementById('rest-key').value.trim();
+            siteUrl = document.getElementById('site-url').value.trim();
+        }
+
+        function testSDKLoaded() {
+            log('Testing OneSignal SDK...', 'info');
+            
+            if (typeof OneSignal === 'undefined') {
+                log('❌ OneSignal SDK not loaded! Check your internet connection.', 'error');
+                return false;
+            }
+            
+            log('✅ OneSignal SDK loaded successfully!', 'success');
+            return true;
+        }
+
+        async function initializeOneSignal() {
+            updateConfig();
+            
+            if (!appId) {
+                log('❌ Please enter your App ID first!', 'error');
+                return false;
+            }
+            
+            if (!testSDKLoaded()) return false;
+            
+            try {
+                log('Initializing OneSignal...', 'info');
+                
+                await OneSignal.init({
+                    appId: appId,
+                    allowLocalhostAsSecureOrigin: true,
+                    notifyButton: { enable: false }
+                });
+                
+                oneSignalInitialized = true;
+                log('✅ OneSignal initialized successfully!', 'success');
+                
+                // Generate code
+                generateCode();
+                return true;
+                
+            } catch (error) {
+                log(`❌ OneSignal initialization failed: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        async function requestPermission() {
+            if (!oneSignalInitialized) {
+                log('❌ Please initialize OneSignal first!', 'error');
+                return false;
+            }
+            
+            try {
+                log('Requesting notification permission...', 'info');
+                
+                const permission = await OneSignal.showNativePrompt();
+                
+                if (permission) {
+                    log('✅ Notification permission granted!', 'success');
+                    return true;
+                } else {
+                    log('❌ Notification permission denied by user.', 'error');
+                    return false;
+                }
+                
+            } catch (error) {
+                log(`❌ Permission request failed: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        async function checkSubscription() {
+            if (!oneSignalInitialized) {
+                log('❌ Please initialize OneSignal first!', 'error');
+                return false;
+            }
+            
+            try {
+                log('Checking subscription status...', 'info');
+                
+                const isSubscribed = await OneSignal.isPushNotificationsEnabled();
+                const playerId = await OneSignal.getPlayerId();
+                
+                if (isSubscribed && playerId) {
+                    log(`✅ User is subscribed! Player ID: ${playerId}`, 'success');
+                    return true;
+                } else {
+                    log('❌ User is not subscribed to notifications.', 'error');
+                    return false;
+                }
+                
+            } catch (error) {
+                log(`❌ Subscription check failed: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        async function sendTestNotification() {
+            updateConfig();
+            
+            if (!restKey) {
+                log('❌ Please enter your REST API Key first!', 'error');
+                return false;
+            }
+            
+            if (!oneSignalInitialized) {
+                log('❌ Please initialize OneSignal first!', 'error');
+                return false;
+            }
+            
+            try {
+                log('Sending test notification...', 'info');
+                
+                const notificationData = {
+                    app_id: appId,
+                    headings: { en: "🧪 Test Notification" },
+                    contents: { en: "If you see this, OneSignal is working perfectly!" },
+                    included_segments: ["Subscribed Users"],
+                    web_url: siteUrl || window.location.origin,
+                };
+                
+                const response = await fetch('https://onesignal.com/api/v1/notifications', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Basic ${restKey}`
+                    },
+                    body: JSON.stringify(notificationData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    log(`✅ Test notification sent successfully! Recipients: ${result.recipients || 0}`, 'success');
+                    return true;
+                } else {
+                    log(`❌ Notification failed: ${result.errors ? result.errors.join(', ') : 'Unknown error'}`, 'error');
+                    return false;
+                }
+                
+            } catch (error) {
+                log(`❌ Notification sending failed: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        async function runAllTests() {
+            log('🚀 Running all tests...', 'info');
+            
+            const results = [];
+            results.push(await testSDKLoaded());
+            results.push(await initializeOneSignal());
+            results.push(await requestPermission());
+            results.push(await checkSubscription());
+            results.push(await sendTestNotification());
+            
+            const passed = results.filter(r => r).length;
+            const total = results.length;
+            
+            if (passed === total) {
+                log(`🎉 All tests passed! (${passed}/${total}) Your OneSignal setup is working perfectly!`, 'success');
+            } else {
+                log(`⚠️ Some tests failed. (${passed}/${total}) Check the errors above and fix your configuration.`, 'error');
+            }
+        }
+
+        function generateCode() {
+            updateConfig();
+            
+            const code = `// OneSignal Configuration - Copy this to your main app
+const ONESIGNAL_APP_ID = '${appId}';
+const ONESIGNAL_REST_API_KEY = '${restKey}';
+const SITE_URL = '${siteUrl || window.location.origin}';
+
+// Initialize OneSignal
+function initializeOneSignal() {
+  if (typeof OneSignal !== 'undefined') {
+    OneSignal.init({
+      appId: ONESIGNAL_APP_ID,
+      allowLocalhostAsSecureOrigin: true,
+      notifyButton: { enable: false }
+    });
+  }
+}
+
+// Request notification permission
+async function requestNotificationPermission() {
+  try {
+    const permission = await OneSignal.showNativePrompt();
+    if (permission) {
+      console.log('Notifications enabled!');
+      return true;
+    }
+  } catch (error) {
+    console.error('Permission request failed:', error);
+  }
+  return false;
+}
+
+// Send notification
+async function sendNotification(title, message, targetSemester) {
+  const notificationData = {
+    app_id: ONESIGNAL_APP_ID,
+    headings: { en: title },
+    contents: { en: message },
+    filters: [{ field: "tag", key: "semester", relation: "=", value: targetSemester }],
+    web_url: SITE_URL
+  };
+  
+  const response = await fetch('https://onesignal.com/api/v1/notifications', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': \`Basic \${ONESIGNAL_REST_API_KEY}\`
+    },
+    body: JSON.stringify(notificationData)
+  });
+  
+  return await response.json();
+}`;
+            
+            document.getElementById('code-output').textContent = code;
+        }
+
+        // Auto-fill common GitHub Pages URL pattern
+        window.addEventListener('load', function() {
+            const currentUrl = window.location.origin;
+            if (currentUrl.includes('github.io')) {
+                document.getElementById('site-url').value = currentUrl + '/';
+            }
+        });
+    </script>
+</body>
+</html>
