@@ -117,6 +117,60 @@
       font-size: 0.8rem;
     }
     
+    /* Notification Permission Banner */
+    .notification-banner {
+      background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      transform: translateY(-100%);
+      transition: transform 0.3s ease;
+    }
+
+    .notification-banner.show {
+      transform: translateY(0);
+    }
+
+    .notification-banner-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .notification-banner-text {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .notification-banner-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .notification-banner .btn {
+      padding: 0.5rem 1rem;
+      font-size: 0.8rem;
+    }
+
+    .notification-banner .btn-outline {
+      border-color: rgba(255, 255, 255, 0.3);
+      color: white;
+    }
+
+    .notification-banner .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: white;
+    }
+    
     /* Mobile Navigation */
     @media (max-width: 768px) {
       .header-content {
@@ -149,6 +203,16 @@
       .user-avatar {
         width: 28px;
         height: 28px;
+      }
+
+      .notification-banner-content {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .notification-banner-actions {
+        width: 100%;
+        justify-content: center;
       }
     }
     
@@ -947,72 +1011,6 @@
     .hidden {
       display: none !important;
     }
-
-    /* Notification Permission Banner */
-    .notification-banner {
-      background: linear-gradient(135deg, var(--primary), var(--primary-hover));
-      color: white;
-      padding: 1rem;
-      text-align: center;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 1000;
-      transform: translateY(-100%);
-      transition: transform 0.3s ease;
-    }
-
-    .notification-banner.show {
-      transform: translateY(0);
-    }
-
-    .notification-banner-content {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .notification-banner-text {
-      flex: 1;
-      min-width: 200px;
-    }
-
-    .notification-banner-actions {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .notification-banner .btn {
-      padding: 0.5rem 1rem;
-      font-size: 0.8rem;
-    }
-
-    .notification-banner .btn-outline {
-      border-color: rgba(255, 255, 255, 0.3);
-      color: white;
-    }
-
-    .notification-banner .btn-outline:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: white;
-    }
-
-    @media (max-width: 768px) {
-      .notification-banner-content {
-        flex-direction: column;
-        text-align: center;
-      }
-      
-      .notification-banner-actions {
-        width: 100%;
-        justify-content: center;
-      }
-    }
   </style>
 </head>
 <body>
@@ -1037,6 +1035,7 @@
         <a href="chat.html">Chat</a>
         <a href="assignments.html" class="active">Assignments</a>
         <a href="profile.html">Profile</a>
+        <a href="pyqs.html">PYQ's</a>
       </nav>
       <div class="user-info">
         <div class="user-avatar" id="user-avatar">?</div>
@@ -1276,18 +1275,65 @@
       doc, getDoc as getFirestoreDoc, updateDoc, increment, arrayUnion, arrayRemove
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    // OneSignal Configuration - Your actual App ID
-    const ONESIGNAL_APP_ID = '0257af89-d319-4e08-9af3-cb483d8f9a69';
+    // OneSignal Configuration for GitHub Pages
+    const ONESIGNAL_APP_ID = '0257af89-d319-4e08-9af3-cb483d8f9a69'; // Your actual App ID
+    const ONESIGNAL_REST_API_KEY = 'os_v2_app_ajl27cotdfhargxtzned3d42nfmkapdbrafulyn25uznfsx74htj45o2gt6mfuocaldgrlaijzcopj6sknda7ayls6jkn4av4bplhca'; // Your actual REST API Key
+    const SITE_URL = 'https://shaktisingh5580.github.io/PROGRAMING-FOR-LOOSERS-CLUB-/';
+
+    // DOM elements
+    const userAvatar = document.getElementById('user-avatar');
+    const userName = document.getElementById('user-name');
+    const logoutBtn = document.getElementById('logout-btn');
+    const loginLink = document.getElementById('login-link');
+    const assignmentsGrid = document.getElementById('assignments-grid');
+    const searchInput = document.getElementById('search-input');
+    const semesterFilter = document.getElementById('semester-filter');
+    const subjectFilter = document.getElementById('subject-filter');
+    const assignmentNumberFilter = document.getElementById('assignment-number-filter');
+    const sortSelect = document.getElementById('sort-select');
+    const applyFiltersBtn = document.getElementById('apply-filters-btn');
+    const resetFiltersBtn = document.getElementById('reset-filters-btn');
+
+    // Mobile filters toggle
+    const mobileFiltersToggle = document.getElementById('mobile-filters-toggle');
+    const filtersSection = document.getElementById('filters-section');
+
+    // Notification elements
+    const notificationBanner = document.getElementById('notification-banner');
+    const enableNotificationsBtn = document.getElementById('enable-notifications');
+    const dismissBannerBtn = document.getElementById('dismiss-banner');
+
+    // Upload elements
+    const uploadBtn = document.getElementById('upload-btn');
+    const uploadModal = document.getElementById('upload-modal');
+    const uploadForm = document.getElementById('upload-form');
+    const submitUpload = document.getElementById('submit-upload');
+    const cancelUpload = document.getElementById('cancel-upload');
+    const uploadMessage = document.getElementById('upload-message');
+
+    // Form elements
+    const assignmentTitleEl = document.getElementById('assignment-title');
+    const subjectEl = document.getElementById('subject');
+    const semesterEl = document.getElementById('semester');
+    const assignmentNumberEl = document.getElementById('assignment-number');
+    const driveLinkEl = document.getElementById('drive-link');
+    const keywordsEl = document.getElementById('keywords');
+
+    // Global State
+    let allAssignments = [];
+    let userNamesCache = {};
+    let currentUser = null;
+    let currentProfile = null;
+
+    const profileCache = new Map();
 
     // Initialize OneSignal
     function initializeOneSignal() {
       if (typeof OneSignal !== 'undefined') {
         OneSignal.init({
           appId: ONESIGNAL_APP_ID,
-          allowLocalhostAsSecureOrigin: true, // For development
-          notifyButton: {
-            enable: false // We'll handle subscription manually
-          }
+          allowLocalhostAsSecureOrigin: true,
+          notifyButton: { enable: false }
         });
 
         // Set up OneSignal event listeners
@@ -1309,79 +1355,72 @@
       }
     }
 
-    // Show notification permission banner
+    // Show notification banner
     function showNotificationBanner() {
-      const banner = document.getElementById('notification-banner');
-      banner.classList.add('show');
-      
+      notificationBanner.classList.add('show');
       // Adjust body padding to account for banner
-      document.body.style.paddingTop = banner.offsetHeight + 'px';
+      document.body.style.paddingTop = '80px';
     }
 
     // Hide notification banner
     function hideNotificationBanner() {
-      const banner = document.getElementById('notification-banner');
-      banner.classList.remove('show');
+      notificationBanner.classList.remove('show');
       document.body.style.paddingTop = '0';
     }
 
-    // Subscribe user to push notifications
+    // Subscribe user to notifications
     async function subscribeUserToNotifications() {
       try {
         if (typeof OneSignal === 'undefined') {
-          console.warn('OneSignal not loaded yet');
+          alert('OneSignal is not loaded. Please refresh the page and try again.');
           return;
         }
 
-        const isSubscribed = await OneSignal.isPushNotificationsEnabled();
-        
-        if (!isSubscribed) {
-          // Request permission and subscribe
-          await OneSignal.showNativePrompt();
+        // Request permission
+        const permission = await OneSignal.showNativePrompt();
+        if (!permission) {
+          alert('Please allow notifications to get updates about new assignments!');
+          return;
         }
-        
-        // Tag user with their semester for targeted notifications
-        await tagUserWithSemester();
-        
-        // Hide the banner after successful subscription
-        hideNotificationBanner();
-        
+
+        // Get player ID and tag user
+        const playerId = await OneSignal.getPlayerId();
+        if (playerId && currentProfile) {
+          await tagUserWithSemester();
+          hideNotificationBanner();
+          localStorage.setItem('notificationBannerDismissed', 'true');
+          alert('🎉 Notifications enabled! You\'ll get notified when new assignments for your semester are uploaded.');
+        }
       } catch (error) {
         console.error('Error subscribing to notifications:', error);
+        alert('Failed to enable notifications. Please try again.');
       }
     }
 
     // Tag user with their semester for targeted notifications
     async function tagUserWithSemester() {
       try {
-        if (!currentProfile || !currentProfile.semester) {
-          console.warn('User profile or semester not available');
-          return;
+        if (typeof OneSignal === 'undefined' || !currentProfile) return;
+        
+        const playerId = await OneSignal.getPlayerId();
+        if (playerId) {
+          await OneSignal.sendTags({
+            semester: currentProfile.semester.toString(),
+            user_id: currentUser.uid,
+            college: currentProfile.college || 'unknown',
+            name: currentProfile.name || 'anonymous'
+          });
+          console.log('User tagged with semester:', currentProfile.semester);
         }
-
-        await OneSignal.sendTags({
-          'semester': currentProfile.semester.toString(),
-          'user_id': currentUser.uid,
-          'college': currentProfile.college || 'unknown'
-        });
-
-        console.log('User tagged with semester:', currentProfile.semester);
       } catch (error) {
         console.error('Error tagging user:', error);
       }
     }
 
-    // Send push notification to users of specific semester (client-side simulation)
+    // Send notification when assignment is uploaded
     async function sendNotificationToSemester(assignmentData) {
       try {
-        if (!assignmentData.semester) {
-          console.warn('Assignment semester not specified');
-          return;
-        }
-
-        // For GitHub Pages, we'll use OneSignal's client-side API
-        // Note: This requires your OneSignal app to allow client-side sending
-        // which is not recommended for production due to security concerns
+        const uploaderName = currentProfile?.name || currentUser?.email || 'Someone';
         
         const notificationData = {
           app_id: ONESIGNAL_APP_ID,
@@ -1389,104 +1428,58 @@
             en: "📚 New Assignment Available!"
           },
           contents: {
-            en: `${assignmentData.assignmentTitle} - ${assignmentData.subject} (Semester ${assignmentData.semester})`
+            en: `${assignmentData.assignmentTitle} (${assignmentData.subject}) has been uploaded by ${uploaderName} for Semester ${assignmentData.semester}`
           },
-          data: {
-            assignment_id: assignmentData.id,
-            semester: assignmentData.semester,
-            subject: assignmentData.subject,
-            url: window.location.href
-          },
+          // Target users with matching semester
           filters: [
             {
               field: "tag",
-              key: "semester",
+              key: "semester", 
               relation: "=",
               value: assignmentData.semester.toString()
-            },
-            {
-              operator: "AND"
-            },
-            {
-              field: "tag",
-              key: "user_id",
-              relation: "!=",
-              value: assignmentData.uploaderId // Don't notify the uploader
             }
           ],
-          web_url: window.location.origin + "/assignments.html",
-          chrome_web_icon: window.location.origin + "/HummingBird (1).png",
-          chrome_web_badge: window.location.origin + "/HummingBird (1).png"
+          web_url: SITE_URL + "assignments.html",
+          chrome_web_icon: SITE_URL + "HummingBird (1).png",
+          chrome_web_badge: SITE_URL + "HummingBird (1).png",
+          web_buttons: [
+            {
+              id: "view-assignment",
+              text: "View Assignment", 
+              url: SITE_URL + "assignments.html"
+            }
+          ],
+          data: {
+            type: "assignment",
+            semester: assignmentData.semester,
+            subject: assignmentData.subject,
+            assignmentId: assignmentData.id
+          }
         };
 
-        // For GitHub Pages deployment, we'll simulate the notification
-        // In a real production environment, this should be done server-side
-        console.log('Notification would be sent:', notificationData);
+        const response = await fetch('https://onesignal.com/api/v1/notifications', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Basic ${ONESIGNAL_REST_API_KEY}`
+          },
+          body: JSON.stringify(notificationData)
+        });
+
+        const result = await response.json();
         
-        // Show a local notification to the uploader as confirmation
-        if ('Notification' in window && Notification.permission === 'granted') {
-          new Notification('Assignment Uploaded!', {
-            body: `Your assignment "${assignmentData.assignmentTitle}" has been uploaded and users in semester ${assignmentData.semester} will be notified.`,
-            icon: '/HummingBird (1).png'
-          });
+        if (response.ok) {
+          console.log('Notification sent successfully:', result);
+          return { success: true, id: result.id, recipients: result.recipients };
+        } else {
+          console.error('Failed to send notification:', result);
+          return { success: false, error: result };
         }
-        
       } catch (error) {
         console.error('Error sending notification:', error);
+        return { success: false, error: error.message };
       }
     }
-
-    // DOM elements
-    const userAvatar = document.getElementById('user-avatar');
-    const userName = document.getElementById('user-name');
-    const logoutBtn = document.getElementById('logout-btn');
-    const loginLink = document.getElementById('login-link');
-    const assignmentsGrid = document.getElementById('assignments-grid');
-    const searchInput = document.getElementById('search-input');
-    const semesterFilter = document.getElementById('semester-filter');
-    const subjectFilter = document.getElementById('subject-filter');
-    const assignmentNumberFilter = document.getElementById('assignment-number-filter');
-    const sortSelect = document.getElementById('sort-select');
-    const applyFiltersBtn = document.getElementById('apply-filters-btn');
-    const resetFiltersBtn = document.getElementById('reset-filters-btn');
-
-    // Mobile filters toggle
-    const mobileFiltersToggle = document.getElementById('mobile-filters-toggle');
-    const filtersSection = document.getElementById('filters-section');
-
-    // Upload elements
-    const uploadBtn = document.getElementById('upload-btn');
-    const uploadModal = document.getElementById('upload-modal');
-    const uploadForm = document.getElementById('upload-form');
-    const submitUpload = document.getElementById('submit-upload');
-    const cancelUpload = document.getElementById('cancel-upload');
-    const uploadMessage = document.getElementById('upload-message');
-
-    // Form elements
-    const assignmentTitleEl = document.getElementById('assignment-title');
-    const subjectEl = document.getElementById('subject');
-    const semesterEl = document.getElementById('semester');
-    const assignmentNumberEl = document.getElementById('assignment-number');
-    const driveLinkEl = document.getElementById('drive-link');
-    const keywordsEl = document.getElementById('keywords');
-
-    // Notification banner elements
-    const notificationBanner = document.getElementById('notification-banner');
-    const enableNotificationsBtn = document.getElementById('enable-notifications');
-    const dismissBannerBtn = document.getElementById('dismiss-banner');
-
-    // Global State
-    let allAssignments = [];
-    let userNamesCache = {};
-    let currentUser = null;
-    let currentProfile = null;
-
-    const profileCache = new Map();
-
-    // Initialize OneSignal when the page loads
-    document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(initializeOneSignal, 1000);
-    });
 
     // Mobile filters toggle functionality
     function toggleMobileFilters() {
@@ -1704,23 +1697,25 @@
 
         const docRef = await addDoc(collection(db, 'assignments'), assignmentData);
         
-        // Send push notification to users of the same semester
-        const assignmentWithId = {
+        // Send notification
+        const notificationResult = await sendNotificationToSemester({
           ...assignmentData,
-          id: docRef.id,
-          semester: semester
-        };
+          id: docRef.id
+        });
         
-        await sendNotificationToSemester(assignmentWithId);
+        if (notificationResult.success) {
+          showUploadMessage(`Assignment uploaded successfully! ${notificationResult.recipients || 0} users notified.`, false);
+        } else {
+          showUploadMessage('Assignment uploaded successfully! (Notification failed to send)', false);
+        }
         
-        showUploadMessage('Assignment uploaded successfully! Users in your semester will be notified.', false);
         resetUploadForm();
         
         // Refresh assignments list
         setTimeout(() => {
           uploadModal.close();
           fetchAssignments();
-        }, 2000);
+        }, 1500);
 
       } catch (error) {
         console.error('Error uploading assignment:', error);
@@ -1786,7 +1781,6 @@
       assignmentsToRender.forEach((assignment, index) => {
         const card = document.createElement('div');
         card.classList.add('assignment-card');
-        card.setAttribute('data-assignment-id', assignment.id);
 
         const uploadDate = assignment.uploadDate?.toDate ? assignment.uploadDate.toDate().toLocaleDateString() : 'N/A';
         const uploaderName = uploaderNames[index] || 'Unknown';
@@ -1969,6 +1963,13 @@
     // Mobile filters toggle
     mobileFiltersToggle.addEventListener('click', toggleMobileFilters);
 
+    // Notification event listeners
+    enableNotificationsBtn.addEventListener('click', subscribeUserToNotifications);
+    dismissBannerBtn.addEventListener('click', () => {
+      hideNotificationBanner();
+      localStorage.setItem('notificationBannerDismissed', 'true');
+    });
+
     // Upload functionality - Show for all users, redirect to login if not authenticated
     uploadBtn.addEventListener('click', () => {
       if (!currentUser) {
@@ -1984,16 +1985,6 @@
       uploadModal.close();
     });
 
-    // Notification banner event listeners
-    enableNotificationsBtn.addEventListener('click', async () => {
-      await subscribeUserToNotifications();
-    });
-
-    dismissBannerBtn.addEventListener('click', () => {
-      hideNotificationBanner();
-      localStorage.setItem('notificationBannerDismissed', 'true');
-    });
-
     // Initialize auth
     initAuth({
       onAuthStateChanged: (user, profile) => {
@@ -2002,18 +1993,10 @@
         updateAuthUI();
         
         if (user && profile) {
-          // Subscribe to push notifications when user signs in
+          // Initialize OneSignal and check notification status
           setTimeout(() => {
-            if (typeof OneSignal !== 'undefined') {
-              OneSignal.isPushNotificationsEnabled().then(function(isEnabled) {
-                if (!isEnabled && !localStorage.getItem('notificationBannerDismissed')) {
-                  showNotificationBanner();
-                } else if (isEnabled) {
-                  tagUserWithSemester();
-                }
-              });
-            }
-          }, 2000);
+            initializeOneSignal();
+          }, 1000);
         }
         
         applyCurrentFilters();
@@ -2028,6 +2011,11 @@
     // Initialize mobile filters and load assignments
     initializeMobileFilters();
     fetchAssignments();
+
+    // Initialize OneSignal on page load
+    setTimeout(() => {
+      initializeOneSignal();
+    }, 2000);
 
     // Handle window resize for mobile filters
     window.addEventListener('resize', () => {
