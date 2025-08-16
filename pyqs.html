@@ -1075,7 +1075,7 @@
       if (!paper) return;
 
       document.getElementById('modalTitle').textContent = paper.title;
-      
+
       // Populate paper details
       const detailsHtml = `
         <div class="detail-row">
@@ -1107,28 +1107,35 @@
           <span class="detail-value">${paper.tags.join(', ')}</span>
         </div>
       `;
-      
       document.getElementById('paperDetails').innerHTML = detailsHtml;
-      
-      // Set PDF viewer source
-      const pdfViewer = document.getElementById('pdfViewer');
+
+      // Detect file type and render preview
+      const previewContainer = document.querySelector('.pdf-preview');
+      let previewHtml = '';
       if (paper.fileUrl && paper.fileUrl !== '#') {
-        pdfViewer.src = paper.fileUrl;
+        if (paper.fileUrl.match(/\.(pdf)$/i)) {
+          previewHtml = `<iframe id="pdfViewer" src="${paper.fileUrl}"></iframe>`;
+        } else if (paper.fileUrl.match(/\.(jpg|jpeg|png|gif)$/i)) {
+          previewHtml = `<img id="imgViewer" src="${paper.fileUrl}" style="width:100%;height:auto;max-height:100%;object-fit:contain;background:#222;border-radius:6px;" alt="Paper Image Preview">`;
+        } else {
+          previewHtml = `<div style="color:white;padding:20px;">Preview not available for this file type.</div>`;
+        }
       } else {
-        pdfViewer.src = 'data:text/html,<html><body style="margin:0;padding:20px;font-family:Arial;color:white;background:#444;"><h3>PDF Preview Not Available</h3><p>In a real implementation, the PDF would be displayed here.</p></body></html>';
+        previewHtml = `<div style="color:white;padding:20px;">Preview not available.</div>`;
       }
-      
+      previewContainer.innerHTML = previewHtml;
+
       // Setup download and fullscreen links
       document.getElementById('downloadLink').href = paper.fileUrl;
-      
-      // --- NEW --- Add onclick for fullscreen button
+
+      // Fullscreen button logic
       const fullScreenBtn = document.getElementById('fullScreenBtn');
       fullScreenBtn.onclick = () => {
         if (paper.fileUrl && paper.fileUrl !== '#') {
           window.open(paper.fileUrl, '_blank');
         }
       };
-      
+
       document.getElementById('pdfModal').style.display = 'flex';
       document.body.style.overflow = 'hidden';
     }

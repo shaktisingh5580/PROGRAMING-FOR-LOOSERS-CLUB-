@@ -1,6 +1,6 @@
 [
   {
- "id": "1",
+    "id": "1",
     "title": "BE second Sem 2025",
     "subject": "Basic electronics",
     "year": 2025,
@@ -119,6 +119,7 @@
     "fileSizeMB": 2.0,
     "fileUrl": "pdf/Maths II Second Sem.pdf"
   },
+
   {
     "id": "11",
     "title": "Physics Mid Sem 2025",
@@ -130,5 +131,89 @@
     "pages": 2,
     "fileSizeMB": 2.0,
     "fileUrl": "pdf/Physics Mid Sem.pdf"
+  },
+{
+    "id": "12",
+    "title": "English Mid Sem",
+    "subject": "English",
+    "year": 2024,
+    "examType": "Midterm",
+    "semester": 1,
+    "tags": ["English", "moderate"],
+    "pages": 1,
+    "fileSizeMB": 0.5,
+    "fileUrl": "pdf/English Mid Sem.jpg"
+  },
+  {
+    "id": "13",
+    "title": "Evs Mid Sem",
+    "subject": "Environmental Studies",
+    "year": 2025,
+    "examType": "Midterm",
+    "semester": 1,
+    "tags": ["EVS", "moderate"],
+    "pages": 1,
+    "fileSizeMB": 0.5,
+    "fileUrl": "pdf/Evs Mid Sem.jpg"
+  },
+  {
+    "id": "14",
+    "title": "Evs Second Sem",
+    "subject": "Environmental Studies",
+    "year": 2025,
+    "examType": "Final",
+    "semester": 2,
+    "tags": ["EVS", "moderate"],
+    "pages": 1,
+    "fileSizeMB": 0.5,
+    "fileUrl": "pdf/Evs Second Sem.jpg"
+  },
+  {
+    "id": "15",
+    "title": "Java Mid Sem",
+    "subject": "Java",
+    "year": 2025,
+    "examType": "Midterm",
+    "semester": 1,
+    "tags": ["Java", "moderate"],
+    "pages": 1,
+    "fileSizeMB": 0.5,
+    "fileUrl": "pdf/Java Mid.jpg"
+  },
+  {
+    "id": "16",
+    "title": "Java Second Sem",
+    "subject": "Java",
+    "year": 2025,
+    "examType": "Final",
+    "semester": 2,
+    "tags": ["Java", "moderate"],
+    "pages": 1,
+    "fileSizeMB": 0.5,
+    "fileUrl": "pdf/Java Second Sem.jpg"
+  },
+  {
+    "id": "17",
+    "title": "Physics Second Sem",
+    "subject": "Physics",
+    "year": 2025,
+    "examType": "Final",
+    "semester": 2,
+    "tags": ["Physics", "moderate"],
+    "pages": 1,
+    "fileSizeMB": 0.5,
+    "fileUrl": "pdf/Physics Second Sem.jpg"
+  },
+  {
+    "id": "18",
+    "title": "Be Mid Sem",
+    "subject": "Basic Electronics",
+    "year": 2025,
+    "examType": "Midterm",
+    "semester": 1,
+    "tags": ["BE", "moderate"],
+    "pages": 1,
+    "fileSizeMB": 0.5,
+    "fileUrl": "pdf/Be mid sem.jpg"
   }
 ]
