@@ -1320,13 +1320,68 @@
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     // OneSignal Configuration
-    const ONESIGNAL_APP_ID = '92158bed-55d4-4e77-b274-35c8b715fc7a';
-    const ONESIGNAL_REST_API_KEY = 'os_v2_app_sikyx3kv2rhhpmtugxelofp4plfeoxg3q4kufo4brk5lcelz5dbndnacxfxh4xdfvihgzydvs7oj4isxclru2veo7d7xunllemewqvy';
+    const ONESIGNAL_APP_ID = '0257af89-d319-4e08-9af3-cb483d8f9a69';
+    const ONESIGNAL_REST_API_KEY = 'os_v2_app_ajl27cotdfhargxtzned3d42nfmkapdbrafulyn25uznfsx74htj45o2gt6mfuocaldgrlaijzcopj6sknda7ayls6jkn4av4bplhca';
     const SITE_URL = 'https://shaktisingh5580.github.io/PROGRAMING-FOR-LOOSERS-CLUB-/';
 
     // OneSignal state management
     let oneSignalInitialized = false;
     let oneSignalReady = false;
+
+    // DOM elements
+    const userAvatar = document.getElementById('user-avatar');
+    const userName = document.getElementById('user-name');
+    const logoutBtn = document.getElementById('logout-btn');
+    const loginLink = document.getElementById('login-link');
+    const assignmentsGrid = document.getElementById('assignments-grid');
+    const searchInput = document.getElementById('search-input');
+    const semesterFilter = document.getElementById('semester-filter');
+    const subjectFilter = document.getElementById('subject-filter');
+    const assignmentNumberFilter = document.getElementById('assignment-number-filter');
+    const sortSelect = document.getElementById('sort-select');
+    const applyFiltersBtn = document.getElementById('apply-filters-btn');
+    const resetFiltersBtn = document.getElementById('reset-filters-btn');
+
+    // Mobile filters toggle
+    const mobileFiltersToggle = document.getElementById('mobile-filters-toggle');
+    const filtersSection = document.getElementById('filters-section');
+
+    // Notification elements
+    const notificationBanner = document.getElementById('notification-banner');
+    const enableNotificationsBtn = document.getElementById('enable-notifications');
+    const dismissBannerBtn = document.getElementById('dismiss-banner');
+    const notificationToggleBtn = document.getElementById('notification-toggle-btn');
+    const notificationStatus = document.getElementById('notification-status');
+
+    // Upload elements
+    const uploadBtn = document.getElementById('upload-btn');
+    const uploadModal = document.getElementById('upload-modal');
+    const uploadForm = document.getElementById('upload-form');
+    const submitUpload = document.getElementById('submit-upload');
+    const cancelUpload = document.getElementById('cancel-upload');
+    const uploadMessage = document.getElementById('upload-message');
+
+    // Form elements
+    const assignmentTitleEl = document.getElementById('assignment-title');
+    const subjectEl = document.getElementById('subject');
+    const semesterEl = document.getElementById('semester');
+    const assignmentNumberEl = document.getElementById('assignment-number');
+    const driveLinkEl = document.getElementById('drive-link');
+    const keywordsEl = document.getElementById('keywords');
+
+    // Profile modal elements
+    const profileModal = document.getElementById('profile-modal');
+    const profileModalTitle = document.getElementById('profile-modal-title');
+    const profileAvatar = document.getElementById('profile-avatar');
+    const profileInfo = document.getElementById('profile-info');
+
+    // Global State
+    let allAssignments = [];
+    let userNamesCache = {};
+    let currentUser = null;
+    let currentProfile = null;
+    let notificationPreferences = null;
+    const profileCache = new Map();
 
     // Wait for OneSignal to be available
     function waitForOneSignal(maxAttempts = 50) {
@@ -1395,61 +1450,6 @@
         oneSignalReady = false;
       }
     }
-
-    // DOM elements
-    const userAvatar = document.getElementById('user-avatar');
-    const userName = document.getElementById('user-name');
-    const logoutBtn = document.getElementById('logout-btn');
-    const loginLink = document.getElementById('login-link');
-    const assignmentsGrid = document.getElementById('assignments-grid');
-    const searchInput = document.getElementById('search-input');
-    const semesterFilter = document.getElementById('semester-filter');
-    const subjectFilter = document.getElementById('subject-filter');
-    const assignmentNumberFilter = document.getElementById('assignment-number-filter');
-    const sortSelect = document.getElementById('sort-select');
-    const applyFiltersBtn = document.getElementById('apply-filters-btn');
-    const resetFiltersBtn = document.getElementById('reset-filters-btn');
-
-    // Mobile filters toggle
-    const mobileFiltersToggle = document.getElementById('mobile-filters-toggle');
-    const filtersSection = document.getElementById('filters-section');
-
-    // Notification elements
-    const notificationBanner = document.getElementById('notification-banner');
-    const enableNotificationsBtn = document.getElementById('enable-notifications');
-    const dismissBannerBtn = document.getElementById('dismiss-banner');
-    const notificationToggleBtn = document.getElementById('notification-toggle-btn');
-    const notificationStatus = document.getElementById('notification-status');
-
-    // Upload elements
-    const uploadBtn = document.getElementById('upload-btn');
-    const uploadModal = document.getElementById('upload-modal');
-    const uploadForm = document.getElementById('upload-form');
-    const submitUpload = document.getElementById('submit-upload');
-    const cancelUpload = document.getElementById('cancel-upload');
-    const uploadMessage = document.getElementById('upload-message');
-
-    // Form elements
-    const assignmentTitleEl = document.getElementById('assignment-title');
-    const subjectEl = document.getElementById('subject');
-    const semesterEl = document.getElementById('semester');
-    const assignmentNumberEl = document.getElementById('assignment-number');
-    const driveLinkEl = document.getElementById('drive-link');
-    const keywordsEl = document.getElementById('keywords');
-
-    // Profile modal elements
-    const profileModal = document.getElementById('profile-modal');
-    const profileModalTitle = document.getElementById('profile-modal-title');
-    const profileAvatar = document.getElementById('profile-avatar');
-    const profileInfo = document.getElementById('profile-info');
-
-    // Global State
-    let allAssignments = [];
-    let userNamesCache = {};
-    let currentUser = null;
-    let currentProfile = null;
-    let notificationPreferences = null;
-    const profileCache = new Map();
 
     // Debug function to check Firebase connection
     async function testFirebaseConnection() {
@@ -1749,7 +1749,7 @@
         const assignmentData = {
           assignmentTitle: title,
           subject: subject,
-          semester: semester,
+          semester: parseInt(semester),
           assignmentNumber: assignmentNumber || '',
           driveLink: driveLink,
           keywords: keywordArray,
@@ -2013,31 +2013,6 @@
     }
 
     // OneSignal and notification functions
-    function initializeOneSignal() {
-      if (typeof OneSignal !== 'undefined') {
-        OneSignal.init({
-          appId: ONESIGNAL_APP_ID,
-          allowLocalhostAsSecureOrigin: true,
-          notifyButton: { enable: false }
-        });
-
-        OneSignal.on('subscriptionChange', function(isSubscribed) {
-          console.log('OneSignal subscription changed:', isSubscribed);
-          if (isSubscribed && currentUser && currentProfile) {
-            tagUserWithSemester();
-          }
-        });
-
-        OneSignal.isPushNotificationsEnabled().then(function(isEnabled) {
-          if (isEnabled && currentUser && currentProfile) {
-            tagUserWithSemester();
-          } else if (currentUser && currentProfile && !localStorage.getItem('notificationBannerDismissed')) {
-            showNotificationBanner();
-          }
-        });
-      }
-    }
-
     function showNotificationBanner() {
       if (currentUser && currentProfile && (!notificationPreferences?.enabled) && !localStorage.getItem('notificationBannerDismissed')) {
         notificationBanner.classList.add('show');
@@ -2052,7 +2027,7 @@
 
     async function tagUserWithSemester() {
       try {
-        if (typeof OneSignal === 'undefined' || !currentProfile) return;
+        if (!oneSignalReady || !currentProfile) return;
         
         const playerId = await OneSignal.getPlayerId();
         if (playerId) {
@@ -2183,8 +2158,8 @@
 
     async function subscribeUserToNotifications() {
       try {
-        if (typeof OneSignal === 'undefined') {
-          alert('OneSignal is not loaded. Please refresh the page and try again.');
+        if (!oneSignalReady) {
+          alert('OneSignal is not ready. Please refresh the page and try again.');
           return;
         }
 
@@ -2219,8 +2194,8 @@
       
       if (!currentlyEnabled) {
         try {
-          if (typeof OneSignal === 'undefined') {
-            alert('OneSignal is not loaded. Please refresh the page and try again.');
+          if (!oneSignalReady) {
+            alert('OneSignal is not ready. Please refresh the page and try again.');
             return;
           }
           
@@ -2259,7 +2234,7 @@
           await saveNotificationPreferences(false);
           updateNotificationButtonUI(false);
           
-          if (typeof OneSignal !== 'undefined') {
+          if (oneSignalReady) {
             await OneSignal.setSubscription(false);
           }
           
