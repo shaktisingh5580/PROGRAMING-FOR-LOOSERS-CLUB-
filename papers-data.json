@@ -33,7 +33,7 @@
     "tags": ["BEE", "important", "hard"],
     "pages": 2,
     "fileSizeMB": 3.2,
-    "fileUrl": "/pdf/BEE mid sem.pdf"
+    "fileUrl": "pdf/BEE mid sem.pdf"
   },
   {
     "id": "4",
@@ -45,7 +45,7 @@
     "tags": ["PPS", "programming", "moderate"],
     "pages":1,
     "fileSizeMB": 2.8,
-    "fileUrl": "/pdf/C Mid Sem.pdf"
+    "fileUrl": "pdf/C Mid Sem.pdf"
   },
  {
     "id": "5",
@@ -57,7 +57,7 @@
     "tags": ["EGD", "moderate"],
     "pages": 2,
     "fileSizeMB": 2.0,
-    "fileUrl": "/pdf/Egd First Sem.pdf"
+    "fileUrl": "pdf/Egd First Sem.pdf"
   },
   {
     "id": "6",
@@ -69,7 +69,7 @@
     "tags": ["EGD", "moderate"],
     "pages": 2,
     "fileSizeMB": 2.0,
-    "fileUrl": "/pdf/Egd Mid Sem.pdf"
+    "fileUrl": "pdf/Egd Mid Sem.pdf"
   },
   {
     "id": "7",
@@ -81,7 +81,7 @@
     "tags": ["English", "moderate"],
     "pages": 2,
     "fileSizeMB": 2.0,
-    "fileUrl": "/pdf/English First Sem.pdf"
+    "fileUrl": "pdf/English First Sem.pdf"
   },
   {
     "id": "8",
@@ -93,7 +93,7 @@
     "tags": ["Mathematics I", "moderate"],
     "pages": 2,
     "fileSizeMB": 2.0,
-    "fileUrl": "/pdf/Maths I mid sem.pdf"
+    "fileUrl": "pdf/Maths I mid sem.pdf"
   },
   {
     "id": "9",
@@ -105,7 +105,7 @@
     "tags": ["Mathematics II", "moderate"],
     "pages": 2,
     "fileSizeMB": 2.0,
-    "fileUrl": "/pdf/Maths II mid sem.pdf"
+    "fileUrl": "pdf/Maths II mid sem.pdf"
   },
   {
     "id": "10",
@@ -117,7 +117,7 @@
     "tags": ["Mathematics II", "moderate"],
     "pages": 2,
     "fileSizeMB": 2.0,
-    "fileUrl": "/pdf/Maths II Second Sem.pdf"
+    "fileUrl": "pdf/Maths II Second Sem.pdf"
   },
   {
     "id": "11",
@@ -129,6 +129,6 @@
     "tags": ["Physics", "moderate"],
     "pages": 2,
     "fileSizeMB": 2.0,
-    "fileUrl": "/pdf/Physics Mid Sem.pdf"
+    "fileUrl": "pdf/Physics Mid Sem.pdf"
   }
 ]
