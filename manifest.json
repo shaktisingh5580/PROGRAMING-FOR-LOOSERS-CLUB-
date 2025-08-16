@@ -1,17 +1,17 @@
 {
-  "name": "PFL - Programming For Learning",
+  "name": "PFL - Programming For Life",
   "short_name": "PFL",
-  "description": "Share, discover, and vote on programming assignments",
+  "description": "Connect, share, and learn with fellow programmers",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0f0f10",
   "theme_color": "#4f46e5",
+  "gcm_sender_id": "482941778795",
   "icons": [
     {
       "src": "HummingBird (1).png",
       "sizes": "192x192",
       "type": "image/png"
     }
-  ],
-  "gcm_sender_id": "482941778795"
+  ]
 }
