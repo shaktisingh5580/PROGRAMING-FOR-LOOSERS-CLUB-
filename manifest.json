@@ -1,21 +1,17 @@
 {
-  "name": "PFL Assignments Hub",
-  "short_name": "PFL Hub",
-  "start_url": "/PROGRAMING-FOR-LOOSERS-CLUB-/index.html",
+  "name": "PFL - Programming For Learning",
+  "short_name": "PFL",
+  "description": "Share, discover, and vote on programming assignments",
+  "start_url": "/",
   "display": "standalone",
-  "background_color": "#0c0c0c",
-  "theme_color": "#0c0c0c",
+  "background_color": "#0f0f10",
+  "theme_color": "#4f46e5",
   "icons": [
     {
-      "src": "/PROGRAMING-FOR-LOOSERS-CLUB-/HummingBird (1).png",
+      "src": "HummingBird (1).png",
       "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "/PROGRAMING-FOR-LOOSERS-CLUB-/HummingBird (1).png",
-      "sizes": "512x512",
       "type": "image/png"
     }
   ],
-  "gcm_sender_id": "103953800507"
+  "gcm_sender_id": "482941778795"
 }
