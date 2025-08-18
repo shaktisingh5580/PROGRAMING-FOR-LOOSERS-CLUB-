@@ -1190,7 +1190,7 @@
   </dialog>
 
   <script type="module">
-    import { auth, db, initAuth, signOutUser, redirectToLogin, requireAuth } from './js/auth.js';
+    import { auth, db, initAuth, signOutUser, redirectToLogin } from './js/auth.js';
     import {
       collection, addDoc, getDocs, query, orderBy, serverTimestamp,
       doc, getDoc as getFirestoreDoc, updateDoc, increment, arrayUnion, arrayRemove
@@ -1235,23 +1235,16 @@
     let userNamesCache = {};
     let currentUser = null;
     let currentProfile = null;
+    let isInitialLoad = true; // <-- FIX: Flag to prevent double loading
 
     const profileCache = new Map();
 
     // Mobile filters toggle functionality
     function toggleMobileFilters() {
-      const isCollapsed = mobileFiltersToggle.classList.contains('collapsed');
-      
-      if (isCollapsed) {
-        mobileFiltersToggle.classList.remove('collapsed');
-        filtersSection.classList.add('expanded');
-      } else {
-        mobileFiltersToggle.classList.add('collapsed');
-        filtersSection.classList.remove('expanded');
-      }
+      mobileFiltersToggle.classList.toggle('collapsed');
+      filtersSection.classList.toggle('expanded');
     }
 
-    // Initialize filters as collapsed on mobile
     function initializeMobileFilters() {
       if (window.innerWidth <= 768) {
         mobileFiltersToggle.classList.add('collapsed');
@@ -1272,7 +1265,7 @@
           profileCache.set(uid, profileData);
           return profileData;
         } else {
-          console.error('Profile not found');
+          console.warn('Profile not found for UID:', uid);
           return null;
         }
       } catch (error) {
@@ -1290,16 +1283,14 @@
       try {
         const profile = await loadProfile(uid);
         if (!profile) {
-          alert('Could not load profile.');
+          alert('Could not load user profile.');
           return;
         }
 
         profileModalTitle.textContent = profile.name || 'User Profile';
         profileAvatar.textContent = profile.name ? profile.name[0].toUpperCase() : '?';
-
         profileInfo.innerHTML = '';
         
-        // Create profile fields
         const fields = [
           { label: 'Name', value: profile.name || 'N/A' },
           { label: 'College', value: profile.college || 'N/A' },
@@ -1309,47 +1300,16 @@
         fields.forEach(field => {
           const fieldEl = document.createElement('div');
           fieldEl.className = 'profile-field';
-          fieldEl.innerHTML = `
-            <span class="label">${field.label}</span>
-            <span class="value">${field.value}</span>
-          `;
+          fieldEl.innerHTML = `<span class="label">${field.label}</span><span class="value">${field.value}</span>`;
           profileInfo.appendChild(fieldEl);
         });
 
-        // Add social links
         const links = document.createElement('div');
         links.className = 'profile-links';
+        if (profile.instagram) links.innerHTML += `<a href="https://instagram.com/${profile.instagram}" target="_blank" rel="noopener noreferrer" class="profile-link">Instagram</a>`;
+        if (profile.github) links.innerHTML += `<a href="${profile.github}" target="_blank" rel="noopener noreferrer" class="profile-link">GitHub</a>`;
+        if (profile.linkedin) links.innerHTML += `<a href="${profile.linkedin}" target="_blank" rel="noopener noreferrer" class="profile-link">LinkedIn</a>`;
         
-        if (profile.instagram) {
-          const instagramLink = document.createElement('a');
-          instagramLink.className = 'profile-link';
-          instagramLink.href = `https://instagram.com/${profile.instagram}`;
-          instagramLink.target = '_blank';
-          instagramLink.rel = 'noopener noreferrer';
-          instagramLink.textContent = 'Instagram';
-          links.appendChild(instagramLink);
-        }
-        
-        if (profile.github) {
-          const githubLink = document.createElement('a');
-          githubLink.className = 'profile-link';
-          githubLink.href = profile.github;
-          githubLink.target = '_blank';
-          githubLink.rel = 'noopener noreferrer';
-          githubLink.textContent = 'GitHub';
-          links.appendChild(githubLink);
-        }
-        
-        if (profile.linkedin) {
-          const linkedinLink = document.createElement('a');
-          linkedinLink.className = 'profile-link';
-          linkedinLink.href = profile.linkedin;
-          linkedinLink.target = '_blank';
-          linkedinLink.rel = 'noopener noreferrer';
-          linkedinLink.textContent = 'LinkedIn';
-          links.appendChild(linkedinLink);
-        }
-
         if (links.children.length > 0) {
           profileInfo.appendChild(links);
         }
@@ -1363,7 +1323,7 @@
 
     // Utility functions
     function getOrdinalSuffix(nStr) {
-      const n = parseInt(nStr);
+      const n = parseInt(nStr, 10);
       if (isNaN(n)) return typeof nStr === 'string' ? nStr : '';
       const s = ["th", "st", "nd", "rd"];
       const v = n % 100;
@@ -1418,7 +1378,6 @@
       const driveLink = driveLinkEl.value.trim();
       const keywords = keywordsEl.value.trim();
 
-      // Validation
       if (!title || !subject || !semester || !driveLink) {
         showUploadMessage('Please fill in all required fields.');
         return;
@@ -1429,16 +1388,13 @@
         return;
       }
 
-      // Parse keywords
-      const keywordArray = keywords ? keywords.split(',').map(k => k.trim()).filter(k => k.length > 0) : [];
-
-      // Show loading state
+      const keywordArray = keywords ? keywords.split(',').map(k => k.trim()).filter(Boolean) : [];
       const originalText = submitUpload.innerHTML;
-      submitUpload.innerHTML = '<div class="loading-spinner" style="width: 16px; height: 16px;"></div> Uploading...';
+      submitUpload.innerHTML = '<div class="loading-spinner" style="width: 16px; height: 16px; border-width: 2px;"></div> Uploading...';
       submitUpload.disabled = true;
 
       try {
-        const assignmentData = {
+        await addDoc(collection(db, 'assignments'), {
           assignmentTitle: title,
           subject: subject,
           semester: semester,
@@ -1450,19 +1406,13 @@
           uploadDate: serverTimestamp(),
           votes: 0,
           votedBy: []
-        };
-
-        await addDoc(collection(db, 'assignments'), assignmentData);
+        });
         
         showUploadMessage('Assignment uploaded successfully!', false);
-        resetUploadForm();
-        
-        // Refresh assignments list
         setTimeout(() => {
           uploadModal.close();
           fetchAssignments();
         }, 1500);
-
       } catch (error) {
         console.error('Error uploading assignment:', error);
         showUploadMessage('Failed to upload assignment. Please try again.');
@@ -1474,163 +1424,101 @@
 
     // Assignment functions
     async function fetchAssignments() {
-      assignmentsGrid.innerHTML = `
-        <div class="loading-container">
-          <div class="loading-spinner"></div>
-        </div>
-      `;
-      
+      assignmentsGrid.innerHTML = `<div class="loading-container"><div class="loading-spinner"></div></div>`;
       try {
-        const assignmentsQuery = query(collection(db, "assignments"), orderBy("uploadDate", "desc"));
-        const snapshot = await getDocs(assignmentsQuery);
-        allAssignments = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+        const q = query(collection(db, "assignments"), orderBy("uploadDate", "desc"));
+        const snapshot = await getDocs(q);
+        allAssignments = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         populateAllFilters();
-        await renderAssignments(allAssignments);
+        applyCurrentFilters();
       } catch (error) {
         console.error("Error fetching assignments:", error);
-        assignmentsGrid.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-icon">⚠️</div>
-            <div class="empty-title">Could not load assignments</div>
-            <div class="empty-description">Please check your connection and try again</div>
-            <button class="btn btn-primary" onclick="fetchAssignments()" style="margin-top: 1rem;">Retry</button>
-          </div>
-        `;
+        assignmentsGrid.innerHTML = `<div class="empty-state">...Error loading data...</div>`;
       }
     }
 
     async function renderAssignments(assignmentsToRender) {
       assignmentsGrid.innerHTML = '';
-      
       if (!assignmentsToRender || assignmentsToRender.length === 0) {
-        assignmentsGrid.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-icon">📁</div>
-            <div class="empty-title">No assignments found</div>
-            <div class="empty-description">Try adjusting your filters or be the first to upload!</div>
-          </div>
-        `;
+        assignmentsGrid.innerHTML = `<div class="empty-state"><div class="empty-icon">📁</div><div class="empty-title">No assignments found</div><div class="empty-description">Try adjusting your filters or be the first to upload!</div></div>`;
         return;
       }
 
-      const uploaderNamePromises = assignmentsToRender.map(assignment =>
-        fetchUploaderName(assignment.uploaderId, assignment.uploaderEmail || 'Anonymous')
-      );
-      
-      let uploaderNames = [];
-      try {
-        uploaderNames = await Promise.all(uploaderNamePromises);
-      } catch {
-        uploaderNames = assignmentsToRender.map(a => a.uploaderEmail || 'Anonymous');
-      }
+      const uploaderIds = [...new Set(assignmentsToRender.map(a => a.uploaderId))];
+      await Promise.all(uploaderIds.map(id => fetchUploaderName(id)));
 
-      assignmentsToRender.forEach((assignment, index) => {
+      for (const assignment of assignmentsToRender) {
         const card = document.createElement('div');
-        card.classList.add('assignment-card');
-
+        card.className = 'assignment-card';
         const uploadDate = assignment.uploadDate?.toDate ? assignment.uploadDate.toDate().toLocaleDateString() : 'N/A';
-        const uploaderName = uploaderNames[index] || 'Unknown';
-        const userHasVoted = currentUser && Array.isArray(assignment.votedBy) && assignment.votedBy.includes(currentUser?.uid);
+        const uploaderName = userNamesCache[assignment.uploaderId] || 'Anonymous';
+        const userHasVoted = currentUser && assignment.votedBy?.includes(currentUser.uid);
 
         card.innerHTML = `
           <div class="card-header">
             <div class="card-title">${assignment.assignmentTitle || 'Untitled'}</div>
             <div class="card-meta">
-              <span class="uploader-link" onclick="openProfileModal('${assignment.uploaderId}')">${uploaderName}</span>
+              <span class="uploader-link" data-uid="${assignment.uploaderId}">${uploaderName}</span>
               <span>•</span>
               <span>${uploadDate}</span>
             </div>
           </div>
-          
           <div class="card-body">
             <div class="card-info">
-              <div class="info-item">
-                <span class="info-label">Subject</span>
-                <span class="info-value">${assignment.subject || 'N/A'}</span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">Semester</span>
-                <span class="info-value">${getOrdinalSuffix(assignment.semester)}</span>
-              </div>
-              ${assignment.assignmentNumber ? `
-                <div class="info-item">
-                  <span class="info-label">Assignment No.</span>
-                  <span class="info-value">${assignment.assignmentNumber}</span>
-                </div>
-              ` : ''}
+              <div class="info-item"><span class="info-label">Subject</span><span class="info-value">${assignment.subject || 'N/A'}</span></div>
+              <div class="info-item"><span class="info-label">Semester</span><span class="info-value">${getOrdinalSuffix(assignment.semester)}</span></div>
+              ${assignment.assignmentNumber ? `<div class="info-item"><span class="info-label">Assignment No.</span><span class="info-value">${assignment.assignmentNumber}</span></div>` : ''}
             </div>
-            
-            ${assignment.keywords?.length > 0 ? `
-              <div class="keywords">
-                ${assignment.keywords.map(k => `<span class="keyword-tag">${k}</span>`).join('')}
-              </div>
-            ` : ''}
+            ${assignment.keywords?.length > 0 ? `<div class="keywords">${assignment.keywords.map(k => `<span class="keyword-tag">${k}</span>`).join('')}</div>` : ''}
           </div>
-          
           <div class="card-footer">
             <div class="vote-section">
-              <button class="vote-btn ${userHasVoted ? 'voted' : ''}" onclick="handleVote('${assignment.id}', this)">
-                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
-                </svg>
+              <button class="vote-btn ${userHasVoted ? 'voted' : ''}" data-assignment-id="${assignment.id}">
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
               </button>
               <span class="vote-count">${assignment.votes || 0}</span>
             </div>
-            
             <a href="${assignment.driveLink || '#'}" target="_blank" rel="noopener noreferrer" class="view-btn">
-              <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-              </svg>
+              <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
               View Assignment
             </a>
-          </div>
-        `;
-
+          </div>`;
         assignmentsGrid.appendChild(card);
-      });
+      }
     }
 
-    async function handleVote(assignmentId, voteButtonElement) {
-      if (!currentUser) {
-        redirectToLogin();
-        return;
-      }
-      if (!assignmentId) return;
+    async function handleVote(assignmentId) {
+        if (!currentUser) return redirectToLogin();
+        if (!assignmentId) return;
 
-      const voteSection = voteButtonElement.closest('.vote-section');
-      const voteCountSpan = voteSection?.querySelector('.vote-count');
-      const originalVoted = voteButtonElement.classList.contains('voted');
-      const originalCount = parseInt(voteCountSpan?.textContent || '0', 10);
-
-      // Optimistic UI
-      voteButtonElement.disabled = true;
-      voteButtonElement.classList.toggle('voted');
-      if (voteCountSpan) {
-        voteCountSpan.textContent = String(originalCount + (originalVoted ? -1 : 1));
-      }
-
-      try {
         const assignmentRef = doc(db, "assignments", assignmentId);
-        const docSnap = await getFirestoreDoc(assignmentRef);
-        if (!docSnap.exists()) {
-          throw new Error('This assignment no longer exists.');
+        const voteButton = document.querySelector(`.vote-btn[data-assignment-id="${assignmentId}"]`);
+        const voteCountSpan = voteButton.nextElementSibling;
+
+        voteButton.disabled = true;
+
+        try {
+            const docSnap = await getFirestoreDoc(assignmentRef);
+            if (!docSnap.exists()) throw new Error("Assignment not found");
+
+            const assignmentData = docSnap.data();
+            const hasVoted = (assignmentData.votedBy || []).includes(currentUser.uid);
+
+            const newVotes = (assignmentData.votes || 0) + (hasVoted ? -1 : 1);
+            const updatePayload = hasVoted
+                ? { votes: increment(-1), votedBy: arrayRemove(currentUser.uid) }
+                : { votes: increment(1), votedBy: arrayUnion(currentUser.uid) };
+
+            await updateDoc(assignmentRef, updatePayload);
+
+            // Update UI
+            voteCountSpan.textContent = newVotes;
+            voteButton.classList.toggle('voted', !hasVoted);
+        } catch (error) {
+            console.error('Vote error:', error);
+        } finally {
+            voteButton.disabled = false;
         }
-        const assignmentData = docSnap.data();
-        const hasVoted = (assignmentData.votedBy || []).includes(currentUser.uid);
-        const updatePayload = hasVoted
-          ? { votes: increment(-1), votedBy: arrayRemove(currentUser.uid) }
-          : { votes: increment(1), votedBy: arrayUnion(currentUser.uid) };
-        await updateDoc(assignmentRef, updatePayload);
-      } catch (error) {
-        // Revert UI on failure
-        voteButtonElement.classList.toggle('voted');
-        if (voteCountSpan) {
-          voteCountSpan.textContent = String(originalCount);
-        }
-        console.error('Vote error:', error);
-      } finally {
-        voteButtonElement.disabled = false;
-      }
     }
 
     // Filtering and sorting
@@ -1674,82 +1562,78 @@
     }
 
     function resetAllFilters() {
-      searchInput.value = '';
-      semesterFilter.value = '';
-      subjectFilter.value = '';
-      assignmentNumberFilter.value = '';
-      sortSelect.value = 'uploadDate_desc';
+      uploadForm.reset();
       applyCurrentFilters();
     }
 
-    async function fetchUploaderName(uploaderId, fallbackName = 'Anonymous') {
-      if (userNamesCache[uploaderId]) return userNamesCache[uploaderId];
-      if (!uploaderId) return fallbackName;
+    async function fetchUploaderName(uploaderId) {
+      if (!uploaderId || userNamesCache[uploaderId]) return;
       try {
-        const userDocRef = doc(db, 'profiles', uploaderId);
-        const docSnap = await getFirestoreDoc(userDocRef);
-        if (docSnap.exists() && docSnap.data().name) {
-          const displayName = docSnap.data().name;
-          userNamesCache[uploaderId] = displayName;
-          return displayName;
-        }
-        return fallbackName;
+        const profile = await loadProfile(uploaderId);
+        userNamesCache[uploaderId] = profile?.name || 'Anonymous';
       } catch (err) {
         console.warn('fetchUploaderName failed:', err);
-        return fallbackName;
+        userNamesCache[uploaderId] = 'Anonymous';
       }
     }
+
+    // Event Delegation for dynamic elements
+    assignmentsGrid.addEventListener('click', (e) => {
+        const voteBtn = e.target.closest('.vote-btn');
+        if (voteBtn) {
+            handleVote(voteBtn.dataset.assignmentId);
+            return;
+        }
+        const uploaderLink = e.target.closest('.uploader-link');
+        if (uploaderLink) {
+            openProfileModal(uploaderLink.dataset.uid);
+            return;
+        }
+    });
 
     // Event listeners
     logoutBtn.addEventListener('click', signOutUser);
     applyFiltersBtn.addEventListener('click', applyCurrentFilters);
     resetFiltersBtn.addEventListener('click', resetAllFilters);
     sortSelect.addEventListener('change', applyCurrentFilters);
-
-    // Mobile filters toggle
     mobileFiltersToggle.addEventListener('click', toggleMobileFilters);
 
-    // Upload functionality - Show for all users, redirect to login if not authenticated
     uploadBtn.addEventListener('click', () => {
-      if (!currentUser) {
-        redirectToLogin();
-        return;
-      }
+      if (!currentUser) return redirectToLogin();
       resetUploadForm();
       uploadModal.showModal();
     });
 
     uploadForm.addEventListener('submit', handleUploadSubmit);
-    cancelUpload.addEventListener('click', () => {
-      uploadModal.close();
-    });
+    cancelUpload.addEventListener('click', () => uploadModal.close());
 
-    // Initialize auth
+    // Initialize Auth and App
     initAuth({
       onAuthStateChanged: (user, profile) => {
         currentUser = user;
         currentProfile = profile;
         updateAuthUI();
-        applyCurrentFilters();
+
+        // FIX: Only fetch on the very first load.
+        if (isInitialLoad) {
+          fetchAssignments();
+          isInitialLoad = false;
+        } else {
+          // On subsequent auth changes (e.g., login/logout), just re-render to update voted status.
+          applyCurrentFilters();
+        }
       }
     });
 
-    // Make functions global
+    // Make functions global for legacy onclick handlers if any remain (though delegation is better)
     window.openProfileModal = openProfileModal;
-    window.handleVote = handleVote;
     window.fetchAssignments = fetchAssignments;
 
-    // Initialize mobile filters and load assignments
     initializeMobileFilters();
-    fetchAssignments();
-
-    // Handle window resize for mobile filters
     window.addEventListener('resize', () => {
       if (window.innerWidth > 768) {
         filtersSection.classList.remove('expanded');
         mobileFiltersToggle.classList.add('collapsed');
-      } else {
-        initializeMobileFilters();
       }
     });
   </script>
