@@ -461,15 +461,24 @@
     
     .card-header {
       display: flex;
-      flex-direction: column;
+      justify-content: space-between;
+      align-items: flex-start;
       gap: 0.5rem;
     }
     
+    .card-title-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        flex-grow: 1; /* Allow title to take space */
+    }
+
     .card-title {
       font-size: 1.1rem;
       font-weight: 600;
       color: var(--accent);
       line-height: 1.3;
+      padding-right: 0.5rem; /* Space for buttons */
     }
     
     .card-meta {
@@ -492,6 +501,33 @@
       color: var(--primary-hover);
       text-decoration: underline;
     }
+
+    .card-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-shrink: 0; /* Prevent buttons from shrinking */
+    }
+
+    .btn-icon {
+        background: transparent;
+        border: none;
+        color: var(--soft);
+        cursor: pointer;
+        padding: 0.25rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+    }
+
+    .btn-icon:hover {
+        background: var(--elev);
+        color: var(--accent);
+    }
+
+    .btn-icon.edit-btn:hover { color: var(--warn); }
+    .btn-icon.delete-btn:hover { color: var(--danger); }
     
     .card-body {
       flex: 1;
@@ -793,6 +829,11 @@
       outline: none;
       font-family: inherit;
     }
+
+    .form-field select[disabled] {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
     
     .form-field input:focus,
     .form-field select:focus,
@@ -1036,13 +1077,12 @@
           </select>
         </div>
         
+        <!-- NEW: Branch Filter -->
         <div class="filter-field">
-          <label for="assignment-number-filter">Assignment No.</label>
-          <input 
-            type="text" 
-            id="assignment-number-filter" 
-            placeholder="e.g., 1, Lab-2"
-          />
+            <label for="branch-filter">Branch</label>
+            <select id="branch-filter">
+              <option value="">All Branches</option>
+            </select>
         </div>
         
         <div class="filter-field">
@@ -1094,26 +1134,12 @@
       <div class="modal-body">
         <div class="form-field">
           <label for="assignment-title">Assignment Title *</label>
-          <input 
-            type="text" 
-            id="assignment-title" 
-            placeholder="e.g., Data Structures Lab 1" 
-            required 
-            maxlength="100" 
-          />
+          <input type="text" id="assignment-title" placeholder="e.g., Data Structures Lab 1" required maxlength="100"/>
         </div>
-        
         <div class="form-field">
           <label for="subject">Subject *</label>
-          <input 
-            type="text" 
-            id="subject" 
-            placeholder="e.g., Computer Science" 
-            required 
-            maxlength="50" 
-          />
+          <input type="text" id="subject" placeholder="e.g., Computer Science" required maxlength="50"/>
         </div>
-        
         <div class="form-field">
           <label for="semester">Semester *</label>
           <select id="semester" required>
@@ -1128,39 +1154,26 @@
             <option value="8">8th Semester</option>
           </select>
         </div>
-        
+        <div class="form-field">
+            <label for="branch">Branch *</label>
+            <select id="branch" required>
+                <!-- Options populated by JS -->
+            </select>
+        </div>
         <div class="form-field">
           <label for="assignment-number">Assignment Number</label>
-          <input 
-            type="text" 
-            id="assignment-number" 
-            placeholder="e.g., 1, 2, Lab-1" 
-            maxlength="20" 
-          />
+          <input type="text" id="assignment-number" placeholder="e.g., 1, 2, Lab-1" maxlength="20"/>
         </div>
-        
         <div class="form-field">
           <label for="drive-link">Google Drive Link *</label>
-          <input 
-            type="url" 
-            id="drive-link" 
-            placeholder="https://drive.google.com/..." 
-            required 
-          />
+          <input type="url" id="drive-link" placeholder="https://drive.google.com/..." required/>
           <div class="form-hint">Make sure the link is publicly accessible</div>
         </div>
-        
         <div class="form-field">
           <label for="keywords">Keywords (comma-separated)</label>
-          <input 
-            type="text" 
-            id="keywords" 
-            placeholder="e.g., arrays, sorting, algorithms" 
-            maxlength="200" 
-          />
+          <input type="text" id="keywords" placeholder="e.g., arrays, sorting, algorithms" maxlength="200"/>
           <div class="form-hint">Help others find your assignment</div>
         </div>
-        
         <div id="upload-message" class="message" style="display: none;"></div>
       </div>
       <div class="modal-footer">
@@ -1175,13 +1188,51 @@
     </form>
   </dialog>
 
+  <!-- Edit Modal -->
+  <dialog id="edit-modal">
+    <form method="dialog" id="edit-form">
+      <div class="modal-header">
+        <strong>
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+          Edit Assignment
+        </strong>
+        <button class="btn btn-outline" value="cancel">Close</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-assignment-id">
+        <div class="form-field"><label for="edit-assignment-title">Assignment Title *</label><input type="text" id="edit-assignment-title" required maxlength="100" /></div>
+        <div class="form-field"><label for="edit-subject">Subject *</label><input type="text" id="edit-subject" required maxlength="50" /></div>
+        <div class="form-field">
+          <label for="edit-semester">Semester *</label>
+          <select id="edit-semester" required>
+            <option value="">Select Semester</option>
+            <option value="1">1st Semester</option><option value="2">2nd Semester</option><option value="3">3rd Semester</option><option value="4">4th Semester</option>
+            <option value="5">5th Semester</option><option value="6">6th Semester</option><option value="7">7th Semester</option><option value="8">8th Semester</option>
+          </select>
+        </div>
+        <div class="form-field">
+            <label for="edit-branch">Branch *</label>
+            <select id="edit-branch" required></select>
+        </div>
+        <div class="form-field"><label for="edit-assignment-number">Assignment Number</label><input type="text" id="edit-assignment-number" maxlength="20" /></div>
+        <div class="form-field"><label for="edit-drive-link">Google Drive Link *</label><input type="url" id="edit-drive-link" required /></div>
+        <div class="form-field"><label for="edit-keywords">Keywords (comma-separated)</label><input type="text" id="edit-keywords" maxlength="200" /></div>
+        <div id="edit-message" class="message" style="display: none;"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary" id="submit-update">
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+            Save Changes
+        </button>
+        <button type="button" class="btn btn-outline" id="cancel-edit">Cancel</button>
+      </div>
+    </form>
+  </dialog>
+
   <!-- Profile Modal -->
   <dialog id="profile-modal">
     <form method="dialog">
-      <div class="modal-header">
-        <strong id="profile-modal-title">User Profile</strong>
-        <button class="btn btn-outline" value="cancel">Close</button>
-      </div>
+      <div class="modal-header"><strong id="profile-modal-title">User Profile</strong><button class="btn btn-outline" value="cancel">Close</button></div>
       <div class="modal-body">
         <div class="profile-avatar" id="profile-avatar"></div>
         <div class="profile-info" id="profile-info"></div>
@@ -1190,239 +1241,88 @@
   </dialog>
 
   <script type="module">
-    import { auth, db, initAuth, signOutUser, redirectToLogin } from './js/auth.js';
+    // NOTE: Ensure you have a `js/auth.js` file that exports these functions.
+    // This is a placeholder for your actual auth setup.
+    // Example `js/auth.js` would initialize Firebase and export auth, db, etc.
+    import { auth, db, initAuth, signOutUser, redirectToLogin } from './js/auth.js'; 
     import {
       collection, addDoc, getDocs, query, orderBy, serverTimestamp,
-      doc, getDoc as getFirestoreDoc, updateDoc, increment, arrayUnion, arrayRemove
+      doc, getDoc as getFirestoreDoc, updateDoc, deleteDoc, increment, arrayUnion, arrayRemove
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    // DOM elements
+    // --- DOM Elements ---
+    const assignmentsGrid = document.getElementById('assignments-grid');
     const userAvatar = document.getElementById('user-avatar');
     const userName = document.getElementById('user-name');
     const logoutBtn = document.getElementById('logout-btn');
     const loginLink = document.getElementById('login-link');
-    const assignmentsGrid = document.getElementById('assignments-grid');
     const searchInput = document.getElementById('search-input');
     const semesterFilter = document.getElementById('semester-filter');
     const subjectFilter = document.getElementById('subject-filter');
-    const assignmentNumberFilter = document.getElementById('assignment-number-filter');
+    const branchFilter = document.getElementById('branch-filter');
     const sortSelect = document.getElementById('sort-select');
     const applyFiltersBtn = document.getElementById('apply-filters-btn');
     const resetFiltersBtn = document.getElementById('reset-filters-btn');
-
-    // Mobile filters toggle
     const mobileFiltersToggle = document.getElementById('mobile-filters-toggle');
     const filtersSection = document.getElementById('filters-section');
-
-    // Upload elements
     const uploadBtn = document.getElementById('upload-btn');
     const uploadModal = document.getElementById('upload-modal');
     const uploadForm = document.getElementById('upload-form');
     const submitUpload = document.getElementById('submit-upload');
     const cancelUpload = document.getElementById('cancel-upload');
     const uploadMessage = document.getElementById('upload-message');
-
-    // Form elements
     const assignmentTitleEl = document.getElementById('assignment-title');
     const subjectEl = document.getElementById('subject');
     const semesterEl = document.getElementById('semester');
+    const branchEl = document.getElementById('branch');
     const assignmentNumberEl = document.getElementById('assignment-number');
     const driveLinkEl = document.getElementById('drive-link');
     const keywordsEl = document.getElementById('keywords');
-
-    // Global State
-    let allAssignments = [];
-    let userNamesCache = {};
-    let currentUser = null;
-    let currentProfile = null;
-    let isInitialLoad = true; // <-- FIX: Flag to prevent double loading
-
-    const profileCache = new Map();
-
-    // Mobile filters toggle functionality
-    function toggleMobileFilters() {
-      mobileFiltersToggle.classList.toggle('collapsed');
-      filtersSection.classList.toggle('expanded');
-    }
-
-    function initializeMobileFilters() {
-      if (window.innerWidth <= 768) {
-        mobileFiltersToggle.classList.add('collapsed');
-        filtersSection.classList.remove('expanded');
-      }
-    }
-
-    // Profile Modal functionality
-    async function loadProfile(uid) {
-      if (profileCache.has(uid)) {
-        return profileCache.get(uid);
-      }
-      try {
-        const profileRef = doc(db, 'profiles', uid);
-        const profileSnap = await getFirestoreDoc(profileRef);
-        if (profileSnap.exists()) {
-          const profileData = { id: profileSnap.id, ...profileSnap.data() };
-          profileCache.set(uid, profileData);
-          return profileData;
-        } else {
-          console.warn('Profile not found for UID:', uid);
-          return null;
-        }
-      } catch (error) {
-        console.error('Error loading profile:', error);
-        return null;
-      }
-    }
-
+    const editModal = document.getElementById('edit-modal');
+    const editForm = document.getElementById('edit-form');
+    const cancelEdit = document.getElementById('cancel-edit');
+    const editMessage = document.getElementById('edit-message');
+    const editAssignmentIdEl = document.getElementById('edit-assignment-id');
+    const editAssignmentTitleEl = document.getElementById('edit-assignment-title');
+    const editSubjectEl = document.getElementById('edit-subject');
+    const editSemesterEl = document.getElementById('edit-semester');
+    const editBranchEl = document.getElementById('edit-branch');
+    const editAssignmentNumberEl = document.getElementById('edit-assignment-number');
+    const editDriveLinkEl = document.getElementById('edit-drive-link');
+    const editKeywordsEl = document.getElementById('edit-keywords');
     const profileModal = document.getElementById('profile-modal');
     const profileModalTitle = document.getElementById('profile-modal-title');
     const profileAvatar = document.getElementById('profile-avatar');
     const profileInfo = document.getElementById('profile-info');
 
-    async function openProfileModal(uid) {
-      try {
-        const profile = await loadProfile(uid);
-        if (!profile) {
-          alert('Could not load user profile.');
-          return;
+    // --- Global State & Constants ---
+    let allAssignments = [];
+    let userNamesCache = {};
+    let currentUser = null;
+    let currentProfile = null;
+    let isInitialLoad = true;
+    const profileCache = new Map();
+    const BRANCHES = ['AI ML', 'Data Science', 'Computer Science', 'EC', 'Electrical', 'IT'];
+
+    // --- Conditional Branch Logic ---
+    const setupBranchDropdown = (semesterSelect, branchSelect) => {
+        const semester = parseInt(semesterSelect.value, 10);
+        if (semester >= 3) {
+            branchSelect.innerHTML = `<option value="">Select Branch</option>`;
+            BRANCHES.forEach(b => branchSelect.add(new Option(b, b)));
+            branchSelect.disabled = false;
+            branchSelect.required = true;
+        } else {
+            branchSelect.innerHTML = `<option value="Common" selected>Common for All Branches</option>`;
+            branchSelect.disabled = true;
+            branchSelect.required = false;
         }
+    };
+    
+    semesterEl.addEventListener('change', () => setupBranchDropdown(semesterEl, branchEl));
+    editSemesterEl.addEventListener('change', () => setupBranchDropdown(editSemesterEl, editBranchEl));
 
-        profileModalTitle.textContent = profile.name || 'User Profile';
-        profileAvatar.textContent = profile.name ? profile.name[0].toUpperCase() : '?';
-        profileInfo.innerHTML = '';
-        
-        const fields = [
-          { label: 'Name', value: profile.name || 'N/A' },
-          { label: 'College', value: profile.college || 'N/A' },
-          { label: 'Semester', value: profile.semester ? getOrdinalSuffix(profile.semester) : 'N/A' }
-        ];
-
-        fields.forEach(field => {
-          const fieldEl = document.createElement('div');
-          fieldEl.className = 'profile-field';
-          fieldEl.innerHTML = `<span class="label">${field.label}</span><span class="value">${field.value}</span>`;
-          profileInfo.appendChild(fieldEl);
-        });
-
-        const links = document.createElement('div');
-        links.className = 'profile-links';
-        if (profile.instagram) links.innerHTML += `<a href="https://instagram.com/${profile.instagram}" target="_blank" rel="noopener noreferrer" class="profile-link">Instagram</a>`;
-        if (profile.github) links.innerHTML += `<a href="${profile.github}" target="_blank" rel="noopener noreferrer" class="profile-link">GitHub</a>`;
-        if (profile.linkedin) links.innerHTML += `<a href="${profile.linkedin}" target="_blank" rel="noopener noreferrer" class="profile-link">LinkedIn</a>`;
-        
-        if (links.children.length > 0) {
-          profileInfo.appendChild(links);
-        }
-
-        profileModal.showModal();
-      } catch (error) {
-        console.error('Error opening profile modal:', error);
-        alert('Failed to open profile.');
-      }
-    }
-
-    // Utility functions
-    function getOrdinalSuffix(nStr) {
-      const n = parseInt(nStr, 10);
-      if (isNaN(n)) return typeof nStr === 'string' ? nStr : '';
-      const s = ["th", "st", "nd", "rd"];
-      const v = n % 100;
-      return n + (s[(v - 20) % 10] || s[v] || s[0]);
-    }
-
-    function updateAuthUI() {
-      if (currentUser) {
-        const displayName = currentProfile?.name || currentUser.email;
-        const avatar = currentProfile?.name ? currentProfile.name[0].toUpperCase() : currentUser.email[0].toUpperCase();
-        
-        userAvatar.textContent = avatar;
-        userName.textContent = displayName;
-        loginLink.style.display = 'none';
-        logoutBtn.classList.remove('hidden');
-      } else {
-        userAvatar.textContent = '?';
-        userName.textContent = 'Guest';
-        loginLink.style.display = 'inline-flex';
-        logoutBtn.classList.add('hidden');
-      }
-    }
-
-    function showUploadMessage(text, isError = true) {
-      uploadMessage.textContent = text;
-      uploadMessage.className = `message ${isError ? 'error' : 'success'}`;
-      uploadMessage.style.display = 'block';
-    }
-
-    function hideUploadMessage() {
-      uploadMessage.style.display = 'none';
-    }
-
-    function resetUploadForm() {
-      uploadForm.reset();
-      hideUploadMessage();
-    }
-
-    async function handleUploadSubmit(e) {
-      e.preventDefault();
-      hideUploadMessage();
-
-      if (!currentUser) {
-        showUploadMessage('Please sign in to upload assignments.');
-        return;
-      }
-
-      const title = assignmentTitleEl.value.trim();
-      const subject = subjectEl.value.trim();
-      const semester = semesterEl.value;
-      const assignmentNumber = assignmentNumberEl.value.trim();
-      const driveLink = driveLinkEl.value.trim();
-      const keywords = keywordsEl.value.trim();
-
-      if (!title || !subject || !semester || !driveLink) {
-        showUploadMessage('Please fill in all required fields.');
-        return;
-      }
-
-      if (!driveLink.match(/^https?:\/\/.+/)) {
-        showUploadMessage('Please enter a valid URL for the Google Drive link.');
-        return;
-      }
-
-      const keywordArray = keywords ? keywords.split(',').map(k => k.trim()).filter(Boolean) : [];
-      const originalText = submitUpload.innerHTML;
-      submitUpload.innerHTML = '<div class="loading-spinner" style="width: 16px; height: 16px; border-width: 2px;"></div> Uploading...';
-      submitUpload.disabled = true;
-
-      try {
-        await addDoc(collection(db, 'assignments'), {
-          assignmentTitle: title,
-          subject: subject,
-          semester: semester,
-          assignmentNumber: assignmentNumber || '',
-          driveLink: driveLink,
-          keywords: keywordArray,
-          uploaderId: currentUser.uid,
-          uploaderEmail: currentUser.email,
-          uploadDate: serverTimestamp(),
-          votes: 0,
-          votedBy: []
-        });
-        
-        showUploadMessage('Assignment uploaded successfully!', false);
-        setTimeout(() => {
-          uploadModal.close();
-          fetchAssignments();
-        }, 1500);
-      } catch (error) {
-        console.error('Error uploading assignment:', error);
-        showUploadMessage('Failed to upload assignment. Please try again.');
-      } finally {
-        submitUpload.innerHTML = originalText;
-        submitUpload.disabled = false;
-      }
-    }
-
-    // Assignment functions
+    // --- Core Functions ---
     async function fetchAssignments() {
       assignmentsGrid.innerHTML = `<div class="loading-container"><div class="loading-spinner"></div></div>`;
       try {
@@ -1433,13 +1333,13 @@
         applyCurrentFilters();
       } catch (error) {
         console.error("Error fetching assignments:", error);
-        assignmentsGrid.innerHTML = `<div class="empty-state">...Error loading data...</div>`;
+        assignmentsGrid.innerHTML = `<div class="empty-state"><h3>Error loading data</h3><p>Please check your connection and try again.</p></div>`;
       }
     }
 
     async function renderAssignments(assignmentsToRender) {
       assignmentsGrid.innerHTML = '';
-      if (!assignmentsToRender || assignmentsToRender.length === 0) {
+      if (assignmentsToRender.length === 0) {
         assignmentsGrid.innerHTML = `<div class="empty-state"><div class="empty-icon">📁</div><div class="empty-title">No assignments found</div><div class="empty-description">Try adjusting your filters or be the first to upload!</div></div>`;
         return;
       }
@@ -1453,80 +1353,180 @@
         const uploadDate = assignment.uploadDate?.toDate ? assignment.uploadDate.toDate().toLocaleDateString() : 'N/A';
         const uploaderName = userNamesCache[assignment.uploaderId] || 'Anonymous';
         const userHasVoted = currentUser && assignment.votedBy?.includes(currentUser.uid);
+        const isOwner = currentUser && currentUser.uid === assignment.uploaderId;
+
+        let cardActionsHTML = '';
+        if (isOwner) {
+            cardActionsHTML = `
+                <div class="card-actions">
+                    <button class="btn-icon edit-btn" data-id="${assignment.id}" title="Edit"><svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></button>
+                    <button class="btn-icon delete-btn" data-id="${assignment.id}" data-title="${assignment.assignmentTitle}" title="Delete"><svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                </div>`;
+        }
+        
+        const branchInfo = (assignment.branch && assignment.branch !== 'Common') 
+            ? `<div class="info-item"><span class="info-label">Branch</span><span class="info-value">${assignment.branch}</span></div>` : '';
 
         card.innerHTML = `
           <div class="card-header">
-            <div class="card-title">${assignment.assignmentTitle || 'Untitled'}</div>
-            <div class="card-meta">
-              <span class="uploader-link" data-uid="${assignment.uploaderId}">${uploaderName}</span>
-              <span>•</span>
-              <span>${uploadDate}</span>
+            <div class="card-title-meta">
+              <div class="card-title">${assignment.assignmentTitle || 'Untitled'}</div>
+              <div class="card-meta">
+                <span class="uploader-link" data-uid="${assignment.uploaderId}">${uploaderName}</span> • <span>${uploadDate}</span>
+              </div>
             </div>
+            ${cardActionsHTML}
           </div>
           <div class="card-body">
             <div class="card-info">
               <div class="info-item"><span class="info-label">Subject</span><span class="info-value">${assignment.subject || 'N/A'}</span></div>
+              ${branchInfo}
               <div class="info-item"><span class="info-label">Semester</span><span class="info-value">${getOrdinalSuffix(assignment.semester)}</span></div>
-              ${assignment.assignmentNumber ? `<div class="info-item"><span class="info-label">Assignment No.</span><span class="info-value">${assignment.assignmentNumber}</span></div>` : ''}
+              ${assignment.assignmentNumber ? `<div class="info-item"><span class="info-label">Asgn. No.</span><span class="info-value">${assignment.assignmentNumber}</span></div>` : ''}
             </div>
             ${assignment.keywords?.length > 0 ? `<div class="keywords">${assignment.keywords.map(k => `<span class="keyword-tag">${k}</span>`).join('')}</div>` : ''}
           </div>
           <div class="card-footer">
             <div class="vote-section">
-              <button class="vote-btn ${userHasVoted ? 'voted' : ''}" data-assignment-id="${assignment.id}">
-                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
-              </button>
+              <button class="vote-btn ${userHasVoted ? 'voted' : ''}" data-assignment-id="${assignment.id}"><svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg></button>
               <span class="vote-count">${assignment.votes || 0}</span>
             </div>
-            <a href="${assignment.driveLink || '#'}" target="_blank" rel="noopener noreferrer" class="view-btn">
-              <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-              View Assignment
-            </a>
+            <a href="${assignment.driveLink || '#'}" target="_blank" rel="noopener noreferrer" class="view-btn"><svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg> View Assignment</a>
           </div>`;
         assignmentsGrid.appendChild(card);
       }
     }
 
+    async function handleUploadSubmit(e) {
+      e.preventDefault();
+      if (!currentUser) return showMessage(uploadMessage, 'Please sign in to upload.');
+
+      const assignmentData = {
+        assignmentTitle: assignmentTitleEl.value.trim(), subject: subjectEl.value.trim(),
+        semester: semesterEl.value, branch: branchEl.value,
+        assignmentNumber: assignmentNumberEl.value.trim(), driveLink: driveLinkEl.value.trim(),
+        keywords: keywordsEl.value.trim().split(',').map(k => k.trim()).filter(Boolean),
+        uploaderId: currentUser.uid, uploaderEmail: currentUser.email,
+        uploadDate: serverTimestamp(), votes: 0, votedBy: []
+      };
+
+      if (!assignmentData.assignmentTitle || !assignmentData.subject || !assignmentData.semester || !assignmentData.branch || !assignmentData.driveLink) {
+        return showMessage(uploadMessage, 'Please fill in all required fields.');
+      }
+      if (assignmentData.semester >= 3 && !BRANCHES.includes(assignmentData.branch)) {
+          return showMessage(uploadMessage, 'Please select a valid branch for this semester.');
+      }
+
+      const originalText = submitUpload.innerHTML;
+      submitUpload.innerHTML = '<div class="loading-spinner" style="width:16px;height:16px;border-width:2px;"></div> Uploading...';
+      submitUpload.disabled = true;
+
+      try {
+        await addDoc(collection(db, 'assignments'), assignmentData);
+        showMessage(uploadMessage, 'Assignment uploaded successfully!', false);
+        setTimeout(() => { uploadModal.close(); fetchAssignments(); }, 1500);
+      } catch (error) {
+        console.error('Error uploading:', error);
+        showMessage(uploadMessage, 'Failed to upload. Please try again.');
+      } finally {
+        submitUpload.innerHTML = originalText;
+        submitUpload.disabled = false;
+      }
+    }
+
+    function handleEditClick(assignmentId) {
+        const assignment = allAssignments.find(a => a.id === assignmentId);
+        if (!assignment) return;
+        hideMessage(editMessage);
+        editAssignmentIdEl.value = assignment.id;
+        editAssignmentTitleEl.value = assignment.assignmentTitle || '';
+        editSubjectEl.value = assignment.subject || '';
+        editSemesterEl.value = assignment.semester || '';
+        setupBranchDropdown(editSemesterEl, editBranchEl);
+        editBranchEl.value = assignment.branch || '';
+        editAssignmentNumberEl.value = assignment.assignmentNumber || '';
+        editDriveLinkEl.value = assignment.driveLink || '';
+        editKeywordsEl.value = (assignment.keywords || []).join(', ');
+        editModal.showModal();
+    }
+
+    async function handleUpdateSubmit(e) {
+        e.preventDefault();
+        const assignmentId = editAssignmentIdEl.value;
+        const submitBtn = document.getElementById('submit-update');
+        const updatedData = {
+            assignmentTitle: editAssignmentTitleEl.value.trim(), subject: editSubjectEl.value.trim(),
+            semester: editSemesterEl.value, branch: editBranchEl.value,
+            assignmentNumber: editAssignmentNumberEl.value.trim(), driveLink: editDriveLinkEl.value.trim(),
+            keywords: editKeywordsEl.value.trim().split(',').map(k => k.trim()).filter(Boolean)
+        };
+
+        if (!updatedData.assignmentTitle || !updatedData.subject || !updatedData.semester || !updatedData.branch || !updatedData.driveLink) {
+            return showMessage(editMessage, 'Please fill in all required fields.');
+        }
+        if (updatedData.semester >= 3 && !BRANCHES.includes(updatedData.branch)) {
+          return showMessage(editMessage, 'Please select a valid branch for this semester.');
+        }
+        
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<div class="loading-spinner" style="width:16px;height:16px;border-width:2px;"></div> Saving...';
+        submitBtn.disabled = true;
+
+        try {
+            await updateDoc(doc(db, 'assignments', assignmentId), updatedData);
+            showMessage(editMessage, 'Update successful!', false);
+            setTimeout(() => { editModal.close(); fetchAssignments(); }, 1500);
+        } catch(error) {
+            console.error("Error updating:", error);
+            showMessage(editMessage, 'Failed to update. Please try again.');
+        } finally {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    }
+
+    async function handleDeleteClick(assignmentId, assignmentTitle) {
+        if (!confirm(`Are you sure you want to delete "${assignmentTitle}"?`)) return;
+        try {
+            await deleteDoc(doc(db, "assignments", assignmentId));
+            alert('Assignment deleted.');
+            fetchAssignments();
+        } catch (error) {
+            console.error("Error deleting:", error);
+            alert('Failed to delete. Please try again.');
+        }
+    }
+
     async function handleVote(assignmentId) {
         if (!currentUser) return redirectToLogin();
-        if (!assignmentId) return;
-
         const assignmentRef = doc(db, "assignments", assignmentId);
         const voteButton = document.querySelector(`.vote-btn[data-assignment-id="${assignmentId}"]`);
-        const voteCountSpan = voteButton.nextElementSibling;
-
         voteButton.disabled = true;
-
         try {
             const docSnap = await getFirestoreDoc(assignmentRef);
             if (!docSnap.exists()) throw new Error("Assignment not found");
-
-            const assignmentData = docSnap.data();
-            const hasVoted = (assignmentData.votedBy || []).includes(currentUser.uid);
-
-            const newVotes = (assignmentData.votes || 0) + (hasVoted ? -1 : 1);
-            const updatePayload = hasVoted
-                ? { votes: increment(-1), votedBy: arrayRemove(currentUser.uid) }
-                : { votes: increment(1), votedBy: arrayUnion(currentUser.uid) };
-
-            await updateDoc(assignmentRef, updatePayload);
-
-            // Update UI
-            voteCountSpan.textContent = newVotes;
+            const hasVoted = (docSnap.data().votedBy || []).includes(currentUser.uid);
+            await updateDoc(assignmentRef, {
+                votes: increment(hasVoted ? -1 : 1),
+                votedBy: hasVoted ? arrayRemove(currentUser.uid) : arrayUnion(currentUser.uid)
+            });
+            const voteCountSpan = voteButton.nextElementSibling;
+            voteCountSpan.textContent = parseInt(voteCountSpan.textContent) + (hasVoted ? -1 : 1);
             voteButton.classList.toggle('voted', !hasVoted);
         } catch (error) {
             console.error('Vote error:', error);
+            fetchAssignments();
         } finally {
             voteButton.disabled = false;
         }
     }
 
-    // Filtering and sorting
+    // --- Filtering and Sorting ---
     function populateAllFilters() {
-      const semesters = [...new Set(allAssignments.map(a => a.semester).filter(Boolean))].sort((a, b) => a - b);
-      const subjects = [...new Set(allAssignments.map(a => a.subject).filter(Boolean))].sort();
-      populateFilterDropdown(semesterFilter, semesters, 'All Semesters');
-      populateFilterDropdown(subjectFilter, subjects, 'All Subjects');
+      const getUniqueValues = key => [...new Set(allAssignments.map(a => a[key]).filter(Boolean))].sort();
+      populateFilterDropdown(semesterFilter, getUniqueValues('semester').sort((a,b) => a-b), 'All Semesters');
+      populateFilterDropdown(subjectFilter, getUniqueValues('subject'), 'All Subjects');
+      populateFilterDropdown(branchFilter, getUniqueValues('branch'), 'All Branches');
     }
 
     function populateFilterDropdown(selectElement, items, defaultOptionText) {
@@ -1538,18 +1538,17 @@
 
     function applyCurrentFilters() {
       if (!allAssignments) return;
-
       const searchTerm = searchInput.value.toLowerCase().trim();
       const selectedSemester = semesterFilter.value;
       const selectedSubject = subjectFilter.value;
-      const assignmentNumFilter = assignmentNumberFilter.value.toLowerCase().trim();
+      const selectedBranch = branchFilter.value;
       const sortByValue = sortSelect.value;
 
       let filtered = allAssignments.filter(a =>
-        (searchTerm ? [a.assignmentTitle, a.subject, ...(a.keywords || [])].join(' ').toLowerCase().includes(searchTerm) : true) &&
+        (searchTerm ? [a.assignmentTitle, a.subject, a.branch, ...(a.keywords || [])].join(' ').toLowerCase().includes(searchTerm) : true) &&
         (selectedSemester ? a.semester === selectedSemester : true) &&
         (selectedSubject ? a.subject === selectedSubject : true) &&
-        (assignmentNumFilter ? String(a.assignmentNumber || '').toLowerCase().includes(assignmentNumFilter) : true)
+        (selectedBranch ? a.branch === selectedBranch : true)
       );
 
       filtered.sort((a, b) => {
@@ -1557,85 +1556,69 @@
         if (sortByValue === 'uploadDate_asc') return (a.uploadDate?.toMillis?.() || 0) - (b.uploadDate?.toMillis?.() || 0);
         return (b.uploadDate?.toMillis?.() || 0) - (a.uploadDate?.toMillis?.() || 0);
       });
-
       renderAssignments(filtered);
     }
 
     function resetAllFilters() {
-      uploadForm.reset();
+      searchInput.value = '';
+      semesterFilter.value = '';
+      subjectFilter.value = '';
+      branchFilter.value = '';
+      sortSelect.value = 'uploadDate_desc';
       applyCurrentFilters();
     }
+    
+    // --- Utility & Helper Functions ---
+    const getOrdinalSuffix = nStr => { const n=parseInt(nStr,10); if(isNaN(n))return typeof nStr==='string'?nStr:''; const s=["th","st","nd","rd"], v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); };
+    const updateAuthUI = () => { if(currentUser){const d=currentProfile?.name||currentUser.email,a=currentProfile?.name?currentProfile.name[0].toUpperCase():currentUser.email[0].toUpperCase();userAvatar.textContent=a;userName.textContent=d;loginLink.style.display='none';logoutBtn.classList.remove('hidden')}else{userAvatar.textContent='?';userName.textContent='Guest';loginLink.style.display='inline-flex';logoutBtn.classList.add('hidden')} };
+    const showMessage = (el,txt,err=true) => { el.textContent=txt; el.className=`message ${err?'error':'success'}`; el.style.display='block'; };
+    const hideMessage = el => { el.style.display='none'; };
+    const resetUploadForm = () => { uploadForm.reset(); hideMessage(uploadMessage); setupBranchDropdown(semesterEl, branchEl); };
+    async function fetchUploaderName(uid) { if (!uid || userNamesCache[uid]) return; try { const p = await loadProfile(uid); userNamesCache[uid] = p?.name || 'Anonymous'; } catch (err) { userNamesCache[uid] = 'Anonymous'; } }
+    async function loadProfile(uid) { if (profileCache.has(uid)) return profileCache.get(uid); try { const ref = doc(db, 'profiles', uid); const snap = await getFirestoreDoc(ref); if (snap.exists()) { const data = { id: snap.id, ...snap.data() }; profileCache.set(uid, data); return data; } return null; } catch (e) { return null; } }
+    async function openProfileModal(uid) { try { const profile = await loadProfile(uid); if (!profile) return alert('Could not load user profile.'); profileModalTitle.textContent = profile.name || 'User Profile'; profileAvatar.textContent = profile.name ? profile.name[0].toUpperCase() : '?'; profileInfo.innerHTML = ''; const fields = [{label:'Name',value:profile.name||'N/A'},{label:'College',value:profile.college||'N/A'},{label:'Semester',value:profile.semester?getOrdinalSuffix(profile.semester):'N/A'}]; fields.forEach(f=>{const el=document.createElement('div');el.className='profile-field';el.innerHTML=`<span class="label">${f.label}</span><span class="value">${f.value}</span>`;profileInfo.appendChild(el)}); const links=document.createElement('div'); links.className='profile-links'; if (profile.instagram) links.innerHTML += `<a href="https://instagram.com/${profile.instagram}" target="_blank" rel="noopener noreferrer" class="profile-link">Instagram</a>`; if (profile.github) links.innerHTML += `<a href="${profile.github}" target="_blank" rel="noopener noreferrer" class="profile-link">GitHub</a>`; if (profile.linkedin) links.innerHTML += `<a href="${profile.linkedin}" target="_blank" rel="noopener noreferrer" class="profile-link">LinkedIn</a>`; if (links.children.length > 0) profileInfo.appendChild(links); profileModal.showModal(); } catch (e) { console.error('Error opening profile modal:', e); alert('Failed to open profile.'); } }
 
-    async function fetchUploaderName(uploaderId) {
-      if (!uploaderId || userNamesCache[uploaderId]) return;
-      try {
-        const profile = await loadProfile(uploaderId);
-        userNamesCache[uploaderId] = profile?.name || 'Anonymous';
-      } catch (err) {
-        console.warn('fetchUploaderName failed:', err);
-        userNamesCache[uploaderId] = 'Anonymous';
-      }
-    }
-
-    // Event Delegation for dynamic elements
+    // --- Event Listeners ---
     assignmentsGrid.addEventListener('click', (e) => {
         const voteBtn = e.target.closest('.vote-btn');
-        if (voteBtn) {
-            handleVote(voteBtn.dataset.assignmentId);
-            return;
-        }
+        if (voteBtn) return handleVote(voteBtn.dataset.assignmentId);
         const uploaderLink = e.target.closest('.uploader-link');
-        if (uploaderLink) {
-            openProfileModal(uploaderLink.dataset.uid);
-            return;
-        }
+        if (uploaderLink) return openProfileModal(uploaderLink.dataset.uid);
+        const editBtn = e.target.closest('.edit-btn');
+        if (editBtn) return handleEditClick(editBtn.dataset.id);
+        const deleteBtn = e.target.closest('.delete-btn');
+        if (deleteBtn) return handleDeleteClick(deleteBtn.dataset.id, deleteBtn.dataset.title);
     });
-
-    // Event listeners
+    
     logoutBtn.addEventListener('click', signOutUser);
     applyFiltersBtn.addEventListener('click', applyCurrentFilters);
     resetFiltersBtn.addEventListener('click', resetAllFilters);
     sortSelect.addEventListener('change', applyCurrentFilters);
-    mobileFiltersToggle.addEventListener('click', toggleMobileFilters);
-
-    uploadBtn.addEventListener('click', () => {
-      if (!currentUser) return redirectToLogin();
-      resetUploadForm();
-      uploadModal.showModal();
-    });
-
+    mobileFiltersToggle.addEventListener('click', () => { mobileFiltersToggle.classList.toggle('collapsed'); filtersSection.classList.toggle('expanded'); });
+    uploadBtn.addEventListener('click', () => { if (!currentUser) return redirectToLogin(); resetUploadForm(); uploadModal.showModal(); });
     uploadForm.addEventListener('submit', handleUploadSubmit);
     cancelUpload.addEventListener('click', () => uploadModal.close());
+    editForm.addEventListener('submit', handleUpdateSubmit);
+    cancelEdit.addEventListener('click', () => editModal.close());
+    window.addEventListener('resize', () => { if (window.innerWidth > 768) { filtersSection.classList.remove('expanded'); mobileFiltersToggle.classList.add('collapsed'); } });
 
-    // Initialize Auth and App
+    // --- App Initialization ---
     initAuth({
       onAuthStateChanged: (user, profile) => {
         currentUser = user;
         currentProfile = profile;
         updateAuthUI();
-
-        // FIX: Only fetch on the very first load.
         if (isInitialLoad) {
           fetchAssignments();
           isInitialLoad = false;
         } else {
-          // On subsequent auth changes (e.g., login/logout), just re-render to update voted status.
           applyCurrentFilters();
         }
       }
     });
 
-    // Make functions global for legacy onclick handlers if any remain (though delegation is better)
-    window.openProfileModal = openProfileModal;
-    window.fetchAssignments = fetchAssignments;
-
-    initializeMobileFilters();
-    window.addEventListener('resize', () => {
-      if (window.innerWidth > 768) {
-        filtersSection.classList.remove('expanded');
-        mobileFiltersToggle.classList.add('collapsed');
-      }
-    });
+    if (window.innerWidth <= 768) { mobileFiltersToggle.classList.add('collapsed'); filtersSection.classList.remove('expanded'); }
+    setupBranchDropdown(semesterEl, branchEl);
   </script>
 </body>
 </html>
