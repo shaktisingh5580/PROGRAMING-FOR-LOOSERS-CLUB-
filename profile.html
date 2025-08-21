@@ -1,619 +1,332 @@
 <!doctype html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Programming for Losers — Profile</title>
     <meta name="color-scheme" content="dark light" />
-    <style>
-      :root {
-        color-scheme: dark;
-        --bg: #0f0f10;
-        --elev: #151517;
-        --elev-2: #1b1b1e;
-        --muted: #d9d9db;
-        --soft: #a9a9ad;
-        --line: #2a2a2e;
-        --accent: #ffffff;
-        --ok: #43d17a;
-        --warn: #e7c74f;
-        --danger: #ff5d5d;
-        --primary: #4f46e5;
-        --primary-hover: #4338ca;
-      }
-      
-      * { 
-        box-sizing: border-box; 
-        margin: 0; 
-        padding: 0; 
-      }
-      
-      body {
-        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial;
-        background: var(--bg);
-        color: var(--muted);
-        line-height: 1.6;
-        min-height: 100vh;
-      }
-      
-      /* Header */
-      header {
-        background: var(--elev-2);
-        border-bottom: 1px solid var(--line);
-        padding: 1rem 0;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        backdrop-filter: blur(10px);
-      }
-      
-      .header-content {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 1rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 1rem;
-      }
-      
-      .logo {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--accent);
-      }
-      
-      .nav-links {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-        flex-wrap: wrap;
-      }
-      
-      .nav-links a {
-        color: var(--muted);
-        text-decoration: none;
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
-        transition: all 0.2s;
-        white-space: nowrap;
-        font-weight: 500;
-      }
-      
-      .nav-links a:hover {
-        background: var(--elev);
-        color: var(--accent);
-      }
-      
-      .nav-links a.active {
-        background: var(--primary);
-        color: white;
-      }
-      
-      /* Mobile Navigation */
-      @media (max-width: 768px) {
-        .header-content {
-          flex-direction: column;
-          gap: 0.5rem;
-          padding: 0 0.5rem;
-        }
-        
-        .nav-links {
-          order: -1;
-          width: 100%;
-          justify-content: center;
-          gap: 0.5rem;
-        }
-        
-        .nav-links a {
-          padding: 0.4rem 0.8rem;
-          font-size: 0.9rem;
-        }
-        
-        .logo {
-          font-size: 1.2rem;
-        }
-      }
-      
-      /* Main Container */
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 2rem 1rem;
-      }
-      
-      @media (max-width: 768px) {
-        .container {
-          padding: 1rem 0.5rem;
-        }
-      }
-      
-      /* Grid Layout */
-      .profile-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 2rem;
-      }
-      
-      @media (min-width: 1024px) {
-        .profile-grid {
-          grid-template-columns: 1fr 400px;
-          gap: 3rem;
-        }
-      }
-      
-      /* Cards */
-      .card {
-        background: var(--elev-2);
-        border: 1px solid var(--line);
-        border-radius: 16px;
-        overflow: hidden;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-      }
-      
-      .card:hover {
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
-        transform: translateY(-2px);
-      }
-      
-      .card-header {
-        padding: 1.5rem;
-        border-bottom: 1px solid var(--line);
-        background: var(--elev);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 1rem;
-      }
-      
-      .card-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: var(--accent);
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-      
-      .card-body {
-        padding: 1.5rem;
-      }
-      
-      @media (max-width: 768px) {
-        .card-header,
-        .card-body {
-          padding: 1rem;
-        }
-      }
-      
-      /* Form Elements */
-      .form-section {
-        margin-bottom: 2rem;
-      }
-      
-      .form-section:last-child {
-        margin-bottom: 0;
-      }
-      
-      .section-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: var(--accent);
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-      
-      .form-grid {
-        display: grid;
-        gap: 1rem;
-      }
-      
-      @media (min-width: 768px) {
-        .form-grid.two-cols {
-          grid-template-columns: 1fr 1fr;
-        }
-      }
-      
-      .form-field {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-      
-      .form-field label {
-        font-weight: 500;
-        color: var(--soft);
-        font-size: 0.9rem;
-      }
-      
-      .form-field input,
-      .form-field select {
-        padding: 0.75rem;
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: var(--elev);
-        color: var(--muted);
-        font-size: 1rem;
-        transition: all 0.2s;
-        outline: none;
-      }
-      
-      .form-field input:focus,
-      .form-field select:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-        background: var(--bg);
-      }
-      
-      .form-field input::placeholder {
-        color: var(--soft);
-      }
-      
-      .input-group {
-        display: flex;
-        align-items: stretch;
-      }
-      
-      .input-prefix {
-        background: var(--line);
-        color: var(--soft);
-        padding: 0.75rem;
-        border: 1px solid var(--line);
-        border-right: none;
-        border-radius: 8px 0 0 8px;
-        font-size: 0.9rem;
-        display: flex;
-        align-items: center;
-      }
-      
-      .input-group input {
-        border-radius: 0 8px 8px 0;
-        border-left: none;
-        flex: 1;
-      }
-      
-      .form-hint {
-        font-size: 0.8rem;
-        color: var(--soft);
-        margin-top: 0.25rem;
-      }
-      
-      /* Buttons */
-      .btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        padding: 0.75rem 1.5rem;
-        border: none;
-        border-radius: 8px;
-        font-weight: 500;
-        font-size: 0.9rem;
-        cursor: pointer;
-        transition: all 0.2s;
-        text-decoration: none;
-        white-space: nowrap;
-      }
-      
-      .btn-primary {
-        background: var(--primary);
-        color: white;
-      }
-      
-      .btn-primary:hover {
-        background: var(--primary-hover);
-        transform: translateY(-1px);
-      }
-      
-      .btn-outline {
-        background: transparent;
-        color: var(--muted);
-        border: 1px solid var(--line);
-      }
-      
-      .btn-outline:hover {
-        background: var(--elev);
-        border-color: var(--primary);
-        color: var(--accent);
-      }
-      
-      .btn-danger {
-        background: var(--danger);
-        color: white;
-      }
-      
-      .btn-danger:hover {
-        background: #dc2626;
-      }
-      
-      .btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        transform: none;
-      }
-      
-      .btn-group {
-        display: flex;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-        align-items: center;
-      }
-      
-      @media (max-width: 768px) {
-        .btn-group {
-          flex-direction: column;
-          width: 100%;
-        }
-        
-        .btn {
-          width: 100%;
-        }
-      }
-      
-      /* Status Messages */
-      .status-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.25rem;
-        padding: 0.25rem 0.75rem;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 500;
-      }
-      
-      .status-pill.guest {
-        background: rgba(169, 169, 173, 0.1);
-        color: var(--soft);
-      }
-      
-      .status-pill.signed-in {
-        background: rgba(67, 209, 122, 0.1);
-        color: var(--ok);
-      }
-      
-      .message {
-        padding: 0.75rem 1rem;
-        border-radius: 8px;
-        font-size: 0.9rem;
-        font-weight: 500;
-        margin-top: 1rem;
-      }
-      
-      .message.success {
-        background: rgba(67, 209, 122, 0.1);
-        color: var(--ok);
-        border: 1px solid rgba(67, 209, 122, 0.2);
-      }
-      
-      .message.error {
-        background: rgba(255, 93, 93, 0.1);
-        color: var(--danger);
-        border: 1px solid rgba(255, 93, 93, 0.2);
-      }
-      
-      /* Profile Cards */
-      .profile-card {
-        background: var(--elev);
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 1.5rem;
-        text-align: center;
-      }
-      
-      .profile-avatar {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, var(--primary), var(--primary-hover));
-        color: white;
-        font-size: 2rem;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1rem;
-        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
-      }
-      
-      .profile-name {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: var(--accent);
-        margin-bottom: 0.5rem;
-      }
-      
-      .profile-info {
-        color: var(--soft);
-        font-size: 0.9rem;
-        margin-bottom: 1rem;
-      }
-      
-      .profile-links {
-        display: flex;
-        gap: 0.5rem;
-        justify-content: center;
-        flex-wrap: wrap;
-      }
-      
-      .profile-link {
-        padding: 0.5rem 1rem;
-        background: var(--elev-2);
-        border: 1px solid var(--line);
-        border-radius: 20px;
-        color: var(--muted);
-        text-decoration: none;
-        font-size: 0.8rem;
-        font-weight: 500;
-        transition: all 0.2s;
-      }
-      
-      .profile-link:hover {
-        background: var(--primary);
-        color: white;
-        transform: translateY(-1px);
-      }
-      
-      /* Community Profiles */
-      .profiles-grid {
-        display: grid;
-        gap: 1rem;
-      }
-      
-      @media (min-width: 768px) {
-        .profiles-grid {
-          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        }
-      }
-      
-      .profile-item {
-        background: var(--elev);
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 1rem;
-        transition: all 0.2s;
-      }
-      
-      .profile-item:hover {
-        background: var(--elev-2);
-        transform: translateY(-2px);
-      }
-      
-      .profile-item-header {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        margin-bottom: 0.75rem;
-      }
-      
-      .profile-item-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, var(--primary), var(--primary-hover));
-        color: white;
-        font-size: 1rem;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      
-      .profile-item-name {
-        font-weight: 600;
-        color: var(--accent);
-      }
-      
-      .profile-item-info {
-        font-size: 0.8rem;
-        color: var(--soft);
-        margin-bottom: 0.75rem;
-      }
-      
-      .profile-item-links {
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-      }
-      
-      .profile-item-link {
-        padding: 0.25rem 0.5rem;
-        background: var(--elev-2);
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        color: var(--soft);
-        text-decoration: none;
-        font-size: 0.7rem;
-        transition: all 0.2s;
-      }
-      
-      .profile-item-link:hover {
-        background: var(--primary);
-        color: white;
-      }
-      
-      /* Loading States */
-      .loading {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        border: 2px solid var(--line);
-        border-top: 2px solid var(--primary);
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-      }
-      
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-      
-      /* Icons */
-      .icon {
-        width: 1.2em;
-        height: 1.2em;
-        display: inline-block;
-      }
-      
-      /* Responsive Utilities */
-      .mobile-only {
-        display: block;
-      }
-      
-      .desktop-only {
-        display: none;
-      }
-      
-      @media (min-width: 768px) {
-        .mobile-only {
-          display: none;
-        }
-        
-        .desktop-only {
-          display: block;
-        }
-      }
-      
-      /* Accessibility */
-      @media (prefers-reduced-motion: reduce) {
-        * {
-          animation-duration: 0.01ms !important;
-          animation-iteration-count: 1 !important;
-          transition-duration: 0.01ms !important;
-        }
-      }
-      
-      /* Focus styles */
-      .btn:focus-visible,
-      input:focus-visible,
-      select:focus-visible {
-        outline: 2px solid var(--primary);
-        outline-offset: 2px;
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <div class="header-content">
-        <div class="logo">PFL</div>
-        <nav class="nav-links">
-          <a href="index.html">Home</a>
-          <a href="chat.html">Chat</a>
-          <a href="assignment.html">Assignments</a>
-          <a href="profile.html" class="active">Profile</a>
-          <a href="pyqs.html">PYQ's</a>
-        </nav>
-        <div class="status-pill" id="auth-status">
-          <span class="loading"></span>
-          <span>Loading...</span>
-        </div>
-      </div>
-    </header>
+    
+    <!-- Tailwind CSS for the new navigation bar -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
+    <!-- CSS for the new Anime Navigation Bar -->
+    <style>
+        @keyframes shine { 0% { transform: translateX(-100%); } 50% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-12px); } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(8px); } }
+        @keyframes glow { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.03); } }
+        @keyframes sparkle { 0% { opacity: 0; transform: scale(0) rotate(0deg); } 50% { opacity: 1; transform: scale(1) rotate(180deg); } 100% { opacity: 0; transform: scale(0) rotate(360deg); } }
+        @keyframes blink { 0%, 90%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.2); } }
+        
+        .anime-nav { backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+        .glow-effect { animation: glow 2s ease-in-out infinite; }
+        .shine-effect { animation: shine 3s ease-in-out infinite; }
+        .float-animation { animation: float 2s ease-in-out infinite; }
+        .bounce-animation { animation: bounce 1s ease-in-out infinite 0.5s; }
+        .sparkle-animation { animation: sparkle 0.6s ease-in-out; }
+        .blink-animation { animation: blink 3s ease-in-out infinite; }
+        
+        .mascot-container { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .nav-item { transition: all 0.3s ease; }
+        .nav-item:hover { transform: scale(1.05); }
+        .mobile-icon { transition: transform 0.2s ease; }
+        .mobile-icon:hover { transform: scale(1.2); }
+        .mobile-icon:active { transform: scale(0.9); }
+    </style>
+
+    <!-- Original CSS for the Profile Page Content -->
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg: #0f0f10;
+            --elev: #151517;
+            --elev-2: #1b1b1e;
+            --muted: #d9d9db;
+            --soft: #a9a9ad;
+            --line: #2a2a2e;
+            --accent: #ffffff;
+            --ok: #43d17a;
+            --warn: #e7c74f;
+            --danger: #ff5d5d;
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial;
+            background: var(--bg);
+            color: var(--muted);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+      
+        /* Main Container - Adjusted for new fixed nav */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            padding-top: 120px; /* Space for fixed nav */
+        }
+        @media (max-width: 768px) { .container { padding: 1rem 0.5rem; padding-top: 120px; } }
+      
+        .profile-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+        @media (min-width: 1024px) { .profile-grid { grid-template-columns: 1fr 400px; gap: 3rem; } }
+      
+        .card {
+            background: var(--elev-2);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .card:hover { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2); transform: translateY(-2px); }
+        
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--line);
+            background: var(--elev);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .card-body { padding: 1.5rem; }
+        @media (max-width: 768px) { .card-header, .card-body { padding: 1rem; } }
+      
+        .form-section { margin-bottom: 2rem; }
+        .form-section:last-child { margin-bottom: 0; }
+        
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .form-grid { display: grid; gap: 1rem; }
+        @media (min-width: 768px) { .form-grid.two-cols { grid-template-columns: 1fr 1fr; } }
+        
+        .form-field { display: flex; flex-direction: column; gap: 0.5rem; }
+        .form-field label { font-weight: 500; color: var(--soft); font-size: 0.9rem; }
+        .form-field input, .form-field select {
+            padding: 0.75rem;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--elev);
+            color: var(--muted);
+            font-size: 1rem;
+            transition: all 0.2s;
+            outline: none;
+        }
+        .form-field input:focus, .form-field select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            background: var(--bg);
+        }
+        .form-field input::placeholder { color: var(--soft); }
+        
+        .input-group { display: flex; align-items: stretch; }
+        .input-prefix {
+            background: var(--line);
+            color: var(--soft);
+            padding: 0.75rem;
+            border: 1px solid var(--line);
+            border-right: none;
+            border-radius: 8px 0 0 8px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+        }
+        .input-group input { border-radius: 0 8px 8px 0; border-left: none; flex: 1; }
+        .form-hint { font-size: 0.8rem; color: var(--soft); margin-top: 0.25rem; }
+      
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
+        .btn-outline { background: transparent; color: var(--muted); border: 1px solid var(--line); }
+        .btn-outline:hover { background: var(--elev); border-color: var(--primary); color: var(--accent); }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        
+        .btn-group { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
+        @media (max-width: 768px) { .btn-group { flex-direction: column; width: 100%; } .btn { width: 100%; } }
+        
+        .message { padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.9rem; font-weight: 500; margin-top: 1rem; }
+        .message.success { background: rgba(67, 209, 122, 0.1); color: var(--ok); border: 1px solid rgba(67, 209, 122, 0.2); }
+        .message.error { background: rgba(255, 93, 93, 0.1); color: var(--danger); border: 1px solid rgba(255, 93, 93, 0.2); }
+      
+        .profile-card { background: var(--elev); border: 1px solid var(--line); border-radius: 12px; padding: 1.5rem; text-align: center; }
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+        .profile-name { font-size: 1.25rem; font-weight: 600; color: var(--accent); margin-bottom: 0.5rem; }
+        .profile-info { color: var(--soft); font-size: 0.9rem; margin-bottom: 1rem; }
+        .profile-links { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
+        .profile-link {
+            padding: 0.5rem 1rem;
+            background: var(--elev-2);
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .profile-link:hover { background: var(--primary); color: white; transform: translateY(-1px); }
+      
+        .profiles-grid { display: grid; gap: 1rem; }
+        @media (min-width: 768px) { .profiles-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); } }
+        
+        .profile-item { background: var(--elev); border: 1px solid var(--line); border-radius: 12px; padding: 1rem; transition: all 0.2s; }
+        .profile-item:hover { background: var(--elev-2); transform: translateY(-2px); }
+        .profile-item-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+        .profile-item-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .profile-item-name { font-weight: 600; color: var(--accent); }
+        .profile-item-info { font-size: 0.8rem; color: var(--soft); margin-bottom: 0.75rem; }
+        .profile-item-links { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .profile-item-link {
+            padding: 0.25rem 0.5rem;
+            background: var(--elev-2);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            color: var(--soft);
+            text-decoration: none;
+            font-size: 0.7rem;
+            transition: all 0.2s;
+        }
+        .profile-item-link:hover { background: var(--primary); color: white; }
+      
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--line);
+            border-top: 2px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .icon { width: 1.2em; height: 1.2em; display: inline-block; }
+        .mobile-only { display: block; }
+        .desktop-only { display: none; }
+        @media (min-width: 768px) { .mobile-only { display: none; } .desktop-only { display: block; } }
+        
+        @media (prefers-reduced-motion: reduce) { * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; } }
+        .btn:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+    </style>
+</head>
+<body class="bg-black">
+
+    <!-- NEW: Fixed Anime Navigation Bar -->
+    <div class="fixed top-5 left-0 right-0 z-50">
+        <div class="flex justify-center pt-6">
+            <div class="anime-nav flex items-center gap-3 bg-gray-900/80 border border-gray-700/50 py-2 px-2 rounded-full shadow-2xl relative">
+                
+                <!-- Home -->
+                <a href="index.html" class="nav-item relative cursor-pointer text-sm font-semibold px-6 py-3 rounded-full text-gray-400 hover:text-white" data-tab="Home">
+                    <span class="hidden md:inline relative">Home</span>
+                    <svg class="md:hidden relative w-5 h-5 mobile-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                </a>
+                
+                <!-- Chat -->
+                <a href="chat.html" class="nav-item relative cursor-pointer text-sm font-semibold px-6 py-3 rounded-full text-gray-400 hover:text-white" data-tab="Chat">
+                    <span class="hidden md:inline relative">Chat</span>
+                    <svg class="md:hidden relative w-5 h-5 mobile-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                </a>
+                
+                <!-- Assignments -->
+                <a href="assignment.html" class="nav-item relative cursor-pointer text-sm font-semibold px-6 py-3 rounded-full text-gray-400 hover:text-white" data-tab="Assignments">
+                    <span class="hidden md:inline relative">Assignments</span>
+                    <svg class="md:hidden relative w-5 h-5 mobile-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                </a>
+                
+                <!-- Profile (Active Page) -->
+                <a href="profile.html" class="nav-item relative cursor-pointer text-sm font-semibold px-6 py-3 rounded-full text-white active-tab" data-tab="Profile">
+                    <span class="hidden md:inline relative">Profile</span>
+                    <svg class="md:hidden relative w-5 h-5 mobile-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                </a>
+
+                <!-- PYQ's -->
+                <a href="pyqs.html" class="nav-item relative cursor-pointer text-sm font-semibold px-6 py-3 rounded-full text-gray-400 hover:text-white" data-tab="PYQs">
+                    <span class="hidden md:inline relative">PYQ's</span>
+                    <svg class="md:hidden relative w-5 h-5 mobile-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                </a>
+                
+                <!-- Active Tab Glow & Hover Effects -->
+                <div class="glow-container absolute inset-0 rounded-full -z-10 overflow-hidden opacity-0">
+                    <div class="absolute inset-0 bg-white/20 rounded-full blur-md glow-effect"></div>
+                    <div class="absolute inset-[-4px] bg-white/15 rounded-full blur-xl glow-effect"></div>
+                </div>
+                <div class="hover-effect absolute inset-0 bg-white/5 rounded-full -z-10 opacity-0 transition-opacity duration-300"></div>
+            </div>
+        </div>
+    </div>
+  
+    <!-- Anime Mascot -->
+    <div class="mascot-container fixed top-0 left-1/2 transform -translate-x-1/2 pointer-events-none z-[60] opacity-0" style="top: 35px;">
+        <div class="relative w-12 h-12">
+            <div class="mascot-head absolute w-10 h-10 bg-white rounded-full left-1/2 transform -translate-x-1/2 float-animation shadow-lg">
+                <div class="mascot-eye-left absolute transition-all duration-300" style="left: 20%; top: 35%;"><div class="w-3 h-3 bg-black rounded-full relative blink-animation"><div class="absolute w-1 h-1 bg-white rounded-full" style="top: 20%; right: 20%;"></div></div></div>
+                <div class="mascot-eye-right absolute transition-all duration-300" style="right: 20%; top: 35%;"><div class="w-3 h-3 bg-black rounded-full relative blink-animation"><div class="absolute w-1 h-1 bg-white rounded-full" style="top: 20%; left: 20%;"></div></div></div>
+            </div>
+            <div class="absolute -bottom-1 left-1/2 w-4 h-4 transform -translate-x-1/2 bounce-animation"><div class="w-full h-full bg-white rotate-45 transform origin-center shadow-lg"></div></div>
+        </div>
+    </div>
+
+    <!-- Original Main Content -->
     <main class="container">
       <div class="profile-grid">
         <!-- Profile Form Section -->
@@ -621,38 +334,22 @@
           <div class="card">
             <div class="card-header">
               <h1 class="card-title">
-                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                </svg>
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                 Complete Your Profile
               </h1>
               <button class="btn btn-outline desktop-only" onclick="goBack()">
-                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                </svg>
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                 Back
               </button>
             </div>
             <div class="card-body">
               <form id="profile-form">
-                <!-- Basic Information -->
                 <div class="form-section">
-                  <h2 class="section-title">
-                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    Basic Information
-                  </h2>
+                  <h2 class="section-title"><svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>Basic Information</h2>
                   <div class="form-grid">
                     <div class="form-field">
                       <label for="name">Full Name *</label>
-                      <input 
-                        type="text" 
-                        id="name" 
-                        placeholder="Enter your full name" 
-                        maxlength="80" 
-                        required
-                      />
+                      <input type="text" id="name" placeholder="Enter your full name" maxlength="80" required/>
                     </div>
                   </div>
                   <div class="form-grid two-cols">
@@ -660,175 +357,125 @@
                       <label for="semester">Semester *</label>
                       <select id="semester" required>
                         <option value="">Select Semester</option>
-                        <option value="1">1st Semester</option>
-                        <option value="2">2nd Semester</option>
-                        <option value="3">3rd Semester</option>
-                        <option value="4">4th Semester</option>
-                        <option value="5">5th Semester</option>
-                        <option value="6">6th Semester</option>
-                        <option value="7">7th Semester</option>
-                        <option value="8">8th Semester</option>
+                        <option value="1">1st Semester</option><option value="2">2nd Semester</option><option value="3">3rd Semester</option><option value="4">4th Semester</option>
+                        <option value="5">5th Semester</option><option value="6">6th Semester</option><option value="7">7th Semester</option><option value="8">8th Semester</option>
                       </select>
                     </div>
                     <div class="form-field">
                       <label for="college">College *</label>
-                      <input 
-                        type="text" 
-                        id="college" 
-                        placeholder="Your college name" 
-                        maxlength="120" 
-                        required
-                      />
+                      <input type="text" id="college" placeholder="Your college name" maxlength="120" required/>
                     </div>
                   </div>
                 </div>
-
-                <!-- Social Links -->
                 <div class="form-section">
-                  <h2 class="section-title">
-                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.102m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
-                    </svg>
-                    Social Links
-                  </h2>
+                  <h2 class="section-title"><svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.102m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>Social Links</h2>
                   <div class="form-grid">
                     <div class="form-field">
                       <label for="instagram">Instagram</label>
                       <div class="input-group">
                         <span class="input-prefix">@</span>
-                        <input 
-                          type="text" 
-                          id="instagram" 
-                          placeholder="username or full URL"
-                        />
+                        <input type="text" id="instagram" placeholder="username or full URL"/>
                       </div>
-                      <div class="form-hint">
-                        Enter either your username (e.g., "john_doe") or full URL (e.g., "https://instagram.com/john_doe")
-                      </div>
+                      <div class="form-hint">Enter your username (e.g., "john_doe") or full URL</div>
                     </div>
                     <div class="form-field">
                       <label for="github">GitHub</label>
-                      <input 
-                        type="url" 
-                        id="github" 
-                        placeholder="https://github.com/yourusername"
-                      />
+                      <input type="url" id="github" placeholder="https://github.com/yourusername"/>
                     </div>
                     <div class="form-field">
                       <label for="linkedin">LinkedIn</label>
-                      <input 
-                        type="url" 
-                        id="linkedin" 
-                        placeholder="https://linkedin.com/in/yourprofile"
-                      />
+                      <input type="url" id="linkedin" placeholder="https://linkedin.com/in/yourprofile"/>
                     </div>
                   </div>
                 </div>
-
-                <!-- Action Buttons -->
                 <div class="btn-group">
-                  <button type="submit" class="btn btn-primary" id="save-btn">
-                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                    Save Profile
-                  </button>
-                  <a href="login.html" class="btn btn-outline" id="sign-in-link" style="display:none">
-                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
-                    </svg>
-                    Sign In
-                  </a>
-                  <button type="button" class="btn btn-danger" id="sign-out-btn" style="display:none">
-                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                    </svg>
-                    Sign Out
-                  </button>
-                  <button type="button" class="btn btn-outline mobile-only" onclick="goBack()">
-                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                    </svg>
-                    Back
-                  </button>
+                  <button type="submit" class="btn btn-primary" id="save-btn"><svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Save Profile</button>
+                  <a href="login.html" class="btn btn-outline" id="sign-in-link" style="display:none"><svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>Sign In</a>
+                  <button type="button" class="btn btn-danger" id="sign-out-btn" style="display:none"><svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>Sign Out</button>
+                  <button type="button" class="btn btn-outline mobile-only" onclick="goBack()"><svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>Back</button>
                 </div>
-
                 <div id="message" class="message" style="display:none"></div>
               </form>
             </div>
           </div>
         </section>
-
-        <!-- Sidebar -->
         <aside>
-          <!-- My Profile Card -->
-          <div class="card">
-            <div class="card-header">
-              <h2 class="card-title">
-                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-4 0V5a2 2 0 014 0v1"></path>
-                </svg>
-                My Profile Card
-              </h2>
-              <a href="chat.html" class="btn btn-outline">
-                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                </svg>
-                Open Chat
-              </a>
-            </div>
-            <div class="card-body">
-              <div id="my-profile-card" class="profile-card">
-                <div class="profile-avatar">?</div>
-                <div class="profile-name">Not signed in</div>
-                <div class="profile-info">Sign in to create your profile</div>
-              </div>
-            </div>
+          <div class="card" style="margin-bottom: 2rem;">
+            <div class="card-header"><h2 class="card-title"><svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-4 0V5a2 2 0 014 0v1"></path></svg>My Profile Card</h2></div>
+            <div class="card-body"><div id="my-profile-card" class="profile-card"></div></div>
           </div>
-
-          <!-- Community Profiles -->
           <div class="card">
             <div class="card-header">
-              <h2 class="card-title">
-                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                </svg>
-                Community
-              </h2>
+              <h2 class="card-title"><svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>Community</h2>
               <span class="status-pill" id="profiles-count">0 members</span>
             </div>
-            <div class="card-body">
-              <div id="profiles-list" class="profiles-grid">
-                <div class="profile-item">
-                  <div class="loading"></div>
-                  <div style="text-align: center; color: var(--soft); margin-top: 0.5rem;">Loading profiles...</div>
-                </div>
-              </div>
-            </div>
+            <div class="card-body"><div id="profiles-list" class="profiles-grid"></div></div>
           </div>
         </aside>
       </div>
     </main>
 
+    <!-- NEW: JavaScript for the Anime Navigation Bar -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const navItems = document.querySelectorAll('.nav-item');
+            const mascotContainer = document.querySelector('.mascot-container');
+            const glowContainer = document.querySelector('.glow-container');
+            const hoverEffect = document.querySelector('.hover-effect');
+            
+            let activeTab = 'Profile'; // Set active tab for this page
+            
+            function updateActiveElementPosition() {
+                const activeItem = document.querySelector(`[data-tab="${activeTab}"]`);
+                if (activeItem) {
+                    const rect = activeItem.getBoundingClientRect();
+                    const containerRect = activeItem.closest('.anime-nav').getBoundingClientRect();
+                    
+                    const mascotLeft = rect.left + rect.width / 2;
+                    mascotContainer.style.left = `${mascotLeft}px`;
+                    mascotContainer.style.opacity = '1';
+                    
+                    glowContainer.style.left = `${rect.left - containerRect.left}px`;
+                    glowContainer.style.width = `${rect.width}px`;
+                    glowContainer.style.opacity = '1';
+                }
+            }
+            
+            navItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    if (this.dataset.tab !== activeTab) {
+                        const rect = this.getBoundingClientRect();
+                        const containerRect = this.closest('.anime-nav').getBoundingClientRect();
+                        hoverEffect.style.left = `${rect.left - containerRect.left}px`;
+                        hoverEffect.style.width = `${rect.width}px`;
+                        hoverEffect.style.opacity = '1';
+                    }
+                });
+                item.addEventListener('mouseleave', () => { hoverEffect.style.opacity = '0'; });
+            });
+            
+            window.addEventListener('resize', updateActiveElementPosition);
+            setTimeout(updateActiveElementPosition, 100);
+        });
+    </script>
+    
+    <!-- Original Page JavaScript Logic (Preserved & Debugged) -->
     <script type="module">
-      import { auth, db, initAuth, signOutUser, redirectToLogin } from './js/auth.js';
+      import { auth, db, initAuth, signOutUser } from './js/auth.js';
       import { doc, getDoc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
       // Elements
-      const authStatus = document.getElementById('auth-status');
       const saveBtn = document.getElementById('save-btn');
       const signInLink = document.getElementById('sign-in-link');
       const signOutBtn = document.getElementById('sign-out-btn');
       const message = document.getElementById('message');
       const profileForm = document.getElementById('profile-form');
-
       const nameEl = document.getElementById('name');
       const semesterEl = document.getElementById('semester');
       const collegeEl = document.getElementById('college');
       const instagramEl = document.getElementById('instagram');
       const githubEl = document.getElementById('github');
       const linkedinEl = document.getElementById('linkedin');
-
       const myProfileCard = document.getElementById('my-profile-card');
       const profilesCount = document.getElementById('profiles-count');
       const profilesList = document.getElementById('profiles-list');
@@ -836,74 +483,44 @@
       let currentUser = null;
       let currentProfile = null;
 
-      // Utility functions
       function showMessage(text, type = 'success') {
         message.textContent = text;
         message.className = `message ${type}`;
         message.style.display = 'block';
-        
-        // Auto-hide after 5 seconds
-        setTimeout(() => {
-          message.style.display = 'none';
-        }, 5000);
+        setTimeout(() => { message.style.display = 'none'; }, 5000);
       }
-
-      function hideMessage() {
-        message.style.display = 'none';
-      }
-
+      function hideMessage() { message.style.display = 'none'; }
+      
       function setAuthUI() {
         if (currentUser) {
-          const displayName = currentProfile?.name || currentUser.email;
-          authStatus.innerHTML = `
-            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <span>${displayName}</span>
-          `;
-          authStatus.className = 'status-pill signed-in';
           signInLink.style.display = 'none';
           signOutBtn.style.display = 'inline-flex';
           saveBtn.disabled = false;
         } else {
-          authStatus.innerHTML = `
-            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-            </svg>
-            <span>Guest</span>
-          `;
-          authStatus.className = 'status-pill guest';
           signInLink.style.display = 'inline-flex';
           signOutBtn.style.display = 'none';
           saveBtn.disabled = true;
+          profileForm.reset();
         }
       }
 
       function isValidUrl(str) {
-        if (!str) return true;
+        if (!str) return true; // Empty is valid
         try {
-          const u = new URL(str);
-          return u.protocol === 'http:' || u.protocol === 'https:';
-        } catch { 
-          return false; 
-        }
+          const url = new URL(str);
+          return url.protocol === 'http:' || url.protocol === 'https:';
+        } catch { return false; }
       }
 
       function processInstagramInput(input) {
         if (!input) return null;
-        
-        // If it's a full URL
-        if (input.startsWith('https://instagram.com/') || input.startsWith('http://instagram.com/') || 
-            input.startsWith('https://www.instagram.com/') || input.startsWith('http://www.instagram.com/')) {
-          // Extract username from URL
+        if (input.includes('instagram.com')) {
           const match = input.match(/instagram\.com\/([^\/\?]+)/);
           return match ? match[1] : input;
         }
-        
-        // Remove @ if user added it
         return input.replace(/^@/, '');
       }
-
+      
       function generateInstagramUrl(username) {
         if (!username) return null;
         return `https://instagram.com/${username}`;
@@ -911,51 +528,24 @@
 
       function renderMyProfileCard(profile) {
         if (!currentUser) {
-          myProfileCard.innerHTML = `
-            <div class="profile-avatar">?</div>
-            <div class="profile-name">Not signed in</div>
-            <div class="profile-info">Sign in to create your profile</div>
-          `;
+          myProfileCard.innerHTML = `<div class="profile-avatar">?</div><div class="profile-name">Not signed in</div><div class="profile-info">Sign in to create your profile</div>`;
           return;
         }
-
-        const name = profile?.name || 'Unnamed';
+        const name = profile?.name || 'Unnamed Profile';
         const avatar = name.charAt(0).toUpperCase();
-        const info = [
-          profile?.college || '',
-          profile?.semester ? `Sem ${profile.semester}` : ''
-        ].filter(Boolean).join(' • ') || 'Add your details';
-
+        const info = [profile?.college || null, profile?.semester ? `Sem ${profile.semester}` : null].filter(Boolean).join(' • ') || 'Add your details';
         const links = [];
-        if (profile?.instagram) {
-          links.push(`<a href="${generateInstagramUrl(profile.instagram)}" target="_blank" rel="noopener" class="profile-link">Instagram</a>`);
-        }
-        if (profile?.github) {
-          links.push(`<a href="${profile.github}" target="_blank" rel="noopener" class="profile-link">GitHub</a>`);
-        }
-        if (profile?.linkedin) {
-          links.push(`<a href="${profile.linkedin}" target="_blank" rel="noopener" class="profile-link">LinkedIn</a>`);
-        }
-
-        myProfileCard.innerHTML = `
-          <div class="profile-avatar">${avatar}</div>
-          <div class="profile-name">${name}</div>
-          <div class="profile-info">${info}</div>
-          <div class="profile-links">${links.join('')}</div>
-        `;
+        if (profile?.instagram) links.push(`<a href="${generateInstagramUrl(profile.instagram)}" target="_blank" rel="noopener" class="profile-link">Instagram</a>`);
+        if (profile?.github) links.push(`<a href="${profile.github}" target="_blank" rel="noopener" class="profile-link">GitHub</a>`);
+        if (profile?.linkedin) links.push(`<a href="${profile.linkedin}" target="_blank" rel="noopener" class="profile-link">LinkedIn</a>`);
+        myProfileCard.innerHTML = `<div class="profile-avatar">${avatar}</div><div class="profile-name">${name}</div><div class="profile-info">${info}</div><div class="profile-links">${links.join('') || 'No social links added'}</div>`;
       }
 
       async function loadMyProfile() {
-        if (!currentUser) {
-          currentProfile = null;
-          renderMyProfileCard(null);
-          return;
-        }
-
+        if (!currentUser) { currentProfile = null; renderMyProfileCard(null); return; }
         try {
           const snap = await getDoc(doc(db, 'profiles', currentUser.uid));
           currentProfile = snap.exists() ? snap.data() : null;
-          
           if (currentProfile) {
             nameEl.value = currentProfile.name || '';
             semesterEl.value = currentProfile.semester || '';
@@ -964,163 +554,79 @@
             githubEl.value = currentProfile.github || '';
             linkedinEl.value = currentProfile.linkedin || '';
           }
-          
           renderMyProfileCard(currentProfile);
-        } catch (error) {
-          console.error('Error loading profile:', error);
-          showMessage('Failed to load profile data', 'error');
-        }
+        } catch (error) { showMessage('Failed to load your profile data.', 'error'); }
       }
 
       async function loadCommunityProfiles() {
+        profilesList.innerHTML = `<div class="loading" style="margin: 2rem auto;"></div>`;
         try {
           const snap = await getDocs(collection(db, 'profiles'));
           const profiles = [];
-          
-          snap.forEach((docSnap) => {
-            const profile = { id: docSnap.id, ...docSnap.data() };
-            profiles.push(profile);
-          });
-
+          snap.forEach(docSnap => profiles.push({ id: docSnap.id, ...docSnap.data() }));
           profilesCount.textContent = `${profiles.length} member${profiles.length !== 1 ? 's' : ''}`;
-          
           if (profiles.length === 0) {
-            profilesList.innerHTML = `
-              <div class="profile-item">
-                <div style="text-align: center; color: var(--soft);">No profiles yet</div>
-              </div>
-            `;
+            profilesList.innerHTML = `<div style="text-align: center; color: var(--soft);">No community profiles yet.</div>`;
             return;
           }
-
           profilesList.innerHTML = profiles.map(profile => {
             const avatar = profile.name ? profile.name.charAt(0).toUpperCase() : '?';
-            const info = [
-              profile.college || '',
-              profile.semester ? `Sem ${profile.semester}` : ''
-            ].filter(Boolean).join(' • ') || 'No details';
-
+            const info = [profile.college, profile.semester ? `Sem ${profile.semester}` : null].filter(Boolean).join(' • ') || 'No details';
             const links = [];
-            if (profile.instagram) {
-              links.push(`<a href="${generateInstagramUrl(profile.instagram)}" target="_blank" rel="noopener" class="profile-item-link">IG</a>`);
-            }
-            if (profile.github) {
-              links.push(`<a href="${profile.github}" target="_blank" rel="noopener" class="profile-item-link">GitHub</a>`);
-            }
-            if (profile.linkedin) {
-              links.push(`<a href="${profile.linkedin}" target="_blank" rel="noopener" class="profile-item-link">LinkedIn</a>`);
-            }
-
-            return `
-              <div class="profile-item">
-                <div class="profile-item-header">
-                  <div class="profile-item-avatar">${avatar}</div>
-                  <div>
-                    <div class="profile-item-name">${profile.name || 'Unknown'}</div>
-                  </div>
-                </div>
-                <div class="profile-item-info">${info}</div>
-                <div class="profile-item-links">
-                  ${links.join('')}
-                  <a href="chat.html" class="profile-item-link">Message</a>
-                </div>
-              </div>
-            `;
+            if (profile.instagram) links.push(`<a href="${generateInstagramUrl(profile.instagram)}" target="_blank" rel="noopener" class="profile-item-link">IG</a>`);
+            if (profile.github) links.push(`<a href="${profile.github}" target="_blank" rel="noopener" class="profile-item-link">GitHub</a>`);
+            if (profile.linkedin) links.push(`<a href="${profile.linkedin}" target="_blank" rel="noopener" class="profile-item-link">LinkedIn</a>`);
+            return `<div class="profile-item"><div class="profile-item-header"><div class="profile-item-avatar">${avatar}</div><div><div class="profile-item-name">${profile.name || 'Unknown'}</div></div></div><div class="profile-item-info">${info}</div><div class="profile-item-links">${links.join('')}<a href="chat.html" class="profile-item-link">Message</a></div></div>`;
           }).join('');
-        } catch (error) {
-          console.error('Error loading community profiles:', error);
-          profilesList.innerHTML = `
-            <div class="profile-item">
-              <div style="text-align: center; color: var(--danger);">Failed to load profiles</div>
-            </div>
-          `;
-        }
+        } catch (error) { profilesList.innerHTML = `<div style="text-align: center; color: var(--danger);">Failed to load profiles.</div>`; }
       }
 
-      // Form submission
       profileForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         hideMessage();
-
-        if (!currentUser) {
-          showMessage('Please sign in to save your profile', 'error');
-          return;
-        }
-
+        if (!currentUser) { showMessage('Please sign in to save your profile.', 'error'); return; }
         const name = nameEl.value.trim();
         const semester = semesterEl.value;
         const college = collegeEl.value.trim();
         const instagram = processInstagramInput(instagramEl.value.trim());
         const github = githubEl.value.trim();
         const linkedin = linkedinEl.value.trim();
-
-        // Validation
-        if (!name || !semester || !college) {
-          showMessage('Please fill in all required fields (Name, Semester, College)', 'error');
-          return;
-        }
-
-        if (!isValidUrl(github) || !isValidUrl(linkedin)) {
-          showMessage('Please enter valid URLs for GitHub and LinkedIn', 'error');
-          return;
-        }
-
-        // Show loading state
+        if (!name || !semester || !college) { showMessage('Please fill in all required fields: Name, Semester, and College.', 'error'); return; }
+        if (!isValidUrl(github) || !isValidUrl(linkedin)) { showMessage('Please enter valid URLs for GitHub and LinkedIn.', 'error'); return; }
+        
         const originalText = saveBtn.innerHTML;
         saveBtn.innerHTML = '<span class="loading"></span> Saving...';
         saveBtn.disabled = true;
-
+        
         try {
-          await setDoc(doc(db, 'profiles', currentUser.uid), {
-            name,
-            semester,
-            college,
-            instagram: instagram || null,
-            github: github || null,
-            linkedin: linkedin || null,
-            updatedAt: new Date().toISOString()
-          }, { merge: true });
-
+          const profileData = { name, semester, college, instagram: instagram || null, github: github || null, linkedin: linkedin || null, updatedAt: new Date().toISOString() };
+          await setDoc(doc(db, 'profiles', currentUser.uid), profileData, { merge: true });
           showMessage('Profile saved successfully!', 'success');
           await loadMyProfile();
-          await loadCommunityProfiles();
-        } catch (error) {
-          console.error('Error saving profile:', error);
-          showMessage('Failed to save profile. Please try again.', 'error');
-        } finally {
-          saveBtn.innerHTML = originalText;
-          saveBtn.disabled = false;
-        }
+          await loadCommunityProfiles(); // Refresh list to show updated profile
+        } catch (error) { showMessage('Failed to save profile. Please try again.', 'error'); } 
+        finally { saveBtn.innerHTML = originalText; saveBtn.disabled = false; }
       });
 
-      // Event listeners
       signOutBtn.addEventListener('click', signOutUser);
 
-      // Initialize auth
       initAuth({
         onAuthStateChanged: async (user, profile) => {
           currentUser = user;
-          currentProfile = profile;
+          currentProfile = profile; // This profile might be stale, loadMyProfile will get fresh data
           setAuthUI();
           await loadMyProfile();
-          await loadCommunityProfiles();
         }
       });
-
-      // Back navigation
+      
       function goBack() {
-        if (window.history.length > 1) {
-          window.history.back();
-        } else {
-          window.location.href = './chat.html';
-        }
+        if (window.history.length > 1) { window.history.back(); } 
+        else { window.location.href = './index.html'; } // Fallback to home
       }
-
-      // Make goBack global
       window.goBack = goBack;
 
-      // Initial load
+      // Initial Load
       loadCommunityProfiles();
     </script>
-  </body>
+</body>
 </html>
